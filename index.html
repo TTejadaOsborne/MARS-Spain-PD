@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1800 -->
+<!-- BUILD:20261008-1750 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1800';
+  const BUILD='20261008-1750';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -558,7 +558,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','fregacedos');toggleProjSwitcher('documentacion')">FREGACEDOS I, II &amp; V</div>
           <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','mutxamel');toggleProjSwitcher('documentacion')">MUTXAMEL</div>
           <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','entrenucleos');toggleProjSwitcher('documentacion')">ENTRENÚCLEOS</div>
-          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','custom_nuevas_oportunidades');toggleProjSwitcher('documentacion')">NUEVAS OPORTUNIDADES</div>
         </div>
         <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()">+ Añadir documento</button>
       </div>
@@ -982,7 +981,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 18:00';
+const BUILD_TS = '08/10/2026 17:50';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -1051,9 +1050,17 @@ function showTab(tab){
     document.getElementById('tc-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('tab-'+t).classList.toggle('on', t===tab);
   });
-  // Sync sidebar active state
-  document.getElementById('nav-cronograma').classList.toggle('active', tab==='cronograma');
-  document.getElementById('nav-documentacion').classList.toggle('active', tab==='documentacion');
+  // Show/hide tabs bar: only show on updates (and not for Nuevas Oportunidades)
+  const tabsBar = document.querySelector('.tabs-bar');
+  if(tabsBar){
+    const hideBar = (tab!=='updates') || (currentProjId==='custom_nuevas_oportunidades');
+    tabsBar.style.display = hideBar ? 'none' : '';
+  }
+  // Sync sidebar active state — clear all, then set the right one
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  if(tab==='cronograma') document.getElementById('nav-cronograma').classList.add('active');
+  else if(tab==='documentacion') document.getElementById('nav-documentacion').classList.add('active');
+  else if(currentProjId==='custom_nuevas_oportunidades') document.getElementById('nav-custom_nuevas_oportunidades').classList.add('active');
   if(tab==='updates') renderUpdates();
   if(tab==='cronograma') renderGantt();
   if(tab==='documentacion') renderDocs();
