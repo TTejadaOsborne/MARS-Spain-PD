@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1617 -->
+<!-- BUILD:20261008-1630 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -248,32 +248,46 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sb-section" style="padding-top:16px;">
-    <div class="sb-label">Navegación</div>
+    <div class="sb-label" data-i18n="navLabel">Navegación</div>
     <div class="sb-item active" id="nav-portfolio" onclick="showPage('portfolio')">
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="8" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".25"/></svg>
-      Portfolio
+      <span data-i18n="navPortfolio">Resumen del Portfolio</span>
+    </div>
+    <div class="sb-item" id="nav-semanal" onclick="showPage('semanal')">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="2" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 1v2M11 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 6h13" stroke="currentColor" stroke-width="1.2"/><rect x="3.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/><rect x="6.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/></svg>
+      <span data-i18n="navSemanal">Actualización semanal</span>
     </div>
   </div>
   <div class="sb-section" style="padding-top:12px;">
-    <div class="sb-label">Proyectos</div>
+    <div class="sb-label" data-i18n="navProjects">Proyectos</div>
     <div class="sb-proj">
       <div class="sb-proj-item" id="nav-begues" onclick="openProject('begues')">
         <div class="sb-dot" style="background:var(--green);"></div>
         <div><div style="font-weight:600;">BEGUES I & II</div><div style="font-size:10px;color:var(--text-3);">100 MW · Barcelona</div></div>
       </div>
       <div id="sub-begues" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('begues');showTab('updates')">📋 Updates</div>
-        <div class="sb-sub-item" onclick="openProject('begues');showTab('cronograma')">📅 Cronograma</div>
-        <div class="sb-sub-item" onclick="openProject('begues');showTab('documentacion')">📁 Documentación</div>
+        <div class="sb-sub-item" onclick="openProject('begues');showTab('cronograma')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span data-i18n="navSchedule">Cronograma</span>
+        </div>
+        <div class="sb-sub-item" onclick="openProject('begues');showTab('documentacion')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="navDocs">Documentación</span>
+        </div>
       </div>
       <div class="sb-proj-item" id="nav-fregacedos" onclick="openProject('fregacedos')">
         <div class="sb-dot" style="background:var(--green);"></div>
         <div><div style="font-weight:600;">FREGACEDOS I, II & V</div><div style="font-size:10px;color:var(--text-3);">15 MW · Madrid</div></div>
       </div>
       <div id="sub-fregacedos" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('updates')">📋 Updates</div>
-        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('cronograma')">📅 Cronograma</div>
-        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('documentacion')">📁 Documentación</div>
+        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('cronograma')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span data-i18n="navSchedule">Cronograma</span>
+        </div>
+        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('documentacion')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="navDocs">Documentación</span>
+        </div>
       </div>
       <div class="sb-proj-item" id="nav-mutxamel" onclick="openProject('mutxamel')">
         <div class="sb-dot" style="background:var(--red);"></div>
@@ -281,17 +295,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="sb-badge">1</div>
       </div>
       <div id="sub-mutxamel" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('updates')">📋 Updates</div>
-        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('cronograma')">📅 Cronograma</div>
-        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('documentacion')">📁 Documentación</div>
+        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('cronograma')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span data-i18n="navSchedule">Cronograma</span>
+        </div>
+        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('documentacion')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="navDocs">Documentación</span>
+        </div>
       </div>
       <div class="sb-proj-item" id="nav-entrenucleos" onclick="openProject('entrenucleos')" style="opacity:0.7;">
         <div class="sb-dot" style="background:var(--grey);"></div>
         <div><div style="font-weight:600;color:var(--text-3);">ENTRENÚCLEOS</div><div style="font-size:10px;color:var(--text-3);">49 MW · Stand-by</div></div>
       </div>
       <div id="sub-entrenucleos" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('updates')">📋 Updates</div>
-        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('documentacion')">📁 Documentación</div>
+        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('documentacion')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="navDocs">Documentación</span>
+        </div>
       </div>
     </div>
   </div>
@@ -303,15 +324,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div><div style="font-weight:600;">Nuevas Oportunidades</div><div style="font-size:10px;color:var(--text-3);">En análisis</div></div>
       </div>
       <div id="sub-custom_nuevas_oportunidades" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('updates')">📋 Updates</div>
-        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('documentacion')">📁 Documentación</div>
+        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('documentacion')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="navDocs">Documentación</span>
+        </div>
       </div>
     </div>
   </div>
   <div class="sb-footer">
     <button class="sb-footer-btn" onclick="exportData()">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 6l3.5 3.5L10 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 11h11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Exportar datos
+      <span data-i18n="exportBtn">Exportar datos</span>
     </button>
   </div>
 </div>
@@ -498,6 +521,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   </div>
 </div>
 
+<!-- ACTUALIZACIÓN SEMANAL PAGE -->
+<div id="page-semanal" style="display:none;">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <h2 data-i18n="navSemanal">Actualización semanal</h2>
+      <p data-i18n="semanalDesc">Novedades de todos los proyectos · Semana en curso</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="position:relative;display:inline-block;">
+        <button class="week-sel-btn" onclick="toggleCal('semanal')" style="background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;" id="weekSelBtn">
+          📅 <span id="weekSelLblSemanal">—</span>
+        </button>
+        <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:260px;"></div>
+      </div>
+      <button class="btn btn-sec" onclick="navWeekSemanal(-1)">←</button>
+      <button class="btn btn-sec" onclick="navWeekSemanal(1)">→</button>
+    </div>
+  </div>
+  <div class="content">
+    <div id="semanalFeed"></div>
+  </div>
+</div>
+
 <!-- PROJECT PAGE -->
 <div id="page-project" class="proj-page">
   <div class="proj-ficha" id="projFicha">
@@ -523,7 +569,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div style="display:flex;gap:8px;align-items:center;">
           <button class="btn btn-sec" onclick="navWeek(-1)">‹</button>
           <div class="pos-rel">
-            <button class="week-sel-btn" onclick="toggleCal()">📅 <span id="weekSelLbl">02/10/2026</span> ▾</button>
+            <button class="week-sel-btn" onclick="toggleCal('updates')">📅 <span id="weekSelLbl">02/10/2026</span> ▾</button>
             <div class="cal-popup" id="calPopup" style="display:none;"></div>
           </div>
           <button class="btn btn-sec" onclick="navWeek(1)">›</button>
@@ -960,7 +1006,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 16:17';
+const BUILD_TS = '08/10/2026 16:30';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -971,9 +1017,11 @@ function init(){
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 function showPage(page){
   document.getElementById('page-portfolio').style.display = page==='portfolio' ? '' : 'none';
+  document.getElementById('page-semanal').style.display = page==='semanal' ? '' : 'none';
   document.getElementById('page-project').classList.toggle('on', page==='project');
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   if(page==='portfolio') document.getElementById('nav-portfolio').classList.add('active');
+  if(page==='semanal'){ document.getElementById('nav-semanal').classList.add('active'); renderSemanal(); }
 }
 
 function openProject(pid){
@@ -1016,7 +1064,7 @@ function renderUpdates(){
 
   const [y,m,d] = currentWeek.split('-');
   document.getElementById('weekSelLbl').textContent = `${d}/${m}/${y}`;
-  document.getElementById('updatesWeekTitle').textContent = `Semana del ${weekRange(currentWeek)}`;
+  document.getElementById('updatesWeekTitle').textContent = `${t('weekTitle')} ${weekRange(currentWeek)}`;
   document.getElementById('addUpdateBtn').style.display = isEditor ? '' : 'none';
 
   const wd = allData[currentWeek]||{};
@@ -1032,14 +1080,14 @@ function renderUpdates(){
     if(ni.length){
       const [ny,nm,nd]=nextWk.split('-');
       html+=`<div onclick="currentWeek='${nextWk}';renderUpdates()" style="background:var(--green-s-l);border:1px solid var(--green-s-b);border-radius:8px;padding:11px 16px;margin-bottom:16px;cursor:pointer;display:flex;gap:10px;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:var(--green-s);">↑ Semana siguiente disponible · ${nd}/${nm}/${ny} — ${ni.map(i=>i.topic).join(' · ')}</span></div>`;
+        <span style="font-size:11px;font-weight:700;color:var(--green-s);">${t('nextWeekAvail')} · ${nd}/${nm}/${ny} — ${ni.map(i=>i.topic).join(' · ')}</span></div>`;
     }
   }
 
   if(issues.length){
     html+=`<div style="border:1.5px solid var(--navy);border-radius:8px;overflow:hidden;margin-bottom:20px;">
       <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px;">
-        <span style="color:#fff;font-size:12px;font-weight:700;">📅 Semana actual · ${d}/${m}/${y}</span>
+        <span style="color:#fff;font-size:12px;font-weight:700;">📅 ${t('currentWeekLbl')} · ${d}/${m}/${y}</span>
         <span style="margin-left:auto;background:rgba(57,148,57,0.25);color:#7dcc7d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} novedad${issues.length>1?'es':''}</span>
       </div>`;
     issues.forEach(iss=>{
@@ -1054,23 +1102,23 @@ function renderUpdates(){
           <div class="i-meta">
             <span class="status-tag ${st.cls}">${st.lbl}</span>
             ${imp?`<span class="impact-tag">${imp}</span>`:''}
-            ${iss.attention?`<span class="status-tag s-red">⚠️ Atención</span>`:''}
+            ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
           </div>
         </div>
-        ${acts.length?`<div class="act-section"><div class="act-title">Actividad</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
+        ${acts.length?`<div class="act-section"><div class="act-title">${t('activities')}</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
       </div>`;
     });
     html+=`</div>`;
   } else {
     html+=`<div style="background:var(--bg);border:1.5px dashed var(--border-2);border-radius:8px;padding:32px;text-align:center;margin-bottom:20px;">
-      <div style="font-size:13px;color:var(--text-3);">Sin novedades para esta semana</div>
-      ${isEditor?`<button class="btn btn-primary" style="margin-top:12px;" onclick="openAddUpdate()">+ Añadir novedad</button>`:''}
+      <div style="font-size:13px;color:var(--text-3);">${t('noUpdates')}</div>
+      ${isEditor?`<button class="btn btn-primary" style="margin-top:12px;" onclick="openAddUpdate()">${t('addUpdate')}</button>`:''}
     </div>`;
   }
 
   const prevWeeks = weeks.filter(w=>w<currentWeek).slice(-3).reverse();
   if(prevWeeks.length){
-    html+=`<div class="prev-week-hdr">Semanas anteriores</div>`;
+    html+=`<div class="prev-week-hdr">${t('prevWeeks')}</div>`;
     prevWeeks.forEach(wk=>{
       const issP=(allData[wk]||{})[pid]||[];
       if(!issP.length) return;
@@ -1112,21 +1160,29 @@ function navWeek(dir){
 }
 
 // ── CALENDAR ───────────────────────────────────────────────────────────────
-function toggleCal(){
+let calContext='updates'; // 'updates' or 'semanal'
+function toggleCal(ctx){
+  if(ctx) calContext=ctx;
   calOpen=!calOpen;
-  const p=document.getElementById('calPopup');
-  p.style.display=calOpen?'block':'none';
-  if(calOpen){ const d=new Date(currentWeek); calYear=d.getFullYear(); calMonth=d.getMonth(); renderCal(); }
+  const pid=calContext==='semanal'?'calPopupSemanal':'calPopup';
+  const p=document.getElementById(pid);
+  if(!p) return;
+  // Hide both popups first
+  ['calPopup','calPopupSemanal'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  if(calOpen){ const d=new Date(currentWeek); calYear=d.getFullYear(); calMonth=d.getMonth(); renderCal(pid); p.style.display='block'; }
+  else calOpen=false;
 }
-function renderCal(){
+function renderCal(popupId){
+  const pid=popupId||'calPopup';
   const weeks=Object.keys(allData);
   const y=calYear,m=calMonth;
   const first=new Date(y,m,1),last=new Date(y,m+1,0);
   const startDow=(first.getDay()+6)%7;
+  const onSelect=calContext==='semanal'?`currentWeek='ISODATE';toggleCal('semanal');renderSemanal();`:`currentWeek='ISODATE';toggleCal('updates');renderUpdates();`;
   let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal()" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">‹</button>
+    <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">‹</button>
     <span style="font-size:13px;font-weight:700;color:var(--navy);">${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} ${y}</span>
-    <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal()" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">›</button>
+    <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">›</button>
   </div><div class="cal-grid">`;
   ['L','M','X','J','V','S','D'].forEach(d=>h+=`<div class="cal-dow">${d}</div>`);
   for(let i=0;i<startDow;i++) h+=`<div class="cal-day other-month"></div>`;
@@ -1134,14 +1190,23 @@ function renderCal(){
     const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const hasData=weeks.includes(iso);
     const isSel=iso===currentWeek;
-    h+=`<div class="cal-day${hasData?' has-data':''}${isSel?' selected':''}" onclick="currentWeek='${iso}';toggleCal();renderUpdates();">${day}</div>`;
+    const clickFn=onSelect.replace(/ISODATE/g,iso);
+    h+=`<div class="cal-day${hasData?' has-data':''}${isSel?' selected':''}" onclick="${clickFn}">${day}</div>`;
   }
   h+=`</div>`;
-  document.getElementById('calPopup').innerHTML=h;
+  document.getElementById(pid).innerHTML=h;
 }
 document.addEventListener('mousedown',e=>{
-  if(calOpen&&!document.getElementById('calPopup').contains(e.target)&&!e.target.closest('.week-sel-btn')&&!e.target.closest('#calPopup')){
-    calOpen=false;document.getElementById('calPopup').style.display='none';
+  if(calOpen){
+    const p1=document.getElementById('calPopup');
+    const p2=document.getElementById('calPopupSemanal');
+    const inP1=p1&&p1.contains(e.target);
+    const inP2=p2&&p2.contains(e.target);
+    if(!inP1&&!inP2&&!e.target.closest('.week-sel-btn')){
+      calOpen=false;
+      if(p1) p1.style.display='none';
+      if(p2) p2.style.display='none';
+    }
   }
 });
 
@@ -1168,6 +1233,65 @@ function renderFeed(){
   if(opp) document.getElementById('oppText').textContent=(opp.text||'').slice(0,120);
 }
 
+// ── SEMANAL PAGE ──────────────────────────────────────────────────────────
+function renderSemanal(){
+  const names={begues:'BEGUES I & II',fregacedos:'FREGACEDOS I, II & V',mutxamel:'MUTXAMEL',entrenucleos:'ENTRENÚCLEOS',custom_nuevas_oportunidades:'NUEVAS OPORTUNIDADES'};
+  const projOrder=['begues','fregacedos','mutxamel','entrenucleos','custom_nuevas_oportunidades'];
+  const dotColor={begues:'var(--green)',fregacedos:'var(--green)',mutxamel:'var(--red)',entrenucleos:'var(--grey)',custom_nuevas_oportunidades:'var(--blue)'};
+  const [y,m,d]=currentWeek.split('-');
+  // Update week label in semanal header
+  const lbl=document.getElementById('weekSelLblSemanal');
+  if(lbl) lbl.textContent=weekRange(currentWeek);
+  const wd=allData[currentWeek]||{};
+  let html='';
+  const hasData=projOrder.some(pid=>(wd[pid]||[]).length>0);
+  if(!hasData){
+    html=`<div style="background:#fff;border:1.5px dashed var(--border-2);border-radius:10px;padding:48px;text-align:center;">
+      <div style="font-size:32px;margin-bottom:10px;">📅</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text-2);">${t('noUpdates')}</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
+    </div>`;
+  } else {
+    projOrder.forEach(pid=>{
+      const issues=(wd[pid]||[]);
+      if(!issues.length) return;
+      html+=`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openProject('${pid}')">
+          <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
+          <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span>
+          <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} novedad${issues.length>1?'es':''}</span>
+          <span style="font-size:10px;color:var(--text-3);">Ver proyecto →</span>
+        </div>`;
+      issues.forEach(iss=>{
+        const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+        const acts=iss.activities||[];
+        const imp=IMPACT_LABELS[iss.impact]||'';
+        html+=`<div class="issue-row">
+          <div class="issue-top-row">
+            <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
+            <div class="i-topic">${iss.topic||''}</div>
+            <div class="i-text">${iss.text||''}</div>
+            <div class="i-meta">
+              <span class="status-tag ${st.cls}">${st.lbl}</span>
+              ${imp?`<span class="impact-tag">${imp}</span>`:''}
+              ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
+            </div>
+          </div>
+          ${acts.length?`<div class="act-section"><div class="act-title">${t('activities')}</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+  }
+  document.getElementById('semanalFeed').innerHTML=html;
+}
+function navWeekSemanal(dir){
+  const weeks=Object.keys(allData).sort();
+  const idx=weeks.indexOf(currentWeek);
+  const ni=idx+dir;
+  if(ni>=0&&ni<weeks.length){ currentWeek=weeks[ni]; renderSemanal(); }
+}
+
 // ── GANTT ──────────────────────────────────────────────────────────────────
 let ganttTasks=null; // mutable copy for editor
 function getGanttTasks(){ if(!ganttTasks) ganttTasks=JSON.parse(JSON.stringify(TASKS)); return ganttTasks; }
@@ -1179,8 +1303,8 @@ function renderGantt(){
   if(pid!=='mutxamel'){
     document.getElementById('ganttContainer').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);">
       <div style="font-size:32px;margin-bottom:10px;">📅</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Cronograma no disponible</div>
-      <div style="font-size:12px;">El cronograma de ${m.name||pid} se añadirá próximamente.</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">${t('noSchedule')}</div>
+      <div style="font-size:12px;">${t('noScheduleDesc',m.name||pid)}</div>
     </div>`;
     return;
   }
@@ -1207,7 +1331,7 @@ function renderGantt(){
 
   // Year row
   let yearRow=`<tr>
-    <th rowspan="2" style="width:240px;min-width:240px;background:var(--navy);color:rgba(255,255,255,0.55);font-size:10px;padding:8px 12px;text-align:left;position:sticky;left:0;z-index:3;border-right:2px solid rgba(255,255,255,0.12);">Tarea</th>`;
+    <th rowspan="2" style="width:240px;min-width:240px;background:var(--navy);color:rgba(255,255,255,0.55);font-size:10px;padding:8px 12px;text-align:left;position:sticky;left:0;z-index:3;border-right:2px solid rgba(255,255,255,0.12);">${t('task')}</th>`;
   yearGroups.forEach(yg=>{
     const isFirst=yg.start===0;
     yearRow+=`<th colspan="${yg.count}" style="background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:5px 4px;text-align:center;border-left:${isFirst?'none':'2px solid rgba(255,255,255,0.25)'};">${yg.year}</th>`;
@@ -1298,42 +1422,42 @@ function openGanttEditor(taskId){
   panel.style.display='block';
   panel.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div style="font-size:14px;font-weight:700;color:var(--navy);">✏️ Editar tarea · <span style="font-weight:400;color:var(--text-2);">${task.num||task.id}</span></div>
+      <div style="font-size:14px;font-weight:700;color:var(--navy);">✏️ ${t('editTask')} · <span style="font-weight:400;color:var(--text-2);">${task.num||task.id}</span></div>
       <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-3);">✕</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
       <div style="grid-column:1/-1;">
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Nombre</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskName')}</label>
         <input id="ge-name" value="${task.name}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Inicio</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskStart')}</label>
         <input id="ge-start" type="date" value="${task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Fin</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskEnd')}</label>
         <input id="ge-end" type="date" value="${task.end||task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">% Completado</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskPct')}</label>
         <input id="ge-pct" type="number" min="0" max="100" value="${task.pct}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Predecesor (ID)</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskPred')}</label>
         <select id="ge-pred" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:11.5px;font-family:inherit;">
-          <option value="">— Sin predecesor —</option>
+          <option value="">—</option>
           ${taskOpts}
         </select>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Delay (días)</label>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskDelay')}</label>
         <input id="ge-delay" type="number" min="0" value="${task.delay||0}" placeholder="0" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
       </div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button onclick="saveGanttEdit('${taskId}')" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;">Guardar</button>
+      <button onclick="saveGanttEdit('${taskId}')" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;">${t('save')}</button>
       <button onclick="applyPredecessor('${taskId}')" title="Calcula la fecha de inicio en base al predecesor + delay" style="background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;">🔗 Aplicar vínculo</button>
-      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;cursor:pointer;">Cancelar</button>
+      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;cursor:pointer;">${t('cancel')}</button>
     </div>`;
 }
 
@@ -1392,7 +1516,7 @@ function renderDocs(){
   const sColor={'Vigente':'background:var(--green-s-l);color:var(--green-s);','En revisión':'background:var(--yellow-l);color:var(--yellow);','Borrador':'background:var(--blue-l);color:var(--blue);','Obsoleto':'background:var(--grey-l);color:var(--grey);'};
   const icons={PDF:'📄',Word:'📝',Excel:'📊',PowerPoint:'📋',Link:'🔗',Otro:'📁'};
   document.getElementById('docsContent').innerHTML=`<table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-    <thead><tr>${['Documento','Categoría','Versión','Estado','Fecha','Enlace'].map(h=>`<th style="background:var(--bg);padding:9px 14px;font-size:10.5px;font-weight:700;color:var(--text-2);text-align:left;border-bottom:2px solid var(--border);">${h}</th>`).join('')}</tr></thead>
+    <thead><tr>${[t('docColName'),t('docColCat'),t('docColVer'),t('docColStatus'),t('docColDate'),t('docColLink')].map(h=>`<th style="background:var(--bg);padding:9px 14px;font-size:10.5px;font-weight:700;color:var(--text-2);text-align:left;border-bottom:2px solid var(--border);">${h}</th>`).join('')}</tr></thead>
     <tbody>${docs.map(doc=>`<tr style="border-bottom:1px solid var(--border);">
       <td style="padding:10px 14px;"><div style="font-size:13px;font-weight:600;">${icons[doc.type]||'📁'} ${doc.name}</div>${doc.notes?`<div style="font-size:11px;color:var(--text-3);margin-top:2px;">${doc.notes}</div>`:''}</td>
       <td style="padding:10px 14px;font-size:12px;color:var(--text-2);">${doc.cat}</td>
@@ -1476,6 +1600,24 @@ const T={
     save:'Guardar',
     cancel:'Cancelar',
     nextWeek:'Semana siguiente tiene {0} actualizaciones',
+    navLabel:'Navegación',
+    navPortfolio:'Resumen del Portfolio',
+    navSemanal:'Actualización semanal',
+    navProjects:'Proyectos',
+    navSchedule:'Cronograma',
+    navDocs:'Documentación',
+    semanalDesc:'Novedades de todos los proyectos · Semana en curso',
+    exportBtn:'Exportar datos',
+    currentWeekLbl:'Semana actual',
+    prevWeeks:'Semanas anteriores',
+    nextWeekAvail:'↑ Semana siguiente disponible',
+    docColName:'Documento',
+    docColCat:'Categoría',
+    docColVer:'Versión',
+    docColStatus:'Estado',
+    docColDate:'Fecha',
+    docColLink:'Enlace',
+    editTaskLbl:'Editar tarea',
   },
   en:{
     weekTitle:'Week of',
@@ -1504,6 +1646,24 @@ const T={
     save:'Save',
     cancel:'Cancel',
     nextWeek:'Next week has {0} updates',
+    navLabel:'Navigation',
+    navPortfolio:'Portfolio Overview',
+    navSemanal:'Weekly Update',
+    navProjects:'Projects',
+    navSchedule:'Schedule',
+    navDocs:'Documentation',
+    semanalDesc:'All project updates · Current week',
+    exportBtn:'Export data',
+    currentWeekLbl:'Current week',
+    prevWeeks:'Previous weeks',
+    nextWeekAvail:'↑ Next week available',
+    docColName:'Document',
+    docColCat:'Category',
+    docColVer:'Version',
+    docColStatus:'Status',
+    docColDate:'Date',
+    docColLink:'Link',
+    editTaskLbl:'Edit task',
   }
 };
 function t(key,...args){
