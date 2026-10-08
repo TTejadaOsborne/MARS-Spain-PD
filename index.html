@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1630 -->
+<!-- BUILD:20261008-1636 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1611';
+  const BUILD='20261008-1636';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -350,10 +350,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="page-hdr-left">
       <h2>Portfolio de Desarrollo</h2>
       <p>Proyectos BESS Standalone en España · Seguimiento ejecutivo</p>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <div class="week-badge" id="portfolioWeekBadge">Semana del 28/09 al 04/10</div>
-      <button class="btn btn-primary" onclick="openProject('begues')">+ Nuevo reporting</button>
     </div>
   </div>
   <div class="content">
@@ -1008,7 +1004,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 16:30';
+const BUILD_TS = '08/10/2026 16:36';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
