@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-2042 -->
+<!-- BUILD:20261008-2048 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-2042';
+  const BUILD='20261008-2048';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -214,9 +214,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .cal-day.today{font-weight:800;color:var(--navy)!important;box-shadow:inset 0 0 0 2px #05233D;border-radius:50%;}
 /* PROJECT SWITCHER */
 .proj-switcher{margin-top:4px;}
-.proj-sw-item{padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap;}
+.proj-sw-item{padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .12s;}
 .proj-sw-item:hover{background:var(--bg);}
-.proj-sw-item.active{background:var(--green-l);color:var(--green-d);}
+.proj-sw-item.active{background:var(--green-l);}
+.proj-sw-item.active .psw-name{color:var(--green-d);}
+.psw-icon{width:30px;height:30px;border-radius:7px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.psw-info{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.psw-name{font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.psw-loc{font-size:10px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.psw-badge{font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:auto;flex-shrink:0;}
 
 /* GANTT */
 .gantt-bar-wrap{position:relative;height:32px;}
@@ -522,12 +528,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <svg id="fichaSwitcherChevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none;cursor:pointer;opacity:0.6;margin-top:2px;" onclick="toggleProjSwitcher('ficha')"><path d="M3 6l5 5 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="proj-ficha-loc" id="projFichaLoc"></div>
-      <div id="projSwitcherFicha" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:220px;" class="proj-switcher">
-        <div class="proj-sw-item" onclick="fichaTabSwitchProj('begues')">BEGUES I &amp; II</div>
-        <div class="proj-sw-item" onclick="fichaTabSwitchProj('fregacedos')">FREGACEDOS I, II &amp; V</div>
-        <div class="proj-sw-item" onclick="fichaTabSwitchProj('mutxamel')">MUTXAMEL</div>
-        <div class="proj-sw-item" onclick="fichaTabSwitchProj('entrenucleos')">ENTRENÚCLEOS</div>
-      </div>
+      <div id="projSwitcherFicha" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:260px;" class="proj-switcher"></div>
     </div>
     <div id="projFichaBadge"></div>
     <div class="ficha-specs" id="projFichaSpecs"></div>
@@ -1015,11 +1016,35 @@ function toggleSidebar(){
       :'<path d="M8 2L4 6l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
   }
 }
+const PSW_ICONS={begues:'⚡',fregacedos:'🔋',mutxamel:'☀️',entrenucleos:'🏗️'};
+const PSW_ICON_BG={begues:'#EEF2FF',fregacedos:'#F0FDF4',mutxamel:'#FFFBEB',entrenucleos:'#F8FAFC'};
+function buildProjSwitcherFicha(){
+  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
+  const el=document.getElementById('projSwitcherFicha');
+  if(!el) return;
+  const pids=['begues','fregacedos','mutxamel','entrenucleos'];
+  el.innerHTML=pids.map(pid=>{
+    const m=META[pid]||{};
+    const isActive=pid===currentProjId;
+    const loc=m.loc||'';
+    const city=loc.split(',')[0]||loc;
+    return `<div class="proj-sw-item${isActive?' active':''}" onclick="fichaTabSwitchProj('${pid}')">
+      <div class="psw-icon" style="background:${PSW_ICON_BG[pid]||'var(--bg)'};">${PSW_ICONS[pid]||'⚡'}</div>
+      <div class="psw-info">
+        <div class="psw-name">${m.name||pid}</div>
+        <div class="psw-loc">📍 ${city}</div>
+      </div>
+      <span class="psw-badge" style="${smap[m.sc]||''}">● ${m.status||''}</span>
+    </div>`;
+  }).join('');
+}
 function toggleProjSwitcher(tab){
   const id='projSwitcher'+tab.charAt(0).toUpperCase()+tab.slice(1);
   const el=document.getElementById(id);
   if(!el) return;
-  el.style.display=el.style.display==='none'?'block':'none';
+  const opening=el.style.display==='none';
+  el.style.display=opening?'block':'none';
+  if(opening && tab==='ficha') buildProjSwitcherFicha();
 }
 function fichaTabSwitchProj(pid){
   toggleProjSwitcher('ficha');
