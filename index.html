@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1730 -->
+<!-- BUILD:20261008-1800 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1730';
+  const BUILD='20261008-1800';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -197,6 +197,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .cal-day.week-sel-start{border-radius:6px 0 0 6px!important;}
 .cal-day.week-sel-end{border-radius:0 6px 6px 0!important;}
 .cal-day.other-month{color:var(--border);pointer-events:none;}
+.cal-day.other-month-dim{color:rgba(5,35,61,0.18);pointer-events:none;font-size:11.5px;}
+.cal-day.week-sel-dim{background:var(--green)!important;opacity:0.35;}
 
 /* GANTT */
 .gantt-bar-wrap{position:relative;height:32px;}
@@ -254,16 +256,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <div class="sidebar">
   <div class="sb-section" style="padding-top:16px;">
     <div class="sb-label" data-i18n="navLabel">Navegación</div>
+    <!-- Portfolio: grid/overview icon -->
     <div class="sb-item active" id="nav-portfolio" onclick="showPage('portfolio')">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="8" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".25"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.2" fill="#05233D" opacity=".75"/><rect x="9" y="1" width="6" height="6" rx="1.2" fill="#05233D" opacity=".4"/><rect x="1" y="9" width="6" height="6" rx="1.2" fill="#05233D" opacity=".4"/><rect x="9" y="9" width="6" height="6" rx="1.2" fill="#05233D" opacity=".2"/></svg>
       <span data-i18n="navPortfolio">Resumen del Portfolio</span>
     </div>
+    <!-- Semanal: lightning/pulse icon -->
     <div class="sb-item" id="nav-semanal" onclick="showPage('semanal')">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="2" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 1v2M11 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 6h13" stroke="currentColor" stroke-width="1.2"/><rect x="3.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/><rect x="6.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 1.5L4 9h5l-2 5.5L14 6.5H9L11.5 1.5H9z" stroke="#05233D" stroke-width="1.3" stroke-linejoin="round" fill="#05233D" fill-opacity=".12"/></svg>
       <span data-i18n="navSemanal">Actualización semanal</span>
     </div>
+    <!-- Cronograma: horizontal timeline bars icon -->
     <div class="sb-item" id="nav-cronograma" onclick="navToTab('cronograma')">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="2" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 1v2M11 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 5.5h13" stroke="currentColor" stroke-width="1.2"/><rect x="3" y="7.5" width="9" height="2" rx=".5" fill="currentColor" opacity=".4"/><rect x="3" y="10.5" width="6" height="2" rx=".5" fill="currentColor" opacity=".25"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3.5" width="9" height="2.5" rx="1.2" fill="#05233D" opacity=".8"/><rect x="5" y="7" width="10" height="2.5" rx="1.2" fill="#05233D" opacity=".5"/><rect x="2" y="10.5" width="7" height="2.5" rx="1.2" fill="#05233D" opacity=".35"/></svg>
       <span data-i18n="navSchedule">Cronograma</span>
     </div>
     <div id="sb-proj-sel-cronograma" style="display:none;padding:4px 10px 6px 34px;">
@@ -274,8 +279,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <option value="entrenucleos">ENTRENÚCLEOS</option>
       </select>
     </div>
+    <!-- Documentación: folder icon -->
     <div class="sb-item" id="nav-documentacion" onclick="navToTab('documentacion')">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 1.5h6l3 3V13.5H3V1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/><line x1="5" y1="6.5" x2="10" y2="6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="5" y1="8.5" x2="10" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="5" y1="10.5" x2="8" y2="10.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 4.5h5l1.5 1.5H14.5v8.5H1.5V4.5z" stroke="#05233D" stroke-width="1.3" stroke-linejoin="round" fill="#05233D" fill-opacity=".1"/><path d="M1.5 4.5V3A1 1 0 0 1 2.5 2h3.8l1.5 2.5" stroke="#05233D" stroke-width="1.3" stroke-linejoin="round"/></svg>
       <span data-i18n="navDocs">Documentación</span>
     </div>
     <div id="sb-proj-sel-documentacion" style="display:none;padding:4px 10px 6px 34px;">
@@ -287,78 +293,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
       </select>
     </div>
-  </div>
-  <div class="sb-section" style="padding-top:12px;">
-    <div class="sb-label" data-i18n="navProjects">Proyectos</div>
-    <div class="sb-proj">
-      <div class="sb-proj-item" id="nav-begues" onclick="openProject('begues')">
-        <div class="sb-dot" style="background:var(--green);"></div>
-        <div><div style="font-weight:600;">BEGUES I & II</div><div style="font-size:10px;color:var(--text-3);">100 MW · Barcelona</div></div>
-      </div>
-      <div id="sub-begues" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('begues');showTab('cronograma')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span data-i18n="navSchedule">Cronograma</span>
-        </div>
-        <div class="sb-sub-item" onclick="openProject('begues');showTab('documentacion')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-          <span data-i18n="navDocs">Documentación</span>
-        </div>
-      </div>
-      <div class="sb-proj-item" id="nav-fregacedos" onclick="openProject('fregacedos')">
-        <div class="sb-dot" style="background:var(--green);"></div>
-        <div><div style="font-weight:600;">FREGACEDOS I, II & V</div><div style="font-size:10px;color:var(--text-3);">15 MW · Madrid</div></div>
-      </div>
-      <div id="sub-fregacedos" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('cronograma')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span data-i18n="navSchedule">Cronograma</span>
-        </div>
-        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('documentacion')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-          <span data-i18n="navDocs">Documentación</span>
-        </div>
-      </div>
-      <div class="sb-proj-item" id="nav-mutxamel" onclick="openProject('mutxamel')">
-        <div class="sb-dot" style="background:var(--red);"></div>
-        <div style="flex:1;"><div style="font-weight:600;">MUTXAMEL</div><div style="font-size:10px;color:var(--text-3);">5 MW · Alicante</div></div>
-        <div class="sb-badge">1</div>
-      </div>
-      <div id="sub-mutxamel" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('cronograma')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x=".5" y="1.5" width="11" height="9.5" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><path d="M3 .5v2M9 .5v2M.5 4.5h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <span data-i18n="navSchedule">Cronograma</span>
-        </div>
-        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('documentacion')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-          <span data-i18n="navDocs">Documentación</span>
-        </div>
-      </div>
-      <div class="sb-proj-item" id="nav-entrenucleos" onclick="openProject('entrenucleos')" style="opacity:0.7;">
-        <div class="sb-dot" style="background:var(--grey);"></div>
-        <div><div style="font-weight:600;color:var(--text-3);">ENTRENÚCLEOS</div><div style="font-size:10px;color:var(--text-3);">49 MW · Stand-by</div></div>
-      </div>
-      <div id="sub-entrenucleos" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('documentacion')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-          <span data-i18n="navDocs">Documentación</span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="sb-section" style="padding-top:8px;">
-    <div class="sb-label">Pipeline</div>
-    <div class="sb-proj">
-      <div class="sb-proj-item" id="nav-custom_nuevas_oportunidades" onclick="openProject('custom_nuevas_oportunidades')">
-        <div class="sb-dot" style="background:var(--blue);"></div>
-        <div><div style="font-weight:600;" data-i18n="navOpp">Nuevas Oportunidades</div><div style="font-size:10px;color:var(--text-3);" data-i18n="navOppSub">En análisis</div></div>
-      </div>
-      <div id="sub-custom_nuevas_oportunidades" style="display:none;" class="sb-sub">
-        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('documentacion')">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5l2.5 2.5V11H2V1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/><line x1="3.5" y1="5.5" x2="8.5" y2="5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-          <span data-i18n="navDocs">Documentación</span>
-        </div>
-      </div>
+    <!-- Nuevas Oportunidades: lightbulb icon -->
+    <div class="sb-item" id="nav-custom_nuevas_oportunidades" onclick="openProject('custom_nuevas_oportunidades')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a4.5 4.5 0 0 1 2.5 8.2V11a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5v-1.3A4.5 4.5 0 0 1 8 1.5z" stroke="#05233D" stroke-width="1.3" fill="#05233D" fill-opacity=".12"/><path d="M6.2 12.5h3.6M6.8 14h2.4" stroke="#05233D" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span data-i18n="navOpp">Nuevas Oportunidades</span>
     </div>
   </div>
   <div class="sb-footer">
@@ -461,37 +399,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
             <g class="proj-pin" onclick="openProject('begues')" style="cursor:pointer;">
               <circle cx="845" cy="178" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="845" cy="178" r="9" fill="#399439"/>
-              <rect x="796" y="100" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="845" y="113" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
-              <rect x="806" y="119" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="845" y="130" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
+              <rect x="796" y="120" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="845" y="133" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
+              <rect x="806" y="139" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="845" y="150" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
             </g>
             <!-- FREGACEDOS -->
             <g class="proj-pin" onclick="openProject('fregacedos')" style="cursor:pointer;">
               <circle cx="627" cy="218" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="627" cy="218" r="9" fill="#399439"/>
-              <rect x="574" y="140" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="627" y="153" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
-              <rect x="589" y="159" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="627" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
+              <rect x="574" y="160" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="627" y="173" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
+              <rect x="589" y="179" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="627" y="190" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
             </g>
             <!-- MUTXAMEL -->
             <g class="proj-pin" onclick="openProject('mutxamel')" style="cursor:pointer;">
               <circle cx="756" cy="336" r="18" fill="none" stroke="#C8201E" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="756" cy="336" r="9" fill="#C8201E"/>
-              <rect x="710" y="258" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="756" y="271" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
-              <rect x="706" y="277" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
-              <text x="756" y="288" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
+              <rect x="710" y="278" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="756" y="291" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
+              <rect x="706" y="297" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
+              <text x="756" y="308" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
             </g>
             <!-- ENTRENUCLEOS -->
             <g class="proj-pin" onclick="openProject('entrenucleos')" style="cursor:pointer;">
               <circle cx="566" cy="410" r="13" fill="none" stroke="#6B7280" stroke-width="1.2" opacity="0.5"/>
               <circle cx="566" cy="410" r="7" fill="#6B7280"/>
-              <rect x="511" y="332" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
-              <text x="566" y="345" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
-              <rect x="519" y="351" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
-              <text x="566" y="362" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
+              <rect x="511" y="352" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
+              <text x="566" y="365" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
+              <rect x="519" y="371" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
+              <text x="566" y="382" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
             </g>
           </svg>
         </div>
@@ -552,12 +490,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="page-hdr">
     <div class="page-hdr-left">
       <h2 data-i18n="navSemanal">Actualización semanal</h2>
-      <p data-i18n="semanalDesc">Novedades de todos los proyectos · <span id="semanalWeekSubtitle"></span></p>
+      <p>Novedades de todos los proyectos · <span id="semanalWeekSubtitle"></span></p>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
       <button onclick="navWeekSemanal(-1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">‹</button>
       <div style="position:relative;">
-        <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">📅 <span id="weekSelLblSemanal">—</span></button>
+        <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Semana del <span id="weekSelLblSemanal">—</span></button>
         <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:280px;"></div>
       </div>
       <button onclick="navWeekSemanal(1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">›</button>
@@ -1030,7 +968,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 17:30';
+const BUILD_TS = '08/10/2026 18:00';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -1227,38 +1165,51 @@ function renderCal(popupId){
   const selDate=new Date(currentWeek);
   const selMon=new Date(selDate); selMon.setDate(selDate.getDate()-((selDate.getDay()+6)%7));
   const selMonIso=`${selMon.getFullYear()}-${String(selMon.getMonth()+1).padStart(2,'0')}-${String(selMon.getDate()).padStart(2,'0')}`;
+  // Helper: date → ISO string
+  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
   let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
     <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:14px;">‹</button>
     <span style="font-size:13px;font-weight:700;color:var(--navy);">${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} ${y}</span>
     <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:14px;">›</button>
   </div><div class="cal-grid">`;
   ['L','M','X','J','V','S','D'].forEach(d=>h+=`<div class="cal-dow">${d}</div>`);
-  // Fill blanks before first day
+  // Build allCells: fill leading cells with prev-month days
   const allCells=[];
-  for(let i=0;i<startDow;i++) allCells.push(null);
+  for(let i=startDow-1;i>=0;i--){
+    const dt=new Date(y,m,0-i); // days before 1st of month
+    allCells.push({day:dt.getDate(),iso:toIso(dt),otherMonth:true});
+  }
   for(let day=1;day<=last.getDate();day++){
     const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    allCells.push({day,iso});
+    allCells.push({day,iso,otherMonth:false});
   }
-  // pad to complete weeks
-  while(allCells.length%7!==0) allCells.push(null);
+  // pad trailing cells with next-month days
+  let nextDay=1;
+  while(allCells.length%7!==0){
+    const dt=new Date(y,m+1,nextDay++);
+    allCells.push({day:dt.getDate(),iso:toIso(dt),otherMonth:true});
+  }
   // render week rows
   for(let w=0;w<allCells.length/7;w++){
     const row=allCells.slice(w*7,(w+1)*7);
-    // find monday of this row
-    const firstReal=row.find(c=>c);
-    if(!firstReal){h+=row.map(()=>`<div class="cal-day other-month"></div>`).join('');continue;}
-    const rowDate=new Date(firstReal.iso);
+    // find monday of this row (use first cell which is always the Monday)
+    const rowDate=new Date(row[0].iso);
     const rowMon=new Date(rowDate); rowMon.setDate(rowDate.getDate()-((rowDate.getDay()+6)%7));
-    const rowMonIso=`${rowMon.getFullYear()}-${String(rowMon.getMonth()+1).padStart(2,'0')}-${String(rowMon.getDate()).padStart(2,'0')}`;
+    const rowMonIso=toIso(rowMon);
     const isSelWeek=rowMonIso===selMonIso;
     row.forEach((cell,ci)=>{
-      if(!cell){h+=`<div class="cal-day other-month"></div>`;return;}
-      const {day,iso}=cell;
+      const {day,iso,otherMonth}=cell;
+      if(otherMonth){
+        // Show dim day number, no interaction, but participate in week-sel highlight
+        let cls='cal-day other-month-dim';
+        if(isSelWeek) cls+=' week-sel week-sel-dim';
+        h+=`<div class="${cls}" data-week="${rowMonIso}">${day}</div>`;
+        return;
+      }
       const hasData=weeks.includes(iso);
       const clickFn=onSelect.replace(/ISODATE/g,iso);
       let cls='cal-day';
-      if(isSelWeek){cls+=' week-sel';if(ci===0||row[ci-1]==null)cls+=' week-sel-start';if(ci===6||row[ci+1]==null)cls+=' week-sel-end';}
+      if(isSelWeek){cls+=' week-sel';if(ci===0)cls+=' week-sel-start';if(ci===6)cls+=' week-sel-end';}
       else if(hasData) cls+=' has-data';
       h+=`<div class="${cls}" data-week="${rowMonIso}" onclick="${clickFn}" onmouseover="calHoverWeek('${pid}','${rowMonIso}')" onmouseout="calUnhover('${pid}')">${day}</div>`;
     });
@@ -1326,7 +1277,7 @@ function renderSemanal(){
   const lbl=document.getElementById('weekSelLblSemanal');
   if(lbl) lbl.textContent=weekRange(currentWeek);
   const sub=document.getElementById('semanalWeekSubtitle');
-  if(sub) sub.textContent=`${t('weekTitle')} ${weekRange(currentWeek)}`;
+  if(sub) sub.textContent=`Semana del ${weekRange(currentWeek)}`;
   const wd=allData[currentWeek]||{};
   let html='';
   const hasData=projOrder.some(pid=>(wd[pid]||[]).length>0);
