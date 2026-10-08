@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v20261008-3 -->
+<!-- BUILD:20261008-1611 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,21 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>MARS · Spain Development CRM v3</title>
+<title>MARS · Spain Development CRM</title>
+<script>
+// Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
+(function(){
+  const BUILD='20261008-1611';
+  function check(){
+    fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
+      .then(r=>r.text()).then(html=>{
+        const m=html.match(/<!--\s*BUILD:([\w-]+)\s*-->/);
+        if(m&&m[1]!==BUILD){ location.reload(true); }
+      }).catch(()=>{});
+  }
+  setTimeout(()=>{ check(); setInterval(check,60000); },5000);
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -946,7 +960,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 16:10';
+const BUILD_TS = '08/10/2026 16:11';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
