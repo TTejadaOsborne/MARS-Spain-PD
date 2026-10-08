@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1800 -->
+<!-- BUILD:20261008-1810 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1800';
+  const BUILD='20261008-1810';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -514,23 +514,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <div id="page-project" class="proj-page">
   <div class="proj-ficha" id="projFicha">
     <button class="btn btn-sec" style="font-size:11px;margin-bottom:12px;padding:5px 11px;" onclick="showPage('portfolio')">← Volver al portfolio</button>
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-      <div>
+    <div style="position:relative;display:inline-block;">
+      <div id="projFichaNameWrap" style="display:flex;align-items:center;gap:8px;">
         <div class="proj-ficha-name" id="projFichaName"></div>
-        <div class="proj-ficha-loc" id="projFichaLoc"></div>
+        <svg id="fichaSwitcherChevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none;cursor:pointer;opacity:0.6;margin-top:2px;" onclick="toggleProjSwitcher('ficha')"><path d="M3 6l5 5 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div id="fichaTabProjSwitcher" style="display:none;flex-direction:column;align-items:flex-end;position:relative;">
-        <div style="font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;" id="fichaTabLabel">CRONOGRAMA</div>
-        <div onclick="toggleProjSwitcher('ficha')" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">
-          <span id="fichaProjName" style="font-size:13px;font-weight:700;color:#fff;">—</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div id="projSwitcherFicha" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:210px;" class="proj-switcher">
-          <div class="proj-sw-item" onclick="fichaTabSwitchProj('begues')">BEGUES I &amp; II</div>
-          <div class="proj-sw-item" onclick="fichaTabSwitchProj('fregacedos')">FREGACEDOS I, II &amp; V</div>
-          <div class="proj-sw-item" onclick="fichaTabSwitchProj('mutxamel')">MUTXAMEL</div>
-          <div class="proj-sw-item" onclick="fichaTabSwitchProj('entrenucleos')">ENTRENÚCLEOS</div>
-        </div>
+      <div class="proj-ficha-loc" id="projFichaLoc"></div>
+      <div id="projSwitcherFicha" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:220px;" class="proj-switcher">
+        <div class="proj-sw-item" onclick="fichaTabSwitchProj('begues')">BEGUES I &amp; II</div>
+        <div class="proj-sw-item" onclick="fichaTabSwitchProj('fregacedos')">FREGACEDOS I, II &amp; V</div>
+        <div class="proj-sw-item" onclick="fichaTabSwitchProj('mutxamel')">MUTXAMEL</div>
+        <div class="proj-sw-item" onclick="fichaTabSwitchProj('entrenucleos')">ENTRENÚCLEOS</div>
       </div>
     </div>
     <div id="projFichaBadge"></div>
@@ -1027,9 +1021,21 @@ function toggleProjSwitcher(tab){
 }
 function fichaTabSwitchProj(pid){
   toggleProjSwitcher('ficha');
-  // Determine current tab (cronograma or documentacion)
+  // Determine current tab (cronograma or documentacion) — stay on it, just change project
   const isCron=document.getElementById('tc-cronograma').style.display!=='none';
-  navToTabWithProj(isCron?'cronograma':'documentacion', pid);
+  const tab=isCron?'cronograma':'documentacion';
+  // Update project metadata in header without resetting to updates tab
+  currentProjId=pid;
+  showPage('project'); // ensures project page is visible, doesn't change tab
+  const m=META[pid]||{};
+  document.getElementById('projFichaName').textContent=m.name||pid;
+  document.getElementById('projFichaLoc').innerHTML='📍 '+(m.loc||'');
+  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
+  document.getElementById('projFichaBadge').innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
+  document.getElementById('projFichaSpecs').innerHTML=(m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
+  // Re-render just the current tab content
+  if(tab==='cronograma') renderGantt();
+  else renderDocs();
 }
 document.addEventListener('mousedown',e=>{
   ['projSwitcherFicha'].forEach(id=>{
@@ -1082,20 +1088,9 @@ function showTab(tab){
     const hideBar = (tab!=='updates') || (currentProjId==='custom_nuevas_oportunidades');
     tabsBar.style.display = hideBar ? 'none' : '';
   }
-  // Show/hide ficha tab-proj switcher
-  const fichaSwitch = document.getElementById('fichaTabProjSwitcher');
-  const fichaTabLbl = document.getElementById('fichaTabLabel');
-  if(fichaSwitch){
-    if(tab==='cronograma'||tab==='documentacion'){
-      fichaSwitch.style.display='flex';
-      if(fichaTabLbl) fichaTabLbl.textContent=tab==='cronograma'?'CRONOGRAMA':'DOCUMENTACIÓN';
-      const m=META[currentProjId]||{};
-      const fn=document.getElementById('fichaProjName');
-      if(fn) fn.textContent=m.name||currentProjId;
-    } else {
-      fichaSwitch.style.display='none';
-    }
-  }
+  // Show/hide chevron for project switching (only in cronograma/documentacion tabs)
+  const chevron = document.getElementById('fichaSwitcherChevron');
+  if(chevron) chevron.style.display = (tab==='cronograma'||tab==='documentacion') ? 'block' : 'none';
   // Sync sidebar active state — clear all, then set the right one
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   if(tab==='cronograma') document.getElementById('nav-cronograma').classList.add('active');
@@ -1421,9 +1416,7 @@ function getGanttTasks(){ if(!ganttTasks) ganttTasks=JSON.parse(JSON.stringify(T
 function renderGantt(){
   const pid=currentProjId;
   const m=META[pid]||{};
-  // Update ficha switcher title
-  const fn=document.getElementById('fichaProjName');
-  if(fn) fn.textContent=m.name||pid;
+  // Highlight active item in switcher
   document.querySelectorAll('#projSwitcherFicha .proj-sw-item').forEach(el=>{
     el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
   });
@@ -1635,9 +1628,7 @@ let extraDocs={};
 function renderDocs(){
   const pid=currentProjId;
   const m=META[pid]||{};
-  // Update project title in tab header and editor button
-  const fn=document.getElementById('fichaProjName');
-  if(fn) fn.textContent=m.name||pid;
+  // Highlight active item in switcher
   document.querySelectorAll('#projSwitcherFicha .proj-sw-item').forEach(el=>{
     el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
   });
