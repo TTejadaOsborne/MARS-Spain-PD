@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-2048 -->
+<!-- BUILD:20261008-2050 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-2048';
+  const BUILD='20261008-2050';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1029,7 +1029,6 @@ function buildProjSwitcherFicha(){
     const loc=m.loc||'';
     const city=loc.split(',')[0]||loc;
     return `<div class="proj-sw-item${isActive?' active':''}" onclick="fichaTabSwitchProj('${pid}')">
-      <div class="psw-icon" style="background:${PSW_ICON_BG[pid]||'var(--bg)'};">${PSW_ICONS[pid]||'⚡'}</div>
       <div class="psw-info">
         <div class="psw-name">${m.name||pid}</div>
         <div class="psw-loc">📍 ${city}</div>
