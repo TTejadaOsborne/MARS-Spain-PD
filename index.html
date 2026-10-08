@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1700 -->
+<!-- BUILD:20261008-1730 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1700';
+  const BUILD='20261008-1730';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -190,10 +190,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .cal-popup{position:absolute;top:calc(100% + 8px);right:0;z-index:200;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 24px rgba(5,35,61,0.15);min-width:260px;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,34px);gap:2px;}
 .cal-dow{font-size:9.5px;font-weight:700;color:var(--text-3);text-align:center;padding:2px 0 6px;}
-.cal-day{width:34px;height:34px;border-radius:6px;border:none;background:none;font-size:12.5px;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;}
-.cal-day:hover{background:var(--bg);}
-.cal-day.has-data{background:var(--navy);color:#fff;font-weight:700;}
-.cal-day.selected{background:var(--green)!important;color:#fff!important;font-weight:700;}
+.cal-day{width:34px;height:34px;border-radius:0;border:none;background:none;font-size:12.5px;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;}
+.cal-day:hover,.cal-day.week-hover{background:rgba(5,35,61,0.06);}
+.cal-day.has-data{background:rgba(5,35,61,0.12);color:var(--navy);font-weight:700;}
+.cal-day.week-sel{background:var(--green)!important;color:#fff!important;font-weight:700;}
+.cal-day.week-sel-start{border-radius:6px 0 0 6px!important;}
+.cal-day.week-sel-end{border-radius:0 6px 6px 0!important;}
 .cal-day.other-month{color:var(--border);pointer-events:none;}
 
 /* GANTT */
@@ -260,6 +262,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="2" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 1v2M11 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 6h13" stroke="currentColor" stroke-width="1.2"/><rect x="3.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/><rect x="6.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor" opacity=".6"/></svg>
       <span data-i18n="navSemanal">Actualización semanal</span>
     </div>
+    <div class="sb-item" id="nav-cronograma" onclick="navToTab('cronograma')">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="2" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 1v2M11 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 5.5h13" stroke="currentColor" stroke-width="1.2"/><rect x="3" y="7.5" width="9" height="2" rx=".5" fill="currentColor" opacity=".4"/><rect x="3" y="10.5" width="6" height="2" rx=".5" fill="currentColor" opacity=".25"/></svg>
+      <span data-i18n="navSchedule">Cronograma</span>
+    </div>
+    <div id="sb-proj-sel-cronograma" style="display:none;padding:4px 10px 6px 34px;">
+      <select id="projSelCronograma" onchange="navToTabWithProj('cronograma',this.value)" style="width:100%;font-size:11px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;font-family:'Inter',sans-serif;color:var(--navy);background:#fff;cursor:pointer;">
+        <option value="begues">BEGUES I & II</option>
+        <option value="fregacedos">FREGACEDOS I, II & V</option>
+        <option value="mutxamel">MUTXAMEL</option>
+        <option value="entrenucleos">ENTRENÚCLEOS</option>
+      </select>
+    </div>
+    <div class="sb-item" id="nav-documentacion" onclick="navToTab('documentacion')">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 1.5h6l3 3V13.5H3V1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/><line x1="5" y1="6.5" x2="10" y2="6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="5" y1="8.5" x2="10" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="5" y1="10.5" x2="8" y2="10.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+      <span data-i18n="navDocs">Documentación</span>
+    </div>
+    <div id="sb-proj-sel-documentacion" style="display:none;padding:4px 10px 6px 34px;">
+      <select id="projSelDocumentacion" onchange="navToTabWithProj('documentacion',this.value)" style="width:100%;font-size:11px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;font-family:'Inter',sans-serif;color:var(--navy);background:#fff;cursor:pointer;">
+        <option value="begues">BEGUES I & II</option>
+        <option value="fregacedos">FREGACEDOS I, II & V</option>
+        <option value="mutxamel">MUTXAMEL</option>
+        <option value="entrenucleos">ENTRENÚCLEOS</option>
+        <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
+      </select>
+    </div>
   </div>
   <div class="sb-section" style="padding-top:12px;">
     <div class="sb-label" data-i18n="navProjects">Proyectos</div>
@@ -324,7 +351,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="sb-proj">
       <div class="sb-proj-item" id="nav-custom_nuevas_oportunidades" onclick="openProject('custom_nuevas_oportunidades')">
         <div class="sb-dot" style="background:var(--blue);"></div>
-        <div><div style="font-weight:600;">Nuevas Oportunidades</div><div style="font-size:10px;color:var(--text-3);">En análisis</div></div>
+        <div><div style="font-weight:600;" data-i18n="navOpp">Nuevas Oportunidades</div><div style="font-size:10px;color:var(--text-3);" data-i18n="navOppSub">En análisis</div></div>
       </div>
       <div id="sub-custom_nuevas_oportunidades" style="display:none;" class="sb-sub">
         <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('documentacion')">
@@ -434,37 +461,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
             <g class="proj-pin" onclick="openProject('begues')" style="cursor:pointer;">
               <circle cx="845" cy="178" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="845" cy="178" r="9" fill="#399439"/>
-              <rect x="796" y="140" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="845" y="153" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
-              <rect x="806" y="159" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="845" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
+              <rect x="796" y="100" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="845" y="113" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
+              <rect x="806" y="119" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="845" y="130" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
             </g>
             <!-- FREGACEDOS -->
             <g class="proj-pin" onclick="openProject('fregacedos')" style="cursor:pointer;">
               <circle cx="627" cy="218" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="627" cy="218" r="9" fill="#399439"/>
-              <rect x="574" y="180" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="627" y="193" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
-              <rect x="589" y="199" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="627" y="210" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
+              <rect x="574" y="140" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="627" y="153" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
+              <rect x="589" y="159" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="627" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
             </g>
             <!-- MUTXAMEL -->
             <g class="proj-pin" onclick="openProject('mutxamel')" style="cursor:pointer;">
               <circle cx="756" cy="336" r="18" fill="none" stroke="#C8201E" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="756" cy="336" r="9" fill="#C8201E"/>
-              <rect x="710" y="298" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="756" y="311" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
-              <rect x="706" y="317" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
-              <text x="756" y="328" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
+              <rect x="710" y="258" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="756" y="271" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
+              <rect x="706" y="277" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
+              <text x="756" y="288" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
             </g>
             <!-- ENTRENUCLEOS -->
             <g class="proj-pin" onclick="openProject('entrenucleos')" style="cursor:pointer;">
               <circle cx="566" cy="410" r="13" fill="none" stroke="#6B7280" stroke-width="1.2" opacity="0.5"/>
               <circle cx="566" cy="410" r="7" fill="#6B7280"/>
-              <rect x="511" y="372" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
-              <text x="566" y="385" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
-              <rect x="519" y="391" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
-              <text x="566" y="402" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
+              <rect x="511" y="332" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
+              <text x="566" y="345" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
+              <rect x="519" y="351" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
+              <text x="566" y="362" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
             </g>
           </svg>
         </div>
@@ -525,17 +552,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="page-hdr">
     <div class="page-hdr-left">
       <h2 data-i18n="navSemanal">Actualización semanal</h2>
-      <p data-i18n="semanalDesc">Novedades de todos los proyectos · Semana en curso</p>
+      <p data-i18n="semanalDesc">Novedades de todos los proyectos · <span id="semanalWeekSubtitle"></span></p>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <div style="position:relative;display:inline-block;">
-        <button class="week-sel-btn" onclick="toggleCal('semanal')" style="background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;" id="weekSelBtn">
-          📅 <span id="weekSelLblSemanal">—</span>
-        </button>
-        <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:260px;"></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button onclick="navWeekSemanal(-1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">‹</button>
+      <div style="position:relative;">
+        <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">📅 <span id="weekSelLblSemanal">—</span></button>
+        <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:280px;"></div>
       </div>
-      <button class="btn btn-sec" onclick="navWeekSemanal(-1)">←</button>
-      <button class="btn btn-sec" onclick="navWeekSemanal(1)">→</button>
+      <button onclick="navWeekSemanal(1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">›</button>
     </div>
   </div>
   <div class="content">
@@ -1005,7 +1030,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 17:00';
+const BUILD_TS = '08/10/2026 17:30';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -1014,7 +1039,27 @@ function init(){
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
+function navToTab(tab){
+  // if a project is already open, just switch tab; else use selector value
+  const pid=currentProjId||(tab==='cronograma'?document.getElementById('projSelCronograma').value:document.getElementById('projSelDocumentacion').value)||'begues';
+  openProject(pid);
+  showTab(tab);
+  // show the selector for this tab
+  document.getElementById('sb-proj-sel-cronograma').style.display=tab==='cronograma'?'':'none';
+  document.getElementById('sb-proj-sel-documentacion').style.display=tab==='documentacion'?'':'none';
+  // sync selector to current project
+  const sel=document.getElementById(tab==='cronograma'?'projSelCronograma':'projSelDocumentacion');
+  if(sel) sel.value=pid;
+}
+function navToTabWithProj(tab,pid){
+  openProject(pid);
+  showTab(tab);
+}
 function showPage(page){
+  document.getElementById('sb-proj-sel-cronograma').style.display='none';
+  document.getElementById('sb-proj-sel-documentacion').style.display='none';
+  document.getElementById('nav-cronograma').classList.remove('active');
+  document.getElementById('nav-documentacion').classList.remove('active');
   document.getElementById('page-portfolio').style.display = page==='portfolio' ? '' : 'none';
   document.getElementById('page-semanal').style.display = page==='semanal' ? '' : 'none';
   document.getElementById('page-project').classList.toggle('on', page==='project');
@@ -1176,24 +1221,63 @@ function renderCal(popupId){
   const weeks=Object.keys(allData);
   const y=calYear,m=calMonth;
   const first=new Date(y,m,1),last=new Date(y,m+1,0);
-  const startDow=(first.getDay()+6)%7;
+  const startDow=(first.getDay()+6)%7; // Mon=0
   const onSelect=calContext==='semanal'?`currentWeek='ISODATE';toggleCal('semanal');renderSemanal();`:`currentWeek='ISODATE';toggleCal('updates');renderUpdates();`;
+  // Determine selected week's monday
+  const selDate=new Date(currentWeek);
+  const selMon=new Date(selDate); selMon.setDate(selDate.getDate()-((selDate.getDay()+6)%7));
+  const selMonIso=`${selMon.getFullYear()}-${String(selMon.getMonth()+1).padStart(2,'0')}-${String(selMon.getDate()).padStart(2,'0')}`;
   let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">‹</button>
+    <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:14px;">‹</button>
     <span style="font-size:13px;font-weight:700;color:var(--navy);">${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} ${y}</span>
-    <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">›</button>
+    <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:14px;">›</button>
   </div><div class="cal-grid">`;
   ['L','M','X','J','V','S','D'].forEach(d=>h+=`<div class="cal-dow">${d}</div>`);
-  for(let i=0;i<startDow;i++) h+=`<div class="cal-day other-month"></div>`;
+  // Fill blanks before first day
+  const allCells=[];
+  for(let i=0;i<startDow;i++) allCells.push(null);
   for(let day=1;day<=last.getDate();day++){
     const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const hasData=weeks.includes(iso);
-    const isSel=iso===currentWeek;
-    const clickFn=onSelect.replace(/ISODATE/g,iso);
-    h+=`<div class="cal-day${hasData?' has-data':''}${isSel?' selected':''}" onclick="${clickFn}">${day}</div>`;
+    allCells.push({day,iso});
+  }
+  // pad to complete weeks
+  while(allCells.length%7!==0) allCells.push(null);
+  // render week rows
+  for(let w=0;w<allCells.length/7;w++){
+    const row=allCells.slice(w*7,(w+1)*7);
+    // find monday of this row
+    const firstReal=row.find(c=>c);
+    if(!firstReal){h+=row.map(()=>`<div class="cal-day other-month"></div>`).join('');continue;}
+    const rowDate=new Date(firstReal.iso);
+    const rowMon=new Date(rowDate); rowMon.setDate(rowDate.getDate()-((rowDate.getDay()+6)%7));
+    const rowMonIso=`${rowMon.getFullYear()}-${String(rowMon.getMonth()+1).padStart(2,'0')}-${String(rowMon.getDate()).padStart(2,'0')}`;
+    const isSelWeek=rowMonIso===selMonIso;
+    row.forEach((cell,ci)=>{
+      if(!cell){h+=`<div class="cal-day other-month"></div>`;return;}
+      const {day,iso}=cell;
+      const hasData=weeks.includes(iso);
+      const clickFn=onSelect.replace(/ISODATE/g,iso);
+      let cls='cal-day';
+      if(isSelWeek){cls+=' week-sel';if(ci===0||row[ci-1]==null)cls+=' week-sel-start';if(ci===6||row[ci+1]==null)cls+=' week-sel-end';}
+      else if(hasData) cls+=' has-data';
+      h+=`<div class="${cls}" data-week="${rowMonIso}" onclick="${clickFn}" onmouseover="calHoverWeek('${pid}','${rowMonIso}')" onmouseout="calUnhover('${pid}')">${day}</div>`;
+    });
   }
   h+=`</div>`;
   document.getElementById(pid).innerHTML=h;
+}
+function calHoverWeek(pid,wiso){
+  const el=document.getElementById(pid);
+  if(!el) return;
+  el.querySelectorAll('.cal-day').forEach(d=>{
+    d.classList.remove('week-hover');
+    if(d.dataset.week===wiso&&!d.classList.contains('week-sel')) d.classList.add('week-hover');
+  });
+}
+function calUnhover(pid){
+  const el=document.getElementById(pid);
+  if(!el) return;
+  el.querySelectorAll('.week-hover').forEach(d=>d.classList.remove('week-hover'));
 }
 document.addEventListener('mousedown',e=>{
   if(calOpen){
@@ -1241,6 +1325,8 @@ function renderSemanal(){
   // Update week label in semanal header
   const lbl=document.getElementById('weekSelLblSemanal');
   if(lbl) lbl.textContent=weekRange(currentWeek);
+  const sub=document.getElementById('semanalWeekSubtitle');
+  if(sub) sub.textContent=`${t('weekTitle')} ${weekRange(currentWeek)}`;
   const wd=allData[currentWeek]||{};
   let html='';
   const hasData=projOrder.some(pid=>(wd[pid]||[]).length>0);
@@ -1602,6 +1688,7 @@ const T={
     navLabel:'Navegación',
     navPortfolio:'Resumen del Portfolio',
     navSemanal:'Actualización semanal',
+    navOpp:'Nuevas Oportunidades',navOppSub:'En análisis',
     navProjects:'Proyectos',
     navSchedule:'Cronograma',
     navDocs:'Documentación',
@@ -1666,6 +1753,7 @@ const T={
     navLabel:'Navigation',
     navPortfolio:'Portfolio Overview',
     navSemanal:'Weekly Update',
+    navOpp:'New Opportunities',navOppSub:'In analysis',
     navProjects:'Projects',
     navSchedule:'Schedule',
     navDocs:'Documentation',
