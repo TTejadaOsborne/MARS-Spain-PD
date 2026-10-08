@@ -220,6 +220,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="hdr-title"><h1>Spain Development</h1><p>Portfolio de Proyectos BESS</p></div>
   </div>
   <div class="hdr-right">
+    <div id="lastUpdatedBadge" style="font-size:10px;color:rgba(255,255,255,0.45);white-space:nowrap;padding-right:10px;"></div>
     <div class="lang-grp">
       <button class="lang-btn on" data-lang="es" onclick="setLang('es')">ES</button>
       <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -945,7 +946,10 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
+const BUILD_TS = '08/10/2026 16:10';
 function init(){
+  const el=document.getElementById('lastUpdatedBadge');
+  if(el) el.textContent=`Actualizado ${BUILD_TS}`;
   renderFeed();
   applyLang();
 }
