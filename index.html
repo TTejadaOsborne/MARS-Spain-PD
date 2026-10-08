@@ -1117,7 +1117,7 @@ function renderCal(){
   document.getElementById('calPopup').innerHTML=h;
 }
 document.addEventListener('mousedown',e=>{
-  if(calOpen&&!document.getElementById('calPopup').contains(e.target)&&!e.target.closest('.week-sel-btn')){
+  if(calOpen&&!document.getElementById('calPopup').contains(e.target)&&!e.target.closest('.week-sel-btn')&&!e.target.closest('#calPopup')){
     calOpen=false;document.getElementById('calPopup').style.display='none';
   }
 });
@@ -1146,6 +1146,9 @@ function renderFeed(){
 }
 
 // ── GANTT ──────────────────────────────────────────────────────────────────
+let ganttTasks=null; // mutable copy for editor
+function getGanttTasks(){ if(!ganttTasks) ganttTasks=JSON.parse(JSON.stringify(TASKS)); return ganttTasks; }
+
 function renderGantt(){
   const pid=currentProjId;
   const m=META[pid]||{};
@@ -1158,32 +1161,72 @@ function renderGantt(){
     </div>`;
     return;
   }
-  const tasks=TASKS;
+  const tasks=getGanttTasks();
   const minDate=new Date('2022-12-01'), maxDate=new Date('2026-06-01');
+  const totalMs=maxDate-minDate;
   const months=[];
   let cur=new Date(minDate.getFullYear(),minDate.getMonth(),1);
   while(cur<=maxDate){months.push(new Date(cur));cur.setMonth(cur.getMonth()+1);}
   const today=new Date();
-  const todayPct=Math.max(0,Math.min(100,(today-minDate)/(maxDate-minDate)*100));
+  const todayPct=Math.max(0,Math.min(100,(today-minDate)/totalMs*100));
   const CW=38;
-  let html=`<div style="overflow-x:auto;"><table style="width:${240+months.length*CW}px;border-collapse:collapse;">
-  <thead><tr>
-    <th style="width:240px;background:var(--navy);color:rgba(255,255,255,0.7);font-size:10px;padding:8px 12px;text-align:left;position:sticky;top:0;">Tarea</th>
-    ${months.map(mn=>`<th style="width:${CW}px;background:var(--navy);color:rgba(255,255,255,0.7);font-size:9.5px;padding:8px 2px;text-align:center;">${['E','F','M','A','My','Jn','Jl','Ag','S','O','N','D'][mn.getMonth()]}${String(mn.getFullYear()).slice(2)}</th>`).join('')}
-  </tr></thead><tbody>`;
+  const MNAMES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const MSHORT=['E','F','M','A','My','Jn','Jl','Ag','S','O','N','D'];
+
+  // Build year groups for two-row header
+  const yearGroups=[];
+  let yg=null;
+  months.forEach((mn,i)=>{
+    const y=mn.getFullYear();
+    if(!yg||yg.year!==y){ yg={year:y,start:i,count:0}; yearGroups.push(yg); }
+    yg.count++;
+  });
+
+  // Year row
+  let yearRow=`<tr>
+    <th rowspan="2" style="width:240px;min-width:240px;background:var(--navy);color:rgba(255,255,255,0.55);font-size:10px;padding:8px 12px;text-align:left;position:sticky;left:0;z-index:3;border-right:2px solid rgba(255,255,255,0.12);">Tarea</th>`;
+  yearGroups.forEach(yg=>{
+    const isFirst=yg.start===0;
+    yearRow+=`<th colspan="${yg.count}" style="background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:5px 4px;text-align:center;border-left:${isFirst?'none':'2px solid rgba(255,255,255,0.25)'};">${yg.year}</th>`;
+  });
+  yearRow+=`</tr>`;
+
+  // Month row
+  let monthRow=`<tr>`;
+  months.forEach((mn,i)=>{
+    const isYearStart=mn.getMonth()===0;
+    monthRow+=`<th style="width:${CW}px;background:#0a2540;color:rgba(255,255,255,0.65);font-size:9px;padding:4px 2px;text-align:center;border-left:${isYearStart?'2px solid rgba(255,255,255,0.25)':'1px solid rgba(255,255,255,0.08)'};">${MSHORT[mn.getMonth()]}</th>`;
+  });
+  monthRow+=`</tr>`;
+
+  let html=`<div style="overflow-x:auto;position:relative;"><table style="width:${240+months.length*CW}px;border-collapse:collapse;table-layout:fixed;">
+  <thead>${yearRow}${monthRow}</thead><tbody>`;
+
   tasks.forEach(task=>{
-    const isPhase=task.level===1;
+    const isPhase=task.level<=1;
     const isMile=task.milestone;
     const start=new Date(task.start),end=new Date(task.end||task.start);
-    const left=Math.max(0,(start-minDate)/(maxDate-minDate)*100);
-    const width=Math.max(0.3,(end-start)/(maxDate-minDate)*100);
+    const left=Math.max(0,(start-minDate)/totalMs*100);
+    const width=Math.max(0.3,(end-start)/totalMs*100);
     const visible=start<=maxDate&&end>=minDate;
     const indent=task.level===1?0:task.level===2?12:24;
     const pctColor=task.pct===100?'#16803C':task.pct>0?task.color:'var(--grey)';
-    html+=`<tr style="border-bottom:1px solid var(--border);${isPhase?'background:#F7F9FB;':''}">
-      <td style="padding:6px 10px 6px ${10+indent}px;font-size:${isPhase?'12':'11.5'}px;font-weight:${isPhase?700:400};color:var(--navy);border-right:2px solid var(--border-2);">
+    const editorAttr=isEditor&&!isMile?`onclick="openGanttEditor('${task.id}')" style="cursor:pointer;" title="Editar tarea"`:'';
+
+    // Predecessor line hint
+    let predHint='';
+    if(task.pred){
+      const predTask=tasks.find(t=>t.id===task.pred);
+      if(predTask) predHint=`<span style="font-size:9px;color:var(--text-3);margin-left:4px;" title="Predecesor: ${predTask.name}${task.delay?` +${task.delay}d`:''}">← ${task.pred}</span>`;
+    }
+
+    html+=`<tr style="border-bottom:1px solid var(--border);${isPhase?'background:#F7F9FB;':''}" ${editorAttr}>
+      <td style="padding:6px 10px 6px ${10+indent}px;font-size:${isPhase?'12':'11.5'}px;font-weight:${isPhase?700:400};color:var(--navy);border-right:2px solid var(--border-2);position:sticky;left:0;background:${isPhase?'#F7F9FB':'#fff'};z-index:1;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
-          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;" title="${task.name}">${isMile?'◆ ':''}${task.name}</span>
+          <div style="display:flex;align-items:center;gap:2px;min-width:0;">
+            <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:155px;" title="${task.name}">${isMile?'◆ ':''}${task.name}</span>
+            ${predHint}
+          </div>
           ${!isMile?`<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;background:${task.pct===100?'var(--green-s-l)':task.pct>0?'var(--blue-l)':'var(--grey-l)'};color:${pctColor};">${task.pct}%</span>`:''}
         </div>
       </td>
@@ -1192,12 +1235,107 @@ function renderGantt(){
           <div style="height:100%;width:${task.pct}%;background:${task.color};border-radius:2px;opacity:0.7;"></div>
         </div>`:''}
         ${isMile&&visible?`<div style="position:absolute;top:50%;left:${left}%;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:var(--navy);"></div>`:''}
-        <div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,0,0,0.5);"></div>
+        <div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,0,0,0.5);pointer-events:none;"></div>
+        ${yearGroups.filter(yg=>yg.start>0).map(yg=>{
+          const yPct=((new Date(yg.year,0,1)-minDate)/totalMs*100);
+          return `<div style="position:absolute;top:0;bottom:0;left:${yPct}%;width:1px;background:rgba(0,0,0,0.12);pointer-events:none;"></div>`;
+        }).join('')}
       </td>
     </tr>`;
   });
   html+=`</tbody></table></div>`;
+
+  // Add editor panel placeholder
+  html+=`<div id="ganttEditorPanel" style="display:none;background:#F7F9FB;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;"></div>`;
   document.getElementById('ganttContainer').innerHTML=html;
+}
+
+// ── GANTT EDITOR ───────────────────────────────────────────────────────────
+function openGanttEditor(taskId){
+  if(!isEditor) return;
+  const tasks=getGanttTasks();
+  const task=tasks.find(t=>t.id===taskId);
+  if(!task||task.milestone) return;
+  const panel=document.getElementById('ganttEditorPanel');
+  if(!panel) return;
+  const phases=tasks.filter(t=>t.level===1);
+  const phaseOpts=phases.map(p=>`<option value="${p.id}" ${task.pred===p.id?'selected':''}>${p.num} ${p.name}</option>`).join('');
+  const taskOpts=tasks.filter(t=>t.id!==taskId&&!t.milestone).map(t=>`<option value="${t.id}" ${task.pred===t.id?'selected':''}>${t.num||t.id} ${t.name}</option>`).join('');
+  panel.style.display='block';
+  panel.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:700;color:var(--navy);">✏️ Editar tarea · <span style="font-weight:400;color:var(--text-2);">${task.num||task.id}</span></div>
+      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-3);">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="grid-column:1/-1;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Nombre</label>
+        <input id="ge-name" value="${task.name}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Inicio</label>
+        <input id="ge-start" type="date" value="${task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Fin</label>
+        <input id="ge-end" type="date" value="${task.end||task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">% Completado</label>
+        <input id="ge-pct" type="number" min="0" max="100" value="${task.pct}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Predecesor (ID)</label>
+        <select id="ge-pred" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:11.5px;font-family:inherit;">
+          <option value="">— Sin predecesor —</option>
+          ${taskOpts}
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">Delay (días)</label>
+        <input id="ge-delay" type="number" min="0" value="${task.delay||0}" placeholder="0" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveGanttEdit('${taskId}')" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;">Guardar</button>
+      <button onclick="applyPredecessor('${taskId}')" title="Calcula la fecha de inicio en base al predecesor + delay" style="background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;">🔗 Aplicar vínculo</button>
+      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;cursor:pointer;">Cancelar</button>
+    </div>`;
+}
+
+function saveGanttEdit(taskId){
+  const tasks=getGanttTasks();
+  const task=tasks.find(t=>t.id===taskId);
+  if(!task) return;
+  task.name=document.getElementById('ge-name').value||task.name;
+  task.start=document.getElementById('ge-start').value||task.start;
+  task.end=document.getElementById('ge-end').value||task.end;
+  task.pct=Math.max(0,Math.min(100,parseInt(document.getElementById('ge-pct').value)||0));
+  task.pred=document.getElementById('ge-pred').value||null;
+  task.delay=parseInt(document.getElementById('ge-delay').value)||0;
+  renderGantt();
+  toast('Tarea actualizada');
+}
+
+function applyPredecessor(taskId){
+  const tasks=getGanttTasks();
+  const task=tasks.find(t=>t.id===taskId);
+  if(!task||!task.pred) return;
+  const pred=tasks.find(t=>t.id===task.pred);
+  if(!pred) return;
+  const predEnd=new Date(pred.end||pred.start);
+  const delay=task.delay||0;
+  predEnd.setDate(predEnd.getDate()+delay);
+  const newStart=predEnd.toISOString().slice(0,10);
+  // Keep same duration
+  const origStart=new Date(task.start), origEnd=new Date(task.end||task.start);
+  const dur=origEnd-origStart;
+  const newEnd=new Date(predEnd); newEnd.setTime(newEnd.getTime()+dur);
+  task.start=newStart;
+  task.end=newEnd.toISOString().slice(0,10);
+  document.getElementById('ge-start').value=task.start;
+  document.getElementById('ge-end').value=task.end;
+  toast(`Inicio calculado: ${newStart} (${pred.name} fin + ${delay}d)`);
 }
 
 // ── DOCS ───────────────────────────────────────────────────────────────────
@@ -1275,8 +1413,89 @@ function saveUpdate(){
   toast('Novedad guardada');
 }
 
+// ── I18N ───────────────────────────────────────────────────────────────────
+const T={
+  es:{
+    weekTitle:'Semana del',
+    reporting:'REPORTING SEMANAL',
+    addUpdate:'+ Añadir novedad',
+    noUpdates:'Sin novedades esta semana',
+    noUpdatesDesc:'No hay actualizaciones registradas para este proyecto en la semana seleccionada.',
+    attention:'Requiere atención',
+    activities:'Actividades esta semana',
+    schedule:'Cronograma',
+    docs:'Documentación',
+    updates:'Updates',
+    portfolio:'Portfolio',
+    navPrev:'Semana anterior',
+    navNext:'Semana siguiente',
+    noSchedule:'Cronograma no disponible',
+    noScheduleDesc:'El cronograma de {0} se añadirá próximamente.',
+    task:'Tarea',
+    editTask:'Editar tarea',
+    taskName:'Nombre',
+    taskStart:'Inicio',
+    taskEnd:'Fin',
+    taskPct:'% Completado',
+    taskPred:'Predecesor (ID)',
+    taskDelay:'Delay (días)',
+    save:'Guardar',
+    cancel:'Cancelar',
+    nextWeek:'Semana siguiente tiene {0} actualizaciones',
+  },
+  en:{
+    weekTitle:'Week of',
+    reporting:'WEEKLY REPORTING',
+    addUpdate:'+ Add update',
+    noUpdates:'No updates this week',
+    noUpdatesDesc:'No updates recorded for this project in the selected week.',
+    attention:'Requires attention',
+    activities:'Activities this week',
+    schedule:'Schedule',
+    docs:'Documentation',
+    updates:'Updates',
+    portfolio:'Portfolio',
+    navPrev:'Previous week',
+    navNext:'Next week',
+    noSchedule:'Schedule not available',
+    noScheduleDesc:'The schedule for {0} will be added soon.',
+    task:'Task',
+    editTask:'Edit task',
+    taskName:'Name',
+    taskStart:'Start',
+    taskEnd:'End',
+    taskPct:'% Complete',
+    taskPred:'Predecessor (ID)',
+    taskDelay:'Delay (days)',
+    save:'Save',
+    cancel:'Cancel',
+    nextWeek:'Next week has {0} updates',
+  }
+};
+function t(key,...args){
+  let s=(T[lang]||T.es)[key]||key;
+  args.forEach((a,i)=>s=s.replace('{'+i+'}',a));
+  return s;
+}
+function applyLang(){
+  // Week title label
+  const wt=document.getElementById('updatesWeekTitle');
+  if(wt&&currentWeek) wt.textContent=`${t('weekTitle')} ${weekRange(currentWeek)}`;
+  // Static labels with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    el.textContent=t(k);
+  });
+}
+
 // ── UTILS ───────────────────────────────────────────────────────────────────
-function setLang(l){ lang=l; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on')); }
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));
+  const active=document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`);
+  if(active) active.classList.add('on');
+  applyLang();
+}
 function openModal(id){document.getElementById(id).classList.add('on');}
 function closeModal(id){document.getElementById(id).classList.remove('on');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500);}
