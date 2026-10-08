@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1722 -->
+<!-- BUILD:20261008-1800 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -9,11 +9,12 @@
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAHsUExURQAAADeTOgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsiQiZmPTucOiZoPRhDQDucOjucOhhFQAsiQgohQjygOjqaOjyfOgohQgsiQmX/MzqaOjqaOl/4NAsiQgsjQjqaOjqaOjqaOjqaOgsjQjqaOjqaOjqaOjqaOjqZOjqaOjqaOjqZOjqaOjqaOjqaOjqaOjqaOjqaOjqaOjqaOjqZOjqaOjqaOjqZOjqaOjqaOjqaOjqaOjqaOjqaOjiWOjqZOjqZOgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsiQgskQhAwQSJdPhU8QAoiQhU7QChsPSx1PA0oQit0PShuPSdrPTqaOh5TPx5SPzudOjSKOxM3QRM2QTOJOzubOilvPQwnQgwmQiluPTmXOhxPPxxOPzmWOjqbOjOHOxI0QREzQTKGOyhrPQwlQidqPTiWOhtLPwohQhpKPziVOjGEOxAxQTGDPCdpPSZoPTmYOv///9ktnawAAABxdFJOUwAAETY4MQgHEkzq8vPrVFJPUPbEFRTC91P9cW/82SYk2I4CjDs56asKCaj1VRNt5f7q/eqM0dOL/WRa911iZgWjpQZjZizb3S1kZ/n6agyrrg0y4OI0cPv8cg+ztRA45+g6d3kBCgtO7/hjYfBRGiEb1Yn6oQAAAAFiS0dEo8fa7xoAAAAHdElNRQfqCggOKznX5PphAAABeklEQVQ4y2NgGAqAiZkFAljZEILsrFBBZg4GTi5uMODh5UMo4OfigYjyCjAIChVCgbAITF5UDCYmLoGkQFIKpkBaBquCQlk5iLy8QiF2BYWKSiB5JeVCbAqKgJhLBaRAVQ3KRVFQXFIMJNU1GBg0teBcFBNKy8oLC7V1gF7ULiwsryjFUFBZVQ3yqqguyIvVNbUYbqirbwDaKymtB/RiUWN9JaaCpuYWoCX6+kALWtuaMBQYGBq1d3RCRLu6242MDdAVmJjW9/SWg5jlff31ZuYW6FZYWllPmDgJ6IyiyVParW1sMdxgZ+9Q3z61q7Bw2vQJ9Y5OzhgKXBhc3epnzJw1a/acencPBk8sChi8vNvnziuZ3+7jy4BdgZ9//YQFCyfUBwTiUMAQFFy/qKc+JJQBlwKGsPD6+ohIBtwKoqLr62Ni8ShgiItPSGTAp4AxKTkFrwKG1DQGNAXpGZniQJCZhZqfsiGiObkMeYISIMCXj6ogHywqkVsAAGWW8Mtkd1UBAAAAAElFTkSuQmCC">
 <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAHsUExURQAAADeTOgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsiQiZmPTucOiZoPRhDQDucOjucOhhFQAsiQgohQjygOjqaOjyfOgohQgsiQmX/MzqaOjqaOl/4NAsiQgsjQjqaOjqaOjqaOjqaOgsjQjqaOjqaOjqaOjqaOjqZOjqaOjqaOjqZOjqaOjqaOjqaOjqaOjqaOjqaOjqaOjqaOjqZOjqaOjqaOjqZOjqaOjqaOjqaOjqaOjqaOjqaOjiWOjqZOjqZOgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsjQgsiQgskQhAwQSJdPhU8QAoiQhU7QChsPSx1PA0oQit0PShuPSdrPTqaOh5TPx5SPzudOjSKOxM3QRM2QTOJOzubOilvPQwnQgwmQiluPTmXOhxPPxxOPzmWOjqbOjOHOxI0QREzQTKGOyhrPQwlQidqPTiWOhtLPwohQhpKPziVOjGEOxAxQTGDPCdpPSZoPTmYOv///9ktnawAAABxdFJOUwAAETY4MQgHEkzq8vPrVFJPUPbEFRTC91P9cW/82SYk2I4CjDs56asKCaj1VRNt5f7q/eqM0dOL/WRa911iZgWjpQZjZizb3S1kZ/n6agyrrg0y4OI0cPv8cg+ztRA45+g6d3kBCgtO7/hjYfBRGiEb1Yn6oQAAAAFiS0dEo8fa7xoAAAAHdElNRQfqCggOKznX5PphAAABeklEQVQ4y2NgGAqAiZkFAljZEILsrFBBZg4GTi5uMODh5UMo4OfigYjyCjAIChVCgbAITF5UDCYmLoGkQFIKpkBaBquCQlk5iLy8QiF2BYWKSiB5JeVCbAqKgJhLBaRAVQ3KRVFQXFIMJNU1GBg0teBcFBNKy8oLC7V1gF7ULiwsryjFUFBZVQ3yqqguyIvVNbUYbqirbwDaKymtB/RiUWN9JaaCpuYWoCX6+kALWtuaMBQYGBq1d3RCRLu6242MDdAVmJjW9/SWg5jlff31ZuYW6FZYWllPmDgJ6IyiyVParW1sMdxgZ+9Q3z61q7Bw2vQJ9Y5OzhgKXBhc3epnzJw1a/acencPBk8sChi8vNvnziuZ3+7jy4BdgZ9//YQFCyfUBwTiUMAQFFy/qKc+JJQBlwKGsPD6+ohIBtwKoqLr62Ni8ShgiItPSGTAp4AxKTkFrwKG1DQGNAXpGZniQJCZhZqfsiGiObkMeYISIMCXj6ogHywqkVsAAGWW8Mtkd1UBAAAAAElFTkSuQmCC">
 <meta http-equiv="Expires" content="0">
+<script>document.addEventListener('DOMContentLoaded',function(){var links=document.querySelectorAll('link[rel*="icon"]');links.forEach(function(l){var h=l.cloneNode();document.head.removeChild(l);document.head.appendChild(h);});});</script>
 <title>MARS Spain PD</title>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1722';
+  const BUILD='20261008-1800';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -61,8 +62,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 /* SIDEBAR */
 .sidebar{width:var(--sidebar-w);background:#FFFFFF;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
 .sb-section{padding:8px 12px 4px;}
-.sb-label{font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;padding:0 8px;margin-bottom:4px;}
-.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--text-2);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px;}
+.sb-label{font-size:10px;font-weight:800;color:var(--navy);letter-spacing:1.2px;text-transform:uppercase;padding:0 8px;margin-bottom:6px;opacity:0.7;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;cursor:pointer;color:var(--text-2);font-size:11.5px;font-weight:500;transition:all .15s;margin-bottom:1px;}
 .sb-item:hover{background:var(--bg);color:var(--navy);}
 .sb-item.active{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green);font-weight:600;}
 .sb-proj{padding:4px 12px;}
@@ -199,6 +200,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .cal-day.other-month{color:var(--border);pointer-events:none;}
 .cal-day.other-month-dim{color:rgba(5,35,61,0.18);pointer-events:none;font-size:11.5px;}
 .cal-day.week-sel-dim{background:var(--green)!important;opacity:0.35;}
+.cal-day.today{font-weight:800;color:var(--navy)!important;box-shadow:inset 0 0 0 2px #05233D;border-radius:50%;}
+/* PROJECT SWITCHER */
+.proj-switcher{margin-top:4px;}
+.proj-sw-item{padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap;}
+.proj-sw-item:hover{background:var(--bg);}
+.proj-sw-item.active{background:var(--green-l);color:var(--green-d);}
 
 /* GANTT */
 .gantt-bar-wrap{position:relative;height:32px;}
@@ -525,26 +532,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
     <!-- CRONOGRAMA TAB -->
     <div id="tc-cronograma" style="display:none;padding:20px 28px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <select id="projSelCronogramaInline" onchange="navToTabWithProj('cronograma',this.value)" style="font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;color:var(--navy);background:#fff;cursor:pointer;">
-          <option value="begues">BEGUES I &amp; II</option>
-          <option value="fregacedos">FREGACEDOS I, II &amp; V</option>
-          <option value="mutxamel">MUTXAMEL</option>
-          <option value="entrenucleos">ENTRENÚCLEOS</option>
-        </select>
+      <div id="cronogramaTabHdr" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div id="cronogramaProjTitle" style="font-size:18px;font-weight:800;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:8px;" onclick="toggleProjSwitcher('cronograma')">
+          <span id="cronogramaProjName">—</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div id="projSwitcherCronograma" style="display:none;position:absolute;top:auto;left:auto;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.12);z-index:50;min-width:200px;" class="proj-switcher">
+          <div class="proj-sw-item" onclick="navToTabWithProj('cronograma','begues');toggleProjSwitcher('cronograma')">BEGUES I &amp; II</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('cronograma','fregacedos');toggleProjSwitcher('cronograma')">FREGACEDOS I, II &amp; V</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('cronograma','mutxamel');toggleProjSwitcher('cronograma')">MUTXAMEL</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('cronograma','entrenucleos');toggleProjSwitcher('cronograma')">ENTRENÚCLEOS</div>
+        </div>
       </div>
       <div id="ganttContainer"></div>
     </div>
     <!-- DOCUMENTACION TAB -->
     <div id="tc-documentacion" style="display:none;padding:20px 28px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <select id="projSelDocumentacionInline" onchange="navToTabWithProj('documentacion',this.value)" style="font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;color:var(--navy);background:#fff;cursor:pointer;">
-          <option value="begues">BEGUES I &amp; II</option>
-          <option value="fregacedos">FREGACEDOS I, II &amp; V</option>
-          <option value="mutxamel">MUTXAMEL</option>
-          <option value="entrenucleos">ENTRENÚCLEOS</option>
-          <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
-        </select>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div id="documentacionProjTitle" style="font-size:18px;font-weight:800;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:8px;" onclick="toggleProjSwitcher('documentacion')">
+          <span id="documentacionProjName">—</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div id="projSwitcherDocumentacion" style="display:none;position:absolute;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.12);z-index:50;min-width:200px;" class="proj-switcher">
+          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','begues');toggleProjSwitcher('documentacion')">BEGUES I &amp; II</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','fregacedos');toggleProjSwitcher('documentacion')">FREGACEDOS I, II &amp; V</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','mutxamel');toggleProjSwitcher('documentacion')">MUTXAMEL</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','entrenucleos');toggleProjSwitcher('documentacion')">ENTRENÚCLEOS</div>
+          <div class="proj-sw-item" onclick="navToTabWithProj('documentacion','custom_nuevas_oportunidades');toggleProjSwitcher('documentacion')">NUEVAS OPORTUNIDADES</div>
+        </div>
         <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()">+ Añadir documento</button>
       </div>
       <div id="docsContent"></div>
@@ -967,7 +982,7 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = '08/10/2026 17:22';
+const BUILD_TS = '08/10/2026 18:00';
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -977,20 +992,28 @@ function init(){
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 function navToTab(tab){
-  const inlineSel=document.getElementById(tab==='cronograma'?'projSelCronogramaInline':'projSelDocumentacionInline');
-  const pid=currentProjId||(inlineSel?inlineSel.value:null)||'begues';
+  const pid=currentProjId||'begues';
   openProject(pid);
   showTab(tab);
-  if(inlineSel) inlineSel.value=pid;
 }
 function navToTabWithProj(tab,pid){
   openProject(pid);
   showTab(tab);
-  const cSel=document.getElementById('projSelCronogramaInline');
-  const dSel=document.getElementById('projSelDocumentacionInline');
-  if(cSel&&tab==='cronograma') cSel.value=pid;
-  if(dSel&&tab==='documentacion') dSel.value=pid;
 }
+function toggleProjSwitcher(tab){
+  const id='projSwitcher'+tab.charAt(0).toUpperCase()+tab.slice(1);
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+document.addEventListener('mousedown',e=>{
+  ['projSwitcherCronograma','projSwitcherDocumentacion'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&!el.contains(e.target)&&!e.target.closest('[onclick*="toggleProjSwitcher"]')){
+      el.style.display='none';
+    }
+  });
+});
 function showPage(page){
   document.getElementById('nav-cronograma').classList.remove('active');
   document.getElementById('nav-documentacion').classList.remove('active');
@@ -1028,6 +1051,9 @@ function showTab(tab){
     document.getElementById('tc-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('tab-'+t).classList.toggle('on', t===tab);
   });
+  // Sync sidebar active state
+  document.getElementById('nav-cronograma').classList.toggle('active', tab==='cronograma');
+  document.getElementById('nav-documentacion').classList.toggle('active', tab==='documentacion');
   if(tab==='updates') renderUpdates();
   if(tab==='cronograma') renderGantt();
   if(tab==='documentacion') renderDocs();
@@ -1175,6 +1201,7 @@ function renderCal(popupId){
   const selMonIso=`${selMon.getFullYear()}-${String(selMon.getMonth()+1).padStart(2,'0')}-${String(selMon.getDate()).padStart(2,'0')}`;
   // Helper: date → ISO string
   const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  const todayIso=toIso(new Date());
   let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
     <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal('${pid}')" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:14px;">‹</button>
     <span style="font-size:13px;font-weight:700;color:var(--navy);">${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} ${y}</span>
@@ -1205,6 +1232,7 @@ function renderCal(popupId){
     const rowMon=new Date(rowDate); rowMon.setDate(rowDate.getDate()-((rowDate.getDay()+6)%7));
     const rowMonIso=toIso(rowMon);
     const isSelWeek=rowMonIso===selMonIso;
+    const weekHasData=row.some(c=>weeks.includes(c.iso));
     row.forEach((cell,ci)=>{
       const {day,iso,otherMonth}=cell;
       if(otherMonth){
@@ -1215,11 +1243,14 @@ function renderCal(popupId){
         return;
       }
       const hasData=weeks.includes(iso);
+      const isToday=iso===todayIso;
       const clickFn=onSelect.replace(/ISODATE/g,iso);
       let cls='cal-day';
       if(isSelWeek){cls+=' week-sel';if(ci===0)cls+=' week-sel-start';if(ci===6)cls+=' week-sel-end';}
       else if(hasData) cls+=' has-data';
-      h+=`<div class="${cls}" data-week="${rowMonIso}" onclick="${clickFn}" onmouseover="calHoverWeek('${pid}','${rowMonIso}')" onmouseout="calUnhover('${pid}')">${day}</div>`;
+      if(isToday) cls+=' today';
+      const dot=(weekHasData&&!isSelWeek&&ci===0)?`<span style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--navy);opacity:0.5;display:block;"></span>`:'';
+      h+=`<div class="${cls}" style="position:relative;" data-week="${rowMonIso}" onclick="${clickFn}" onmouseover="calHoverWeek('${pid}','${rowMonIso}')" onmouseout="calUnhover('${pid}')">${day}${dot}</div>`;
     });
   }
   h+=`</div>`;
@@ -1343,9 +1374,13 @@ function getGanttTasks(){ if(!ganttTasks) ganttTasks=JSON.parse(JSON.stringify(T
 function renderGantt(){
   const pid=currentProjId;
   const m=META[pid]||{};
-  // Sync inline selector
-  const cSel=document.getElementById('projSelCronogramaInline');
-  if(cSel) cSel.value=pid;
+  // Update project title in tab header
+  const cName=document.getElementById('cronogramaProjName');
+  if(cName) cName.textContent=m.name||pid;
+  // Highlight active item in switcher
+  document.querySelectorAll('#projSwitcherCronograma .proj-sw-item').forEach(el=>{
+    el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
+  });
   if(pid!=='mutxamel'){
     document.getElementById('ganttContainer').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);">
       <div style="font-size:32px;margin-bottom:10px;">📅</div>
@@ -1552,9 +1587,12 @@ let extraDocs={};
 function renderDocs(){
   const pid=currentProjId;
   const m=META[pid]||{};
-  // Sync inline selector and editor button
-  const dSel=document.getElementById('projSelDocumentacionInline');
-  if(dSel) dSel.value=pid;
+  // Update project title in tab header and editor button
+  const dName=document.getElementById('documentacionProjName');
+  if(dName) dName.textContent=m.name||pid;
+  document.querySelectorAll('#projSwitcherDocumentacion .proj-sw-item').forEach(el=>{
+    el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
+  });
   document.getElementById('addDocBtn')&&(document.getElementById('addDocBtn').style.display=isEditor?'':'none');
   const docs=[...((DEFAULT_DOCS[pid]||[])),...(extraDocs[pid]||[])];
   if(!docs.length){
