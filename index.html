@@ -217,8 +217,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   </div>
   <div class="hdr-right">
     <div class="lang-grp">
-      <button class="lang-btn on" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn on" data-lang="es" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
     </div>
     <button class="hdr-pill" id="editorBtn" onclick="showPwdModal()">🔒 Editor</button>
     <button class="hdr-pill green" id="editorBadge" style="display:none" onclick="exitEditor()">✏️ Editor · salir</button>
@@ -943,6 +943,7 @@ const META = {
 // ── INIT ───────────────────────────────────────────────────────────────────
 function init(){
   renderFeed();
+  applyLang();
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
@@ -1211,13 +1212,16 @@ function renderGantt(){
     const visible=start<=maxDate&&end>=minDate;
     const indent=task.level===1?0:task.level===2?12:24;
     const pctColor=task.pct===100?'#16803C':task.pct>0?task.color:'var(--grey)';
-    const editorAttr=isEditor&&!isMile?`onclick="openGanttEditor('${task.id}')" style="cursor:pointer;" title="Editar tarea"`:'';
+    const editorAttr=isEditor&&!isMile?`data-edit="${task.id}" style="cursor:pointer;" title="Click para editar"`:''
 
     // Predecessor line hint
     let predHint='';
     if(task.pred){
       const predTask=tasks.find(t=>t.id===task.pred);
-      if(predTask) predHint=`<span style="font-size:9px;color:var(--text-3);margin-left:4px;" title="Predecesor: ${predTask.name}${task.delay?` +${task.delay}d`:''}">← ${task.pred}</span>`;
+      if(predTask){
+        const delayTxt=task.delay?` +${task.delay}d`:'';
+        predHint=`<span style="font-size:9px;color:var(--text-3);margin-left:4px;" title="Predecesor: ${predTask.name}${delayTxt}">← ${task.pred}</span>`;
+      }
     }
 
     html+=`<tr style="border-bottom:1px solid var(--border);${isPhase?'background:#F7F9FB;':''}" ${editorAttr}>
@@ -1248,6 +1252,14 @@ function renderGantt(){
   // Add editor panel placeholder
   html+=`<div id="ganttEditorPanel" style="display:none;background:#F7F9FB;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;"></div>`;
   document.getElementById('ganttContainer').innerHTML=html;
+
+  // Delegated click listener for task editor rows
+  if(isEditor){
+    document.getElementById('ganttContainer').addEventListener('click',function(e){
+      const tr=e.target.closest('tr[data-edit]');
+      if(tr) openGanttEditor(tr.getAttribute('data-edit'));
+    });
+  }
 }
 
 // ── GANTT EDITOR ───────────────────────────────────────────────────────────
@@ -1491,9 +1503,10 @@ function applyLang(){
 // ── UTILS ───────────────────────────────────────────────────────────────────
 function setLang(l){
   lang=l;
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));
-  const active=document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`);
-  if(active) active.classList.add('on');
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(b.getAttribute('data-lang')===l) b.classList.add('on');
+  });
   applyLang();
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
