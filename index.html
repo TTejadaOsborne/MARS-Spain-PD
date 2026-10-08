@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MARS · Spain Development CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#05233D;--green:#399439;--green-d:#2A7A2A;--green-l:#EBF5EB;
+  --blue:#3A7BD5;--blue-l:#EBF2FB;
+  --red:#C8201E;--red-l:#FEF2F2;--red-b:#FECACA;
+  --yellow:#B07D00;--yellow-l:#FFFBEB;--yellow-b:#FDE68A;
+  --green-s:#16803C;--green-s-l:#F0FDF4;--green-s-b:#BBF7D0;
+  --grey:#6B7280;--grey-l:#F9FAFB;--grey-b:#E5E7EB;
+  --bg:#F5F7F9;--surface:#FFFFFF;--border:#DDE3EA;--border-2:#C8D0DA;
+  --text:#05233D;--text-2:#4A6278;--text-3:#8DA0B0;
+  --sidebar-w:310px;--hdr-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* HEADER */
+.hdr{height:var(--hdr-h);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:2px solid var(--green);flex-shrink:0;z-index:100;}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.logo-wrap{background:#fff;border-radius:5px;padding:4px 10px;display:flex;align-items:center;}
+.logo-wrap img{height:22px;}
+.hdr-title h1{font-size:13px;font-weight:700;color:#fff;}
+.hdr-title p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.4px;text-transform:uppercase;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hdr-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.hdr-pill:hover{background:rgba(255,255,255,0.15);color:#fff;}
+.hdr-pill.green{background:var(--green);border-color:var(--green);color:#fff;font-weight:600;}
+.lang-grp{display:flex;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;}
+.lang-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;padding:4px 9px;cursor:pointer;font-family:'Inter',sans-serif;}
+.lang-btn.on{background:var(--green);color:#fff;}
+
+/* LAYOUT */
+.body{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:#FFFFFF;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sb-section{padding:8px 12px 4px;}
+.sb-label{font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;padding:0 8px;margin-bottom:4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--text-2);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px;}
+.sb-item:hover{background:var(--bg);color:var(--navy);}
+.sb-item.active{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green);font-weight:600;}
+.sb-proj{padding:4px 12px;}
+.sb-proj-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:11.5px;color:var(--text-2);transition:all .15s;margin-bottom:1px;}
+.sb-proj-item:hover{background:var(--bg);color:var(--navy);}
+.sb-proj-item.active{background:var(--blue-l);color:var(--navy);font-weight:600;}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sb-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:auto;}
+.sb-sub{padding:2px 12px 4px 32px;border-left:2px solid var(--border);margin:0 0 2px 22px;}
+.sb-sub-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;color:var(--text-3);transition:all .15s;}
+.sb-sub-item:hover{color:var(--navy);background:var(--bg);}
+.sb-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+.sb-footer-btn{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--text-3);background:none;border:none;width:100%;font-family:'Inter',sans-serif;}
+.sb-footer-btn:hover{background:var(--bg);color:var(--navy);}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.page-hdr{background:#FFFFFF;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.page-hdr-left h2{font-size:18px;font-weight:800;color:var(--navy);}
+.page-hdr-left p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;}
+.btn-primary{background:var(--green);color:#fff;}
+.btn-primary:hover{background:var(--green-d);}
+.btn-sec{background:#fff;border:1px solid var(--border);color:var(--text-2);}
+.btn-sec:hover{border-color:var(--navy);color:var(--navy);}
+.week-badge{background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:5px;}
+.content{padding:16px 20px;background:var(--bg);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.stat-card{background:#fff;border:1px solid #E8ECF0;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(5,35,61,0.05);cursor:default;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.navy::before{background:var(--navy);}
+.stat-card.red::before{background:var(--red);}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.stat-icon.blue{background:var(--blue-l);}
+.stat-icon.green{background:var(--green-l);}
+.stat-icon.navy{background:rgba(5,35,61,0.07);}
+.stat-icon.red{background:var(--red-l);}
+.stat-num{font-size:26px;font-weight:800;color:var(--navy);line-height:1;margin-bottom:3px;}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;}
+.stat-sub{font-size:10.5px;color:var(--text-3);margin-top:5px;}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.card-hdr{padding:12px 16px;border-bottom:1px solid var(--border);background:#FAFBFC;display:flex;align-items:center;justify-content:space-between;}
+.card-hdr h3{font-size:13px;font-weight:700;color:var(--navy);}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;}
+.tag-navy{background:rgba(5,35,61,0.08);color:var(--navy);}
+
+/* MAP */
+.map-wrap{background:#FFFFFF;height:540px;position:relative;overflow:hidden;}
+.map-svg{width:100%;height:540px;display:block;}
+.proj-pin{cursor:pointer;}
+.proj-pin circle.pulse{animation:pulse 2s ease-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes pulse{0%{transform:scale(1);opacity:1;}70%{transform:scale(2.8);opacity:0;}100%{transform:scale(2.8);opacity:0;}}
+
+/* PROJECT LIST */
+.proj-list-item{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;gap:10px;white-space:nowrap;}
+.proj-list-item:hover{background:var(--bg);}
+.proj-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.proj-list-name{font-size:12.5px;font-weight:700;color:var(--navy);flex:1;}
+.proj-list-loc{font-size:11px;color:var(--text-3);}
+.proj-list-mw{font-size:12px;font-weight:700;color:var(--text-2);padding-right:6px;}
+
+/* UPDATES FEED */
+.update-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
+.update-item:hover{background:var(--bg);}
+.update-badge{font-size:9.5px;font-weight:700;padding:3px 6px;border-radius:4px;text-align:center;height:fit-content;margin-top:1px;flex-shrink:0;min-width:58px;}
+.update-proj{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.update-text{font-size:12px;color:var(--text-2);line-height:1.4;}
+.update-date{font-size:10px;color:var(--text-3);margin-top:3px;}
+
+/* OPP CARD */
+.opp-card{background:linear-gradient(135deg,var(--navy) 0%,#1B4F8A 100%);border-radius:10px;padding:20px;color:#fff;cursor:pointer;}
+.opp-card:hover{opacity:0.95;}
+
+/* PROJECT PAGE */
+.proj-page{display:none;flex-direction:column;flex:1;}
+.proj-page.on{display:flex;}
+.proj-ficha{background:var(--navy);padding:20px 28px;flex-shrink:0;}
+.proj-ficha-name{font-size:22px;font-weight:800;color:#fff;margin-bottom:2px;}
+.proj-ficha-loc{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;}
+.ficha-specs{display:flex;gap:24px;flex-wrap:wrap;margin-top:10px;}
+.ficha-spec-val{font-size:13px;font-weight:700;color:#fff;}
+.ficha-spec-lbl{font-size:9.5px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.3px;margin-top:1px;}
+.ficha-div{width:1px;background:rgba(255,255,255,0.12);}
+
+/* TABS */
+.tabs-bar{background:#fff;border-bottom:2px solid var(--border);padding:0 28px;display:flex;flex-shrink:0;}
+.tab{padding:13px 18px;font-size:12.5px;font-weight:600;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:7px;}
+.tab:hover{color:var(--navy);}
+.tab.on{color:var(--green);border-bottom-color:var(--green);}
+.tab-content{flex:1;overflow-y:auto;}
+
+/* UPDATES TAB */
+.issue-row{background:#fff;border-bottom:1px solid var(--border);}
+.issue-top-row{display:grid;grid-template-columns:4px 160px 1fr auto;min-height:52px;}
+.i-sbar{}
+.i-topic{padding:12px 14px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.3px;border-right:1px solid var(--border);display:flex;align-items:center;}
+.i-text{padding:12px 16px;font-size:13px;line-height:1.55;color:var(--text);display:flex;align-items:center;}
+.i-meta{padding:10px 12px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;min-width:130px;}
+.status-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+.impact-tag{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid rgba(58,123,213,0.25);background:rgba(58,123,213,0.08);color:var(--blue);}
+.sbar-red{background:var(--red);}
+.sbar-yellow{background:var(--yellow);}
+.sbar-green{background:var(--green-s);}
+.sbar-grey{background:var(--grey);}
+.s-red{background:var(--red-l);color:var(--red);border:1px solid var(--red-b);}
+.s-yellow{background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);}
+.s-green{background:var(--green-s-l);color:var(--green-s);border:1px solid var(--green-s-b);}
+.s-grey{background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);}
+.act-section{background:#F7F9FB;border-top:1px dashed var(--border);padding:9px 14px 10px 180px;}
+.act-title{font-size:9.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;}
+.act-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.act-date{font-size:10px;color:var(--text-3);flex-shrink:0;margin-top:2px;}
+.prev-week-hdr{padding:16px 18px 6px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;border-top:2px solid var(--border);}
+.prev-week-date{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;color:var(--text-2);}
+.week-sel-btn{background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+
+/* WEEK CAL */
+.pos-rel{position:relative;}
+.cal-popup{position:absolute;top:calc(100% + 8px);right:0;z-index:200;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 24px rgba(5,35,61,0.15);min-width:260px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,34px);gap:2px;}
+.cal-dow{font-size:9.5px;font-weight:700;color:var(--text-3);text-align:center;padding:2px 0 6px;}
+.cal-day{width:34px;height:34px;border-radius:6px;border:none;background:none;font-size:12.5px;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;}
+.cal-day:hover{background:var(--bg);}
+.cal-day.has-data{background:var(--navy);color:#fff;font-weight:700;}
+.cal-day.selected{background:var(--green)!important;color:#fff!important;font-weight:700;}
+.cal-day.other-month{color:var(--border);pointer-events:none;}
+
+/* GANTT */
+.gantt-bar-wrap{position:relative;height:32px;}
+.gantt-bar{position:absolute;top:7px;height:18px;border-radius:3px;}
+.gantt-progress{position:absolute;top:0;left:0;height:100%;border-radius:3px;opacity:0.4;}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(5,35,61,0.55);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-bg.on{display:flex;}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:520px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal-hdr{background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h2{font-size:14px;font-weight:700;color:#fff;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.6);font-size:22px;cursor:pointer;line-height:1;}
+.modal-body{padding:20px;max-height:70vh;overflow-y:auto;}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.form-row{margin-bottom:13px;}
+.form-lbl{display:block;font-size:10.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;}
+.form-input{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none;}
+.form-input:focus{border-color:var(--navy);}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238DA0B0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+.form-textarea{min-height:80px;resize:vertical;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:12.5px;padding:10px 20px;border-radius:7px;z-index:300;transition:transform .25s;pointer-events:none;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+
+/* PWD */
+.pwd-card{background:#fff;border-radius:12px;width:100%;max-width:360px;padding:28px;}
+
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo-wrap"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAxCAYAAABd9aLLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFxEAABcRAcom8z8AAAzESURBVHhe7Vx7kBxFGZ/b6b68SBBIyOuS2+mevQtngML1bl7dM7lLogES0MJQJZaiCBZCkBKslIBVSwn8ER51ye5dkktCEUiRCLGEP0RRREReBSWvgAKiJSWiRIkBTCA8LmN9vbuXuZ7Zu73d2Qtcza/qV1e324+vu3/Tr++bVZQECRIkSJAgQYIECRIkSJAgQYIECRIkSJCgwWhSdfsclbLtKmW3VSRxdiDCcsos7xi5gDigamylSpwtoXqHc7tK7IKi65Ok7E2qxs9Bmn21Spw7IvI1hEhz1qi6/YXhpvhN9ELns4uvZb2Lr+XrqmXHVe5NM1ewnLKAXYGoe2Vd1Nl3VWKfoczrPGG4bUcA/Q3jqRK+QyXs9vEl36Fks7hkSi6lEvsmrC/xse5VZmaJjwh7B1P2dakt9SO77Fisscew7obrlUnYQWVWx5GHYG52qqrxdYjyl4V9mVHaESMRYW8iwp5F1Lk00JrUKddZPV0bmP/5m+2Pq2Fnr/1xx1pncIbDD6qt7C1E+b76yP6FNLYHUfYzZRGfG7AN0ISoew0i/EVE2cHiuI8zM92+0mJOKdkDAnRuwNT1MeWjENKwP6CM5UqNqgtYd27BhH8cri+ChP1HmX3KNJGxxZyCKbsIE/eDoiiqaUOMLD8wlO9F1LZKzWky+gzGtjm+vdGqimyb5WcudfzmDNgPZcbBoUnjJ0d6erWqpt2zMOUHinaPc3+Vqbv1CND1kebsVDo6mo80rHaolK2AWa26+iUBEmch0r0/l0RwdEnYr0tNarL6LdvZ4vhWnzUq7X7L77zZ8uescvxUS0S59RJm6lbHFJZlV05FxP3pUe+v2gVYeuqp+0YqHcNS3GLOx5Q9iSk/HKqnEgMCbG61FuG2nnCao0HCDok25ZSUkTdOr1aAbIvln3SF7U/uYD4iEeXWTTaI0iwnbNNXzECEvVb1WDeKdQlQFLDER5S90NzmLTqipjGi1ZusavZNmPBDY6o7KMC03Q77iVCao0HC3wWbvJyHOjd0fs0ZqEKA/ZZvbrD8Bec6ftO8iDJjIRtEGrum1OefQRr7MJxmnFm3AItpP0KEbYVGBWRVNZqpfTYm7H/FGVUufwRWLcDSPkjeANfFEZaugAC78l1frUaAzoDlL/4h86d9Dg40cl1jZaV+lARInPfDaUqMvb8qsK3mQ8hwY+G0hTV+IWxuA9oaFZN0m2KNPxoqsxpWJUDRln2YsgcxZffFRsIex4RFH5bGKsB+y3c2m4faLrWfU2ZH1DVGIsrfiN7KVClAwg5gwn8nl9sQ6vy+wBmiRgEChQj580raOTWgr5HheQhRth3TCgM5GqsRIDzJGrsPDgRy9XVhIZ+LCX8nVJ+wa2wCtDfbvlkwX+y+08jK1dQCTFhpOyPbVoUAdRdOy88q2exUudxxQB0CLBtP3W3KQnacXHIUVN1Zjgj/R+UlYxRWKUCk8Z1y3XEAU/7fUH3CrjEKcMAeNAvmHXL5tQK1Wpdgyg+G7KpKgGJr8Yhc5jghDgHy91Ia+z5cwsqlD0O7PQ9prL5rk+oFuEuuPg7EIUB7k+2beXOvWTDPl8uvFShtX1aXAAl7YtTxawzGIkBYNllEA+BU7D6otI5wKoZLY41twpRHn8KI+DxiDyOn+/QL0NnsHLYK1i/NW8zj5fJrRX0CFEvwX5DOvMnEWdgoKouWnhBwwZVRrQDBSP5XRPiOyBmsrRsOJXcq2blR+4imFOHfRJTvjV56XXGRG72HkfgpF6Ddb8Pfd4y8caVcdj0Av3TNAgz0m3BlNoJCH/wBRXdWSb78KgVYFN0vJi3kGogglL4orLex5lwQOhVTT0eEPRMpXEH3kEItGxP+7/B3EmsRIDx17fb0OIgp2x+qT9gVuAcsdJ5XSYDOZsc3+8zHrT6rNdBDVWK1KtoCJ0iJSHOurFuADacrxAiBI4HlfkwC/A3kQMT5Ec4sCS+XYuDZHpTmAV/xahVRdmvF8nXvMKbsO5ASU/5m6HuZNQgQEfY94TEJ+UtroFzXkF1FAXbkOpq78l1rIgXYX/xr9BmbVt+9WgWxZgeyGAj5crlceVBSIaHpXS1qmp8NQlMpuw7GrExE7Bwm/EDIJkFZgOy9cJrxpvvk2K9hxEaV/7bYEGuRCndGUTNa0QE+dEGNKP8BDE5k+brrq3CNo/XMhrTg1A+lkVmLAClfE5kuTpYEqG/QJ5l5cy3MdFECNPvM/WbB3G3kjU1GwXjAzJsvWnlrn1Ww9hkF41tQRirtfAPBajCS4KtmQIDt9nSVsD9FjsV4siZPSFCAEH9H2FKsVdjT6XwQa855ymzrREzZ7yOFSrmPqOc366yjVObEF+ARDpp95qBVsA5bfdZhMTMWrBtyOSWF0szAhD1Vqc/GzmEz4GSV8HzkmI0nYxCgohzfNQNrbL3YYIbSFi82MWEvYVohzCrT7SPiXh7ckE4gAV7Nb+U+LMNBwuWzLEa2hcGVzL32ve3TFaVrBiLOHTjjDYbKr5mBYASA1jMbEf4KpnEJvAbGIkBFacKUZVVa6Wll0InhfWKpLAThS7rXEihvQggQ+sW8xZziDXgzg+wsdJ5grDfOCEbJsG0MluVHlt3uLFSULMbU2YB174NQ2XVSaemZP9TJAN1rgahkVDoUNIyVNBWTAIVbDZZa4Z6qdloXF9fsn0jjXfLFZ8MESNzLcdvSYhvqpVzXkF1DAoxEdiB7rJW3essCZFuF+J42thonwUENE+d6nPGqj4ushkV//a8iXZKwR6d8gXxXFydV8J3LNgm74hIgoM2biaizE+55Qnmi2La0uPQqHpKLapQAVcJ7EOG7EXF2I8Lurpka34kJi56hRhGg3Wu3W33W6/ZGWyy7Vp/1R7ZR+IGbELHXYt17t3jShru47pHFPsTyDNYdIoL8GusF/7Vsy3ghpbGrRcSTbHesAoQOTHNXJfzZUTtNnJD5FkUzxKlXRqMECO+NKAvseXUTghEoeztUn7CrsgA77u5otvqsC5wB57A9YPtmv/ma1W+dCd+pGvsKJvwtISTifIQpeItYFhN2MxKepwrjUtxnvzqZeAynnVNFniB19zSYHGRbxhMpYl8s7oYjbI9TgBBpO0ksc5S/V3EpLvqM96M08+TsZTRMgDFiNE9IFOyCPc/IGw/Dsmv2me+LE6+vpJSFXR2I8OdxO6wK/OUUdc9VWr05IlObNxNrfCOmfLDi2BB+AFF2m9ISn0svTqQIvycyfC12ASqKMmV+Vwsi7P7opRiWFrh2sS9T5q6MctUJTEgBrlZUo9c4y9nqHILl1ypYd624i81S5vEFmPCHoG+Qzm+HWUvelkzJ9MxH1N1erCNqfMCFyT9UNfa4olunBfNGYvbyaUhz7gnF5zWISNz/yjY3SIAAVXNWId19JbQUw54EXhGcw2bJeYKYiAKEgAMzb+6CE6+ZN+/v3mVTZdryEzHlD2DC/p6i7KLJ6cpuuUkZRjDlu4v1VBgj0d/eU8oib7GcfxgWsuMQYeEI5Uaxor0NEiDstTDhN2DifggzXjkf0vme0tIbPo0FMCEFWDBPtjfaB42C8ai72TxZUZafCC/YwwOpUv5FOX0UmjPuSVhjPy+OUYVxKl57PKymufSifABH3RdcYsMECJ1F3IwIXRcdAgPjHkIaXwP7RDmtjIkmQLgP7Mp3rbU32q86G+HVSO8YeI8ZUecqEJWcfiTAoQL6f8RxKrpBn0E6u0TOL/BJEWDGa5wAAfDKJqLu681tS/1myneVfb2jYaIJUBw++oynu3q7vgT/T5nvtYhAjRpD3xHlEDH0RKhuue2EvYU1/m05/ydFgEjne8EtWLIql1Kps664bkdcvJZZHOjqwrbb7emweUaZ7qeHXoquAuLILtcrEwZ6mADhveDy0lQiBMhqwV8EiA/FawWpPiDhB4LpvNu8yUbBOMfMm7cUP8mlAp1eM8AHjyh/pnhnWIliD/62EGHwt3yOtgDFGC7xVcKvVzylfODKpRBll4kwKsKfr0idv4AI2zbUmFEwibClquYuBxeT/F0lYMIeGtEOje3BhD1cnr6bNdYmHhw46gcpfr2B3SmXHwdELKRcX5H7g+mWDSw71lxvXmyvs6cHP48Dzbq7ChP2GLxkjgj7WwW+jgh7LgXxmWV/uziElIUwzoSZj7CXVI1vkS/Hm2DfphLn9BGpWWcqacMIZowbKrF6QvWGyJaWA16PmcNmqWm7AD9ONJxsvYjGaQBUzblW1diNUn03qpT9OJgOYvyMXiMd/CxOwKEulXbOh9CtitScC1KwH4SLeMDclVNR2t4mfqGq+Gto48Pir2IVVOJ8WW5HggQJEiRIkCBBggQJEiRIkCBBggQJEiRI0FD8H9wdKQUZsytLAAAAAElFTkSuQmCC" alt="MARS"></div>
+    <div style="width:1px;height:26px;background:rgba(255,255,255,0.15);"></div>
+    <div class="hdr-title"><h1>Spain Development</h1><p>Portfolio de Proyectos BESS</p></div>
+  </div>
+  <div class="hdr-right">
+    <div class="lang-grp">
+      <button class="lang-btn on" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="hdr-pill" id="editorBtn" onclick="showPwdModal()">🔒 Editor</button>
+    <button class="hdr-pill green" id="editorBadge" style="display:none" onclick="exitEditor()">✏️ Editor · salir</button>
+  </div>
+</div>
+
+<div class="body">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-section" style="padding-top:16px;">
+    <div class="sb-label">Navegación</div>
+    <div class="sb-item active" id="nav-portfolio" onclick="showPage('portfolio')">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="8" y="8" width="6" height="6" rx="1" fill="currentColor" opacity=".25"/></svg>
+      Portfolio
+    </div>
+  </div>
+  <div class="sb-section" style="padding-top:12px;">
+    <div class="sb-label">Proyectos</div>
+    <div class="sb-proj">
+      <div class="sb-proj-item" id="nav-begues" onclick="openProject('begues')">
+        <div class="sb-dot" style="background:var(--green);"></div>
+        <div><div style="font-weight:600;">BEGUES I & II</div><div style="font-size:10px;color:var(--text-3);">100 MW · Barcelona</div></div>
+      </div>
+      <div id="sub-begues" style="display:none;" class="sb-sub">
+        <div class="sb-sub-item" onclick="openProject('begues');showTab('updates')">📋 Updates</div>
+        <div class="sb-sub-item" onclick="openProject('begues');showTab('cronograma')">📅 Cronograma</div>
+        <div class="sb-sub-item" onclick="openProject('begues');showTab('documentacion')">📁 Documentación</div>
+      </div>
+      <div class="sb-proj-item" id="nav-fregacedos" onclick="openProject('fregacedos')">
+        <div class="sb-dot" style="background:var(--green);"></div>
+        <div><div style="font-weight:600;">FREGACEDOS I, II & V</div><div style="font-size:10px;color:var(--text-3);">15 MW · Madrid</div></div>
+      </div>
+      <div id="sub-fregacedos" style="display:none;" class="sb-sub">
+        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('updates')">📋 Updates</div>
+        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('cronograma')">📅 Cronograma</div>
+        <div class="sb-sub-item" onclick="openProject('fregacedos');showTab('documentacion')">📁 Documentación</div>
+      </div>
+      <div class="sb-proj-item" id="nav-mutxamel" onclick="openProject('mutxamel')">
+        <div class="sb-dot" style="background:var(--red);"></div>
+        <div style="flex:1;"><div style="font-weight:600;">MUTXAMEL</div><div style="font-size:10px;color:var(--text-3);">5 MW · Alicante</div></div>
+        <div class="sb-badge">1</div>
+      </div>
+      <div id="sub-mutxamel" style="display:none;" class="sb-sub">
+        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('updates')">📋 Updates</div>
+        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('cronograma')">📅 Cronograma</div>
+        <div class="sb-sub-item" onclick="openProject('mutxamel');showTab('documentacion')">📁 Documentación</div>
+      </div>
+      <div class="sb-proj-item" id="nav-entrenucleos" onclick="openProject('entrenucleos')" style="opacity:0.7;">
+        <div class="sb-dot" style="background:var(--grey);"></div>
+        <div><div style="font-weight:600;color:var(--text-3);">ENTRENÚCLEOS</div><div style="font-size:10px;color:var(--text-3);">49 MW · Stand-by</div></div>
+      </div>
+      <div id="sub-entrenucleos" style="display:none;" class="sb-sub">
+        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('updates')">📋 Updates</div>
+        <div class="sb-sub-item" onclick="openProject('entrenucleos');showTab('documentacion')">📁 Documentación</div>
+      </div>
+    </div>
+  </div>
+  <div class="sb-section" style="padding-top:8px;">
+    <div class="sb-label">Pipeline</div>
+    <div class="sb-proj">
+      <div class="sb-proj-item" id="nav-custom_nuevas_oportunidades" onclick="openProject('custom_nuevas_oportunidades')">
+        <div class="sb-dot" style="background:var(--blue);"></div>
+        <div><div style="font-weight:600;">Nuevas Oportunidades</div><div style="font-size:10px;color:var(--text-3);">En análisis</div></div>
+      </div>
+      <div id="sub-custom_nuevas_oportunidades" style="display:none;" class="sb-sub">
+        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('updates')">📋 Updates</div>
+        <div class="sb-sub-item" onclick="openProject('custom_nuevas_oportunidades');showTab('documentacion')">📁 Documentación</div>
+      </div>
+    </div>
+  </div>
+  <div class="sb-footer">
+    <button class="sb-footer-btn" onclick="exportData()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 6l3.5 3.5L10 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 11h11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Exportar datos
+    </button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- PORTFOLIO PAGE -->
+<div id="page-portfolio">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <h2>Portfolio de Desarrollo</h2>
+      <p>Proyectos BESS Standalone en España · Seguimiento ejecutivo</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="week-badge" id="portfolioWeekBadge">Semana del 28/09 al 04/10</div>
+      <button class="btn btn-primary" onclick="openProject('begues')">+ Nuevo reporting</button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 15V8l6-6 6 6v7H3z" stroke="#3A7BD5" stroke-width="1.5" fill="none"/><rect x="7" y="10" width="4" height="5" rx="0.5" fill="#3A7BD5" opacity=".4"/></svg></div>
+        <div class="stat-num">120<span style="font-size:14px;font-weight:500;color:var(--text-3);"> MW</span></div>
+        <div class="stat-lbl">Potencia activa</div>
+        <div class="stat-sub">BESS en tramitación</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#399439" stroke-width="1.5"/><path d="M6 9l2 2 4-4" stroke="#399439" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-num">3</div>
+        <div class="stat-lbl">Clusters activos</div>
+        <div class="stat-sub">Begues · Fregacedos · Mutxamel</div>
+      </div>
+      <div class="stat-card navy">
+        <div class="stat-icon navy"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1" fill="#05233D" opacity=".5"/><rect x="10" y="2" width="6" height="6" rx="1" fill="#05233D" opacity=".5"/><rect x="2" y="10" width="6" height="6" rx="1" fill="#05233D" opacity=".3"/><rect x="10" y="10" width="6" height="6" rx="1" fill="#05233D" opacity=".3"/></svg></div>
+        <div class="stat-num">6</div>
+        <div class="stat-lbl">Proyectos</div>
+        <div class="stat-sub">Entrenúcleos en stand-by</div>
+      </div>
+      <div class="stat-card red" style="cursor:pointer;" onclick="openProject('mutxamel')">
+        <div class="stat-icon red"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l7 13H2L9 2z" stroke="#C8201E" stroke-width="1.5" fill="none"/><line x1="9" y1="7" x2="9" y2="11" stroke="#C8201E" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="13" r="0.7" fill="#C8201E"/></svg></div>
+        <div class="stat-num" style="color:var(--red);">1</div>
+        <div class="stat-lbl" style="color:var(--red);">Alerta</div>
+        <div class="stat-sub">Mutxamel requiere atención</div>
+      </div>
+    </div>
+    <!-- Map + Projects -->
+    <div style="display:grid;grid-template-columns:1fr 500px;gap:14px;margin-bottom:14px;">
+      <div class="card">
+        <div class="card-hdr">
+          <h3>Localización de proyectos</h3>
+          <span style="font-size:11px;color:var(--text-3);">Selecciona un punto para abrir su ficha</span>
+        </div>
+        <div class="map-wrap">
+          <svg class="map-svg" viewBox="420 -5 450 545" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#0A3660" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" stroke-linejoin="round" stroke-linecap="round">
+
+                
+        <path d="M708.7 68.2l0.1 0.3 0.4-0.1 0.5-0.3 0.8-0.1 0.9-0.3 0.3 0 0.8 0.4 0.4 0.3 0 0.2-0.1 0.4 0 0.5 0.3 0.9 0.2 0.3 0.5 0.2 0.5 0.1 0.5-0.1 0.4-0.3 0.2-0.4 0.4-1 0.6-0.4 0.8 0.1 1.2 0.3 1.7 0.9 0.5 0 0.4-0.2 0.5 0 1.1 1.2 0.2 2-0.4 2.2-0.7 1.8-0.5 0.7-1.6 1.8-0.4 0.4 0.5 1.2 0.8 0.9 0.9 0.5 1 0.3 1.1 0.1 0.7-0.3 0.3-0.7 0.1-1.5 0.3-1.1 0.7-0.8 0.9-0.3 0.9 0.2-0.9 0.8-0.3 0.7 0.2 0.7 0.7 0.8 0.7 0.5 2.4 0.4 1.4 0.8 1.3 1.1 1.5-0.2 0.4 0.1 0.6 0.5 0.3 0.2 1.4 0.2 0.7 0.2 0.5 0.6 1.4 1 1.5 0.5 3.3 0.3 3.1-0.6 1.1 0.4 0.5 1.6-1 0-1.4 0.7-0.3 0.5-0.1 0.4 0 0.4-0.1 0.3-1.1 1.5-0.2 0.5-0.1 0.4 0.1 0.9-0.3 1.6-0.4 1-0.4 0.3-0.5 0.3-0.3 0.2-0.3 0.7-0.8 0.3-1.1 1.1-0.5 0.3-0.5 0.3-1.9 0.5-0.3 0.3-0.1 0.4 0 0.4-0.1 0.4-0.2 0.7-0.1 0.3-0.5 0.3-0.8 0-0.4-0.1-2.4 0.3-0.3 0.3-0.1 0.4 0 0.3 0 0.3-0.4 0.2-0.3 0.1 0.1 0.1 0.7 0.3-0.1 0.2-0.2 0.3-1 0.6-0.5 0.5-0.3 0.5 0 0.5-0.3 0.2-0.3 0.2-0.4 0.1-0.7-0.3-0.5 0.1-0.3 0.2-0.2 0.4-0.3 0.5-0.2 0.4 0 0.5 0 0.3 0.1 0.3 0.2 0.4 0.1 0.2 0 0.4-0.2 0.5-0.6 1-1.1 1-0.9 1.4-0.2 1-0.1 0.6 0 0.4 0.2 0.3 0.3 0.2 0.2 0.3 0.1 0.3-0.2 0.5-1.2 1.4-0.8 1.3-0.2 0.7-0.2 0.6 0 0.4-0.2 0.8-0.2 0.6-0.3 0.7-0.2 0.5 0 0.5 0.1 0.4 0.1 0.4 0.3 0.3 0.2 0.4 0.1 0.4 0.1 0.4 0 1.1 0 0.5 0 0.7 0.1 0.4 0.2 0.3 0.6 0.6 0.2 0.3 0.1 0.3 0.1 0.4 0.2 0.4 0.3 0.3 0.3 0.2 0.4 0.1 0.4 0 0.3 0.2 0.1 0.5-0.1 0.9-0.3 0.6-0.8 1.1-0.7 1.2-0.6 1.3-0.2 0.4-0.1 0.5-0.5 0.6-0.3 0.4-0.3 0.5-0.2 0.3-0.2 0.1-0.3-0.1-0.7-0.2-0.4 0-1.2-0.4-0.3 0-0.3 0-0.2 0.1-0.6 0.4-0.8 0.1-0.3 0-0.4 0-0.7-0.3-0.7-0.5-0.2-0.2-0.5-0.7-0.3-0.3-0.3-0.2-0.7-0.3-0.7-0.3-0.4 0.1-0.7 0.4-0.4 0-0.4-0.1-0.8-0.3-0.3-0.2-0.3-0.3-0.5-0.6-0.3-0.3-0.4-0.2-0.3-0.2-1.6-0.1-0.3 0.1-0.5-0.3 0-0.1-0.1 0-0.1 0-0.5 0-1.5-1.3-0.3-0.6-0.2-0.5 0-0.5 0-0.4 0.1-0.4 0.1-0.4 1.7-1.9 0.5-0.6 0.3-0.3 0.1-0.4 0.2-0.3 0.2-0.3 0.3 0 0.5 0 0.4 0.3 0.4 0.1 0.4-0.1 0.8-0.3 0.4 0 0.4 0.1 0.8 0.5 0.4-0.1 0.4-0.1 0.2-0.2 0.1-0.4-0.1-0.4-0.1-0.5 0-0.3 0.1-0.1 0-0.2 0-0.2-0.1-0.3-0.2-0.4 0-1.2-1.2-0.8-0.8-0.3-2-1.1-1-0.9-0.4-0.3-0.2 0-0.6 0.1-0.3-0.1-0.2-0.3 0-0.4 0-0.5 0-0.3-1.6-1.1-3-3.7-2.3 0-0.9-0.3-0.6-0.9 0.2-0.1 0.2-0.3 0.2-0.3-0.8-0.8-1.2-0.1-2.7 0.2-0.8-0.1-0.6-0.2-0.5-0.4-0.5-0.6-0.3-0.4-1.2-0.8-0.4-0.2-2.6 0.4-1.7-0.6-0.9-0.2 0.2-0.8 0.3-2.9-0.1-1-0.1-0.4-0.2-0.3-0.3-0.1-0.4 0-0.8 1-0.3 0.2-0.4-0.1-0.6-0.4-0.3 0-0.3-0.3-0.2-0.3 0-0.3 0-0.4 0.6-0.6 0.4-0.2 0.7-0.6 0.6-0.6 0.8-0.7 0.3-0.1 0.4 0 0.4 0.1 0.2 0.1 0.2 0.2 0.3 0.6 0.3 0.2 0.7 0 0.4-0.1 0.4-0.2 1.2-0.8 0.2-0.3 0-0.5-0.1-0.3-0.4-0.1-0.3-0.2-0.3-2.1 0-0.4 0.3-0.5 1.1-0.4 0.3-0.3 0.1-0.5 0-0.9 0.1-0.8 0.4-1.3 0.9-1.4 0.1-0.5 0-0.5-0.6-2.3 0.7-1.3 0-0.3 0.2-0.4 0.2-0.3 0.5-0.5 0.5-0.1 0.8 0.4 0.3 0.1 0.8-0.1 0.4 0 0.5-0.1 0.4-0.2 0.4-0.3 0.7-1.1 0.4-0.2 1.1-0.2 0.4-0.3 0.2-0.3 0.2-0.6 0-0.4-0.1-0.4 0-0.5 0.2-0.4 0.3-0.7 0.6-1 2-1.5 0.5-0.3 0.6-0.4 0.4-0.5 0.6-1.1 0-0.6 0-0.5-0.2-0.4 0-0.4-0.1-0.8 0-0.5 0.3-1.1 0.1-0.3 0.3 0.1 0.5 0.3 0.2-0.1 0.2-0.1 0-0.3 0.1-0.3 0.2-0.1 0.3 0.1 0.3 0.1 0.4 0 0.6-0.3 0.5-0.5 0.6-1.1 0.6-1.1 0.4-0.4 0.3-0.3 1-0.3z m22.6 49.2l-0.3-0.5 0.1-0.7 0.3-0.3 0.6-0.3 0.3-0.3 0.3 0.2 0 0.6-0.3 0.8-0.5 0.4-0.5 0.1z m4.6-1.6l-0.5-0.1-0.8-0.2-0.6-0.1-0.5-0.4 0.1-0.5 0.2-0.6 0.1-0.4 0.5-0.5 0.3 0 0.3 0 0.1 0.5 0 0.6 0.4 0.2 0.4 0.5 0.3 0.2 0 0.5-0.3 0.3z" id="ESNC" name="Navarra, Comunidad Foral de">
+  </path>
+  <path d="M708.7 68.2l-1 0.3-0.3 0.3-0.4 0.4-0.6 1.1-0.6 1.1-0.5 0.5-0.6 0.3-0.4 0-0.3-0.1-0.3-0.1-0.2 0.1-0.1 0.3 0 0.3-0.2 0.1-0.2 0.1-0.5-0.3-0.3-0.1-0.1 0.3-0.3 1.1 0 0.5 0.1 0.8 0 0.4 0.2 0.4 0 0.5 0 0.6-0.6 1.1-0.4 0.5-0.6 0.4-0.5 0.3-2 1.5-0.6 1-0.3 0.7-0.2 0.4 0 0.5 0.1 0.4 0 0.4-0.2 0.6-0.2 0.3-0.4 0.3-1.1 0.2-0.4 0.2-0.7 1.1-0.4 0.3-0.4 0.2-0.5 0.1-0.4 0-0.8 0.1-0.3-0.1-0.8-0.4-0.5 0.1-0.5 0.5-0.2 0.3-0.2 0.4 0 0.3-0.7 1.3 0.6 2.3 0 0.5-0.1 0.5-0.9 1.4-0.4 1.3-0.1 0.8 0 0.9-0.1 0.5-0.3 0.3-1.1 0.4-0.3 0.5 0 0.4 0.3 2.1 0.3 0.2 0.4 0.1 0.1 0.3 0 0.5-0.2 0.3-1.2 0.8-0.4 0.2-0.4 0.1-0.7 0-0.3-0.2-0.3-0.6-0.2-0.2-0.2-0.1-0.4-0.1-0.4 0-0.3 0.1-0.8 0.7-0.6 0.6-0.7 0.6-0.4 0.2-0.6 0.6 0 0.4 0 0.3 0.2 0.3 0.3 0.3 0.3 0 0.6 0.4 0.4 0.1 0.3-0.2 0.8-1 0.4 0 0.3 0.1 0.2 0.3 0.1 0.4 0.1 1-0.3 2.9-0.2 0.8-0.8-0.1-1.4-0.4-1.2-0.7-0.4-1-0.4 0.1-0.3 0.3-0.2 0.3-0.2 0.4 0.1 0.1 0 0.1 0.1 0 0.1 0.2-0.8-0.1-0.7 0.1-0.5 0.3-0.5 0.5-0.1-0.9-0.4-0.3-0.4 0-0.2 0.2-0.3 0.4-0.6-0.3-1.4-1.1-0.4-0.2-0.3-0.1-0.1-0.9 0-0.8 0.1-0.3 0-0.4-0.2-0.4-0.4-0.5-1.4-1-0.5-0.1-0.6 0.2-0.3 0.3-0.2 0.4-0.3 0.9-0.5-0.1-0.5 0.3-0.3 0-0.3-0.1-0.3-0.4 0.1-0.3 0.4-0.5 0.1-0.3-0.1-0.5-0.6 0.3-0.2-0.4-0.1-0.7 0-0.5-0.2-0.7-0.4-0.5-2.6-2.2-1.1-0.5-1-1.3-0.6-0.3-0.8-0.5-1.1-1.1-1.3-0.7-1.2 0.6-1.1 0.3-0.1-0.1-0.6 0.1 0.2-0.5 0.1-0.4-0.2-0.4-0.3-0.3-0.2-0.3-0.2-0.4 0-0.4 0.2-0.4 0.2-0.5 0.5-0.6 0.4-0.7 0.3-0.6 0.1-0.6-0.2-0.4-0.2-0.2-0.4 0.1-0.6 0.8-0.3 0.3-0.3 0.2-0.7 0-0.4 0.1-0.4 0.2-0.2 0.3-0.2 0.3-0.2 0.3 0.1 0.3-0.1 0.3-0.2 0.2-0.3-0.2-0.3-0.2-1.2-1.6-0.6-0.5-0.2-0.3 0.1-0.4 0.1-0.4 0.2-0.4 0.6-0.6 0.5-0.7 0.2-0.4 0.2-0.3 0.4-0.3 1.4-0.2 0.5 0.1 0.4 0.1 0.4 0.2 0.2 0.3 0.2 0.7 0.3 0.3 0.3 0.2 0.3 0.1 0.8 0.1 0.4 0.1 0.4 0.1 0.4 0 0.7-0.2 0.8 0 0.4-0.1 0.3-0.2 0.5-0.5 0.3 0 0.6-0.2 0.2-0.1 0.1-0.3 0.1-0.3-0.1-0.3-0.2-0.3-1.1-0.4-0.6-0.4-0.3-0.4-0.2-0.3 0-0.5 0.5 0 0.7-0.1 0.3 0 0.1-0.1 0.1 0 0.1-0.2 0.2-0.4 0.1-0.4-0.1-0.3-0.3-0.4-0.8-0.2-0.3-0.4 0-0.3 0-0.3-0.2-0.2-0.3-0.2-0.8 0.4-0.7 1.6-0.5 0.2-0.3-0.1-1.2-0.1-1.2-0.3-0.3-0.2-0.2-0.2 0.2-0.4 0.2-0.3 0.3-0.6 0-1.3 0.2-1 0-0.7-0.2-0.4-0.7-0.3-0.2-0.3-0.1-0.5 0.3-0.9 0.2-0.4 0.7-0.6 0-0.5-0.1-0.2-0.3-0.2-0.9-0.1-1.3 0-0.9-0.2-0.7-0.6-0.2-0.1-0.3-0.1-0.4 0.1-0.4 0.2-3.4 2.1-2.5 1 0-0.7-0.3-1.2-0.2-0.4-0.2-0.3 0-0.4 0.1-0.4 0-0.4-0.1-0.5-0.1-0.3 0.1-0.5 0.4-0.6 3.4-2.5 0.5-0.4 0.5-0.2 2.5 0.1 1.1-0.1 0.9 0.3 0.3 0.1 1.8-0.9 0.2-0.4 0.2-0.5 0-1.6 0-0.4 0.7 0.3 0.8 0.1 0.9-0.8 1.3 0.8 2 1.8 0-0.4-0.5-1.4-0.1-0.7-0.2-0.4 0-0.2 0.2-0.2 0.5-0.2 0.5-0.6 1.7-1.1 0.7-0.2 0-0.4-0.3 0 0-0.3 0.7-0.4 1-0.1 2 0.1 2-0.2 0.8-0.4 0.7-0.2 0.5 0.1 0.9 0.6 0.8 0.8 0.3 0.6 0.5 1.4 0.1 1.2 0.2-0.2 0.3-1 0-0.3 0-0.3 0.1-0.3 0.2-0.3 0.4-0.1 0.5 0.2 0.5 0.2 1.2 0.2 2.4 1 1.7 0.4 0.9 0.3 0.8 1.2 2.3 1.1 1.6 0.8 1.6 0.5 1.8 0.2 1.7-0.2 1.4-0.4 0.4-0.1 0.3 0.2 0.2 0.4 0.4 0.4 0.5 0.2 0.1-0.1 0.1-0.1 0.2-0.1 0.3-0.1 0.2 0.1 0.1 0.3 0.1 0.2 0.3 0.2 1.2-1 0.5-0.1 0.8-0.2 2.9-1 0.9-0.6 0.5-0.2 0.5 0 0.5 0.4 0.3 0.5 0.3 0.3 0.6-0.4-0.2-0.2-0.4-0.4-0.2-0.2 1.6-0.8 1.5-1.3 1.5-0.8 0.7 0.5-0.1 0.6-0.1 1.2 0.1 0.7 1.1 0.5 0.5 0.7 0.2 1.1 0.1 0.2z m-61.4 3.2l-0.7-1-0.7-0.3 0 2.2 0.2 0.3 1.3-0.6-0.1-0.6z m25.4 25.6l-2.4-0.7-0.6-0.3-0.5-0.1-1.1-0.1-2.5 0.1-0.5 0.1-0.2 0.3-0.8 1.3-0.6 0.7-0.1 0.3 0.2 0.5 1 1 1.1 0.8 2.5 1.2 2.7 0.6 2 0.9 3.2 0.1 0.2 0 0.2 0.1 0.1 0.3 0.2 0.1 0.5-0.1 0.4-0.2 0.1-0.2 0-0.7-0.2-0.5 0-0.4-0.2-0.3-0.1-0.1-0.3 0-0.2 0.2-0.4 0.4-0.2 0.2-0.3 0.1-0.2-0.1-0.3-0.2-0.4-0.6-0.2-0.2-0.2-0.2-0.2-0.2-0.1-0.2 0-0.3 0.1-0.2 0.2-0.2 0.5-0.1 0.2-0.2 0.2-0.2 0.4-0.8 0-0.2 0.1-0.3 0.1-0.4-0.1-0.2-0.5 0-0.3 0-0.4-0.3-0.2-0.2-0.1-0.3-0.2-0.1-0.3 0-0.4 0.1-0.3 0.1-0.6-0.1z" id="ESPV" name="País Vasco">
+  </path>
+  <path d="M682.1 112.2l0.9 0.2 1.7 0.6 2.6-0.4 0.4 0.2 1.2 0.8 0.3 0.4 0.5 0.6 0.5 0.4 0.6 0.2 0.8 0.1 2.7-0.2 1.2 0.1 0.8 0.8-0.2 0.3-0.2 0.3-0.2 0.1 0.6 0.9 0.9 0.3 2.3 0 3 3.7 1.6 1.1 0 0.3 0 0.5 0 0.4 0.2 0.3 0.3 0.1 0.6-0.1 0.2 0 0.4 0.3 1 0.9 2 1.1 0.8 0.3 1.2 0.8 0 1.2 0.2 0.4 0.1 0.3 0 0.2 0 0.2-0.1 0.1 0 0.3 0.1 0.5 0.1 0.4-0.1 0.4-0.2 0.2-0.4 0.1-0.4 0.1-0.8-0.5-0.4-0.1-0.4 0-0.8 0.3-0.4 0.1-0.4-0.1-0.4-0.3-0.5 0-0.3 0-0.2 0.3-0.2 0.3-0.1 0.4-0.3 0.3-0.5 0.6-1.7 1.9-0.1 0.4-0.1 0.4 0 0.4 0 0.5 0.2 0.5 0.3 0.6 1.5 1.3 0.3 1-0.1 0.2-0.4 1.3-1.6 0.9-0.3 0.2-0.7 0.5-0.4 0.2-0.5 0.1-1 0.1-0.4-0.1-0.4-0.4-0.4-0.3-1-0.5-0.7 0-2.2-0.6-0.4-0.2-0.2-0.4-0.2-0.8-0.1-0.3 0.1-0.4 0.2-0.2 0.1-0.2 0.1 0 0-0.1 0-0.1-0.1-0.3-0.4-0.7-0.9-0.8-0.3-0.4-0.1-0.4 0-0.4 0-0.4 0.3-0.2 0.3-0.2 0.3-0.3 0.2-0.3 0-0.4-0.2-0.3-0.4-0.3-0.6-0.1-0.8-0.1-0.7 0.1-2.3 0.8-0.4 0-0.4-0.3-0.2-0.4-0.2-0.4 0-0.4-0.1-0.4-0.1-0.3-0.2-0.2-0.4-0.2-2.1-0.3-2.5 0.2-1.1 0.4-0.5 0.5-0.9 0.6-0.4 0.2-0.8-0.2-0.3 0.1-0.1 0.2-0.1 0.4 0 0.9-0.1 0.7-0.1 0.3-0.3 0.2-0.2 0.2-0.2 0.2-0.2 0.3-0.2 0.5-0.4 0.8-0.5 0.7-0.1 0.3-0.1 0.2 0 0.1-0.7 0-1.2-0.2-1.4 0.1-0.2 0.1-0.2 0-0.3-0.1-0.7-0.6-0.5-0.2-0.5-0.1-0.6 0-0.6-0.3-0.2-0.3 0.1-0.4 0.1-0.4 0.1-0.4 0.1-0.4 0.2-0.3 0.5-0.5 0.2-0.4 0.2-0.8 0-0.3-0.1-0.4-0.1-0.4-0.3-0.1-0.5-0.2-1 0.1-0.5 0.3-0.5 0.7-0.2 0.4-0.2 0.4-0.1 0.4 0 0.4 0.1 0.4 0 0.4-0.2 0.5-0.5 0.5-1.1 0.7-1.2 0.6-1.6-0.5-0.3-1.8-0.2-0.4-0.1-0.4-0.2-0.3-0.2-0.3-0.3-0.2-0.4 0-0.3 0.1-0.6 0.1-0.6 0-0.4 0-0.5 0-0.6-0.3-0.4-0.7-0.2-0.3-0.1-0.4-0.5-0.7-0.6-0.4-0.3-0.2-0.3-0.8-0.1-0.4-1.3-2 0-0.3 0.5-0.4 0.2-0.5 0.5-1.7 0.1-0.6 0-0.5 0-0.5-0.1-0.4-0.1-0.3-0.1-0.5-0.1-0.4 0-1-0.1-0.4-0.2-0.2-0.2-0.4 0.1-0.3 0.4-0.2 0.8-0.1 0.2-0.2 0.7-1.2 0-0.4-0.1-0.4 0-0.4 0-1.3 0.4-1.1 0-0.3-0.1-0.4-0.3-0.3-0.1-0.4-0.2-0.3-0.6-0.4-0.1-0.4 0.1-0.4 0.3-0.7 0.1-0.5 0-0.4-0.1-0.4-0.2-0.2-0.3 0-0.4 0-0.3 0.2-0.3 0-0.2-0.3 0.1-0.4 1.2-1.3 0.1-0.4 0.3-0.3 0.3-0.3 0.2-0.5 0-0.4-0.2-0.4-0.4-0.6 0.1-0.4 0.7-0.3 1.7-0.2 2.6 0.4 0.6 0.2 1.1 0.2 2.8-0.9 0 0.5 0.1 0.7 0.2 0.4 0.6-0.3 0.1 0.5-0.1 0.3-0.4 0.5-0.1 0.3 0.3 0.4 0.3 0.1 0.3 0 0.5-0.3 0.5 0.1 0.3-0.9 0.2-0.4 0.3-0.3 0.6-0.2 0.5 0.1 1.4 1 0.4 0.5 0.2 0.4 0 0.4-0.1 0.3 0 0.8 0.1 0.9 0.3 0.1 0.4 0.2 1.4 1.1 0.6 0.3 0.3-0.4 0.2-0.2 0.4 0 0.4 0.3 0.1 0.9 0.5-0.5 0.5-0.3 0.7-0.1 0.8 0.1-0.1-0.2-0.1 0 0-0.1-0.1-0.1 0.2-0.4 0.2-0.3 0.3-0.3 0.4-0.1 0.4 1 1.2 0.7 1.4 0.4 0.8 0.1z" id="ESRI" name="La Rioja">
+  </path>
+  <path d="M800.5 218.6l-0.2-0.2-2.5-1.1-0.4-0.2-0.3-0.5-0.1-0.4 0-0.4-0.3-0.3-0.5-0.4-1.2-0.7-2.9-1-0.9-0.5-0.4-0.4-0.3-0.7 0-0.5 0.2-0.5 0.2-0.3 0.1-0.3-0.4-0.4-0.5-0.4-0.9-0.2-0.5-0.5-0.2-0.4-0.1-0.4-0.2-0.2-0.8 0.2-1.1-0.2-0.2-0.7 0.2-0.2 2.2-1.3 0.3-0.3 0.3-0.7 0.8-0.9 0.2-0.4 0.2-0.4 0-0.4-0.4-0.9-0.1-0.5-0.1-0.5 0-0.4-0.3-0.8 0.1-0.6 0.1-0.4 0.2-0.4 0.1-0.4 0.1-0.4 0.5-0.7 0.2-0.5 0.2-0.4 0.1-1.3-0.6-1.9-0.6-0.5-0.6-0.3-0.7-0.5-0.4-1.5-0.2-0.7-0.1-0.3-0.2-0.4 0-0.4 0.1-0.4 0.1-0.4 0.2-0.3 0.4-0.3 0.4 0 0.3-0.1 0.3-0.2 0.1-0.3 0.3-0.2 0.7-0.2 0.4-0.2 0.3-0.3 0.2-0.3 0.3-1 0-0.5 0.1-0.4 0.2-0.4 0.3-0.4 0.6-0.4 0.5-0.2 0.4-0.3 0.1-0.1-0.2-1.2-0.1-1.3 1-2.2-0.1-1-0.4-0.7-0.5-0.6-0.7-0.3-0.3-0.1-0.2-1 0.6-0.9 0.4-1.5 0.1-1-0.1-1.1 0.1-0.3 0.4-0.3 1.2-0.4 0.3-0.2 0.1-0.1 0.1-0.1 0-0.1 0.1-0.2 0.1-0.3 0.2-0.3 0.8-1 0.2-0.3 0.2-0.4-0.2-0.4-0.2-0.4-0.1-0.4 0-0.4 0-0.4-0.2-0.5-0.4-0.1-0.4-0.1-0.4 0.1-1.2-0.2-0.4-0.2-0.2-0.3-0.1-0.4-0.2-1.2-0.5-1.3-0.1-0.4 0-0.4 0.6-0.9 0.9-0.9 0.6-0.9 0.3-0.3 0.3-0.3 0-0.3 0.3-0.3 0.1-0.2 0.3-0.2 0.3-0.1 1.4-0.3 0.4-0.2 0.4-0.5 0.4-0.9 0.5-0.9 0.2-0.2 0.2-0.2 0.3-0.1 0.8-0.2 0.3-0.2 0.3-0.4 0.4-0.6 0.6-0.4 0.3-0.2 0.3-0.3 0.2-0.3 0.2-0.4-0.1-1.8-0.1-0.4-0.1-0.2-0.4-0.3-0.5-0.5-0.1-0.3 0.2-0.3 0.2-0.4 0.3-0.3 0.4-0.2 0.3-0.1 0.3-0.1 0.2-0.2 0.3-0.6 0.2-0.3 0.2-0.2 0.5-0.2 0.2-0.2 0.2-0.3 0.1-0.6 0-0.5 0-0.3 0.5-1.2 0.7-2.2 0-0.3 0.4-0.3 0.2-0.5 0.1-0.6 0.2-1.1 0.1-0.6-0.1-0.6-0.1-0.3 0-0.5 0.2-0.6 0.1-0.4 0.3-1.7 0.1-0.2 0.2-0.3 0.3-0.5 0.3-1 0.1-0.4 0.1-1 0-0.7-0.1-0.2 0.2-0.7 0.1-0.6 0-1-0.2-2.3-0.3-1.4-0.3-0.6-0.2-0.4-0.2-0.2-0.1-0.1-0.2-0.2-0.1-0.4 0-0.6-0.1-0.4-0.2-0.5-0.1-0.4 0.1-0.4 0.3-0.2 0.3 0 0.1-0.1 0.2 0 0.1-0.2 0.1-0.1 0.1-0.3-0.1-0.6 0.1-0.5 0.1-0.3 0.2-0.2 0.2-0.5 0.2-0.4 0.2-0.3 0.1-0.3 0.1-0.2 0.1-0.4 0-0.7 0.1-0.3 0.1-0.4 0-0.2-0.1-0.3-0.5-0.2-0.8-0.2-0.4-0.1-0.3-0.3-0.3-0.5-0.6-1.5-0.8-1.5-0.5-0.4 0.1-0.1 0.1-0.9-0.3-0.8-0.5-0.7-0.6-0.2 0.3-0.5 0.1-0.3 0.3-0.2-0.4-0.6 0.6-1.6-0.1-1.1 0.2-0.8 0.9-0.4 1.1-0.1 0.7 0.1 1.4 0.6 0.7 0.1 0.8-0.1 0.7 0.2 1.7 1 1.2 0.5 0.4 0.2 0.6 0.7 0.5 0.2 0.3-0.2 0.4-0.4 0.4-0.1 0.4 0.1 0.6 0.6 0.3 0.2 3.5 0.2 0.8 0.3 0.8 0.6 0.3 0.8 0.4 0.9 0.4 0.7 0.7 0.5 0.4 0.1 1.4-0.5 4.9 0.1 1 0.2-0.2 0.8 0.2 0.2 0.4 0 0.3 0.2 0.7 1.3 0.8 1.1 0.7 1.9 0.6 0.7-0.2 0.4-0.2 0.5-0.1 0.5 0.4 0.3 0 0.2-0.7 1.1-0.1 0.7 0.9-0.2 0.7 0.7 0.1 0.8-0.8 0.6-0.2 0.1-0.7 0.3 1.2 1.8 0 0.7 0.4 0.4 2.5 0.3 0.3-0.1 0.5-0.2 0.2-0.3 0.2-0.4 0.2-0.2 1.2-0.2 1.4-0.1 1.3-0.6 0.4-1.5 0.2-0.1 0.1-0.1 0.1 0 0.1 0.2 0.5 0.2 0.5 0 0.4-0.2 0.4-0.5 0.1 0.1 0.1 0.1 0 0.1 0 0.2 0.8 0.3 2.5 0.4 0.8 0.3 2.3 1.6 0.9 0.2 0.8 0.1 0.6 0.2 0.6 0.9 0.5 2.1 0.4 0.8 0.8 0.7 0.5 0.4 0.5 0 1.1-0.1 0.6-0.1 0.5-0.4 0.7-0.7 0.9-0.7 0.2-0.3 0.3-0.8 0.2-0.3 0.7-0.3 1.9 0.2 2.5-0.8 1.2-0.1 1.2 0.6 0.5 0.4 2.3 1.1 1.3 0.3 0.6 0 0.3 0.9 0.6 0.9 0.8 0.6 0.8 0.2 0.8 0.5 0.4 0.1 0.5 0 0.2-0.3 0.4-0.9 0.3-0.2 0.8-0.1 1.8 0.7 0.9 0.1 1.1 0 0-0.3-0.5-0.5-0.4-1.1 0.3-0.4 1.7-1.4 0.7-0.4 0.9 0 1.5 0.2 0.9-0.1 0.6-0.4 1.3-1.2 0.6-0.4 0.7-0.1 0.6 0.1 0.7-0.2 1.4-1 1.3 0.5 0.6-0.4 0.5 0 1.2 0.1 0.2 0.1 0.3 0.6 0.3 0.5 0.4 0.4 0.5 0.3 0.8 0.3 1 0.1 1.1-0.1 1.7-0.3 0 0.8-0.4 1.1 0.2 0.9 0 0.9 0.5 0.8 0.7 0.6 0.9-0.2 0.9 0 0.6 0.7 0.2 0 0.5-0.4 0.5 0.1 1 0.7-1 1.9-0.1 0.5-0.2 0.8-0.3 0.4-0.3 0.3-0.3 0.6-0.7-0.3-1.5 0.3-1.2-0.5-0.4-0.6-0.7 0.2-0.9 0.9-0.5 1.2 0 1.9-0.1 1.3 0.3 1 0.6 0.7 1.4 0.9 0.8 1 0.9 1.3-0.1 0.7-0.5 0.5-0.2 0.8 0.3 0.8 0.2 1.1 0 0.4 0.2 0.3 0.7 0.6 0.3 0.4-0.2 1.1-1 1.7-0.5 1.4-0.7 0.7-1.1 1.7-1.3-0.2-1.6 1.2-0.4 1.5-1.1 0.6-3.6 2.9-0.8 1.2-1.3 0.3-0.9 0.2-1.1 0.3-0.4 0.1-0.2 0.1-0.6 0.6-0.2 0.2-0.1 0.4-0.4 0.1-0.5 0-0.5 1.3-5.1 2.1-8.2 3.8-0.8 0.9-2.4 1.6-3 1.3-1.2 0.9-1.1 1.5-1.9 3.5-1.2 1.6-1.3 1.2-2.8 1.6-1.7 0.4-2.7 0.3-2.7 0.7-0.9 0.5-0.4 0.1-1.3 0-7.9 2.4-3.5 0.3-10.1 3.8-2.9 0.6-0.3 0.2-0.7 1.3-0.1 0.4-0.2 0.3-0.5 0.3-0.9-0.6-0.3-0.1-1.8 0-1.7 0.3-1.6 0.7-1 0.7-4.6 4.5-2.2 3-4.4 4.5-0.8 1.5 1.1 0.7 1.1 0.4 0.5 0 0.2-0.3-0.1-0.4-0.6-0.4 0.7 0.1 0.6 0.3 0.4 0.4 1 1.2 1 0.9 0.5 0 0.8 0.2 0 1.1-0.6 1.2-0.4 0.5-2.6 0.8-1.1 1-2 3.1-1.2 1-1.2 0.4-1.3 0.2-0.9-1.5 1.9-0.3 0.9 0.7 1.4-0.8 1.4-2.4-0.8-0.1-1.2 0.1-3.3 1.1-0.8 0.5-0.7 0.8-0.6 0.9-1 2.5z m57.5-103.9l-0.1-0.6 0.5-1 0.4-0.2 0.5 0.5 0.4 1 0.4 0.7-0.1 0.1-0.4 0.1-0.1 0-1-0.1-0.5-0.5z" id="ESCT" name="Cataluña">
+  </path>
+  <path d="M704.5 139.3l0.5 0 0.1 0 0.1 0 0 0.1 0.5 0.3 0.3-0.1 1.6 0.1 0.3 0.2 0.4 0.2 0.3 0.3 0.5 0.6 0.3 0.3 0.3 0.2 0.8 0.3 0.4 0.1 0.4 0 0.7-0.4 0.4-0.1 0.7 0.3 0.7 0.3 0.3 0.2 0.3 0.3 0.5 0.7 0.2 0.2 0.7 0.5 0.7 0.3 0.4 0 0.3 0 0.8-0.1 0.6-0.4 0.2-0.1 0.3 0 0.3 0 1.2 0.4 0.4 0 0.7 0.2 0.3 0.1 0.2-0.1 0.2-0.3 0.3-0.5 0.3-0.4 0.5-0.6 0.1-0.5 0.2-0.4 0.6-1.3 0.7-1.2 0.8-1.1 0.3-0.6 0.1-0.9-0.1-0.5-0.3-0.2-0.4 0-0.4-0.1-0.3-0.2-0.3-0.3-0.2-0.4-0.1-0.4-0.1-0.3-0.2-0.3-0.6-0.6-0.2-0.3-0.1-0.4 0-0.7 0-0.5 0-1.1-0.1-0.4-0.1-0.4-0.2-0.4-0.3-0.3-0.1-0.4-0.1-0.4 0-0.5 0.2-0.5 0.3-0.7 0.2-0.6 0.2-0.8 0-0.4 0.2-0.6 0.2-0.7 0.8-1.3 1.2-1.4 0.2-0.5-0.1-0.3-0.2-0.3-0.3-0.2-0.2-0.3 0-0.4 0.1-0.6 0.2-1 0.9-1.4 1.1-1 0.6-1 0.2-0.5 0-0.4-0.1-0.2-0.2-0.4-0.1-0.3 0-0.3 0-0.5 0.2-0.4 0.3-0.5 0.2-0.4 0.3-0.2 0.5-0.1 0.7 0.3 0.4-0.1 0.3-0.2 0.3-0.2 0-0.5 0.3-0.5 0.5-0.5 1-0.6 0.2-0.3 0.1-0.2-0.7-0.3-0.1-0.1 0.3-0.1 0.4-0.2 0-0.3 0-0.3 0.1-0.4 0.3-0.3 2.4-0.3 0.4 0.1 0.8 0 0.5-0.3 0.1-0.3 0.2-0.7 0.1-0.4 0-0.4 0.1-0.4 0.3-0.3 1.9-0.5 0.5-0.3 0.5-0.3 1.1-1.1 0.8-0.3 0.3-0.7 0.3-0.2 0.5-0.3 0.4-0.3 0.4-1 0.3-1.6-0.1-0.9 0.1-0.4 0.2-0.5 1.1-1.5 0.1-0.3 0-0.4 0.1-0.4 0.3-0.5 1.4-0.7 1 0 0.2 0.4 0 0.4-0.1 0.2-0.1 0.3 0.2 0.5 0.4 0.4 0.4 0.1 0.4-0.1 0.4 0.1 1.4 0.9 0.8 0.6 1.5 2.1 0.1 0.2-0.1 0.2 0 0.2 0.3 0.2 0.6 0 0.2 0 0.2 0.4 0 0.3 0 0.3 0.4 0.3 0.3 0 0.7-0.5 0.3-0.1 0.1-1.3 1 0 2.2 1 1.2-0.1 1-0.6 1.9-1.5 0.4 0.3 0.3-0.1 0.3-0.4 0.2-0.5 0.6 0.5 0.1 0.1 2.4 1.4 0.4 1.1 1.1 0.1 1.2-0.3 0.7-0.3-0.1 0.9 0.3 1 0.5 0.8 0.6 0.5 0.3 0.3 0 0.4 0.1 0.4 0.5 0.2 0.5 0.1 0.3 0.3 0.1 0.2 0.3 0.3 1.6 0.6 1.4-0.1 3.1-1.2 2.5-0.3 0.7-0.6 0.7-0.1 2.1 0.6 0.7 0.3 0.8 1.6 0.7 0.7 0.6-0.1 1.1-1.6 0.7-0.7 0.8-0.3 1.1 1 0.1 0.2-0.1 0.2 0.1 0.2 0.2 0.2 0.8 0.2 0.8-0.1 1.5-0.4 0.7 0.3 5-0.1 1.4 0.2 0.6-0.2 0.2-0.5 0.5 0.4 0.8 1.5 0.6 1.5 0.3 0.5 0.3 0.3 0.4 0.1 0.8 0.2 0.5 0.2 0.1 0.3 0 0.2-0.1 0.4-0.1 0.3 0 0.7-0.1 0.4-0.1 0.2-0.1 0.3-0.2 0.3-0.2 0.4-0.2 0.5-0.2 0.2-0.1 0.3-0.1 0.5 0.1 0.6-0.1 0.3-0.1 0.1-0.1 0.2-0.2 0-0.1 0.1-0.3 0-0.3 0.2-0.1 0.4 0.1 0.4 0.2 0.5 0.1 0.4 0 0.6 0.1 0.4 0.2 0.2 0.1 0.1 0.2 0.2 0.2 0.4 0.3 0.6 0.3 1.4 0.2 2.3 0 1-0.1 0.6-0.2 0.7 0.1 0.2 0 0.7-0.1 1-0.1 0.4-0.3 1-0.3 0.5-0.2 0.3-0.1 0.2-0.3 1.7-0.1 0.4-0.2 0.6 0 0.5 0.1 0.3 0.1 0.6-0.1 0.6-0.2 1.1-0.1 0.6-0.2 0.5-0.4 0.3 0 0.3-0.7 2.2-0.5 1.2 0 0.3 0 0.5-0.1 0.6-0.2 0.3-0.2 0.2-0.5 0.2-0.2 0.2-0.2 0.3-0.3 0.6-0.2 0.2-0.3 0.1-0.3 0.1-0.4 0.2-0.3 0.3-0.2 0.4-0.2 0.3 0.1 0.3 0.5 0.5 0.4 0.3 0.1 0.2 0.1 0.4 0.1 1.8-0.2 0.4-0.2 0.3-0.3 0.3-0.3 0.2-0.6 0.4-0.4 0.6-0.3 0.4-0.3 0.2-0.8 0.2-0.3 0.1-0.2 0.2-0.2 0.2-0.5 0.9-0.4 0.9-0.4 0.5-0.4 0.2-1.4 0.3-0.3 0.1-0.3 0.2-0.1 0.2-0.3 0.3 0 0.3-0.3 0.3-0.3 0.3-0.6 0.9-0.9 0.9-0.6 0.9 0 0.4 0.1 0.4 0.5 1.3 0.2 1.2 0.1 0.4 0.2 0.3 0.4 0.2 1.2 0.2 0.4-0.1 0.4 0.1 0.4 0.1 0.2 0.5 0 0.4 0 0.4 0.1 0.4 0.2 0.4 0.2 0.4-0.2 0.4-0.2 0.3-0.8 1-0.2 0.3-0.1 0.3-0.1 0.2 0 0.1-0.1 0.1-0.1 0.1-0.3 0.2-1.2 0.4-0.4 0.3-0.1 0.3 0.1 1.1-0.1 1-0.4 1.5-0.6 0.9 0.2 1 0.3 0.1 0.7 0.3 0.5 0.6 0.4 0.7 0.1 1-1 2.2 0.1 1.3 0.2 1.2-0.1 0.1-0.4 0.3-0.5 0.2-0.6 0.4-0.3 0.4-0.2 0.4-0.1 0.4 0 0.5-0.3 1-0.2 0.3-0.3 0.3-0.4 0.2-0.7 0.2-0.3 0.2-0.1 0.3-0.3 0.2-0.3 0.1-0.4 0-0.4 0.3-0.2 0.3-0.1 0.4-0.1 0.4 0 0.4 0.2 0.4 0.1 0.3 0.2 0.7 0.4 1.5 0.7 0.5 0.6 0.3 0.6 0.5 0.6 1.9-0.1 1.3-0.2 0.4-0.2 0.5-0.5 0.7-0.1 0.4-0.1 0.4-0.2 0.4-0.1 0.4-0.1 0.6 0.3 0.8 0 0.4 0.1 0.5 0.1 0.5 0.4 0.9 0 0.4-0.2 0.4-0.2 0.4-0.8 0.9-0.3 0.7-0.3 0.3-2.2 1.3-0.2 0.2 0.2 0.7-1.1 0.4-1.5 0.1-0.6 0.1-0.5 0.1-0.3 0.2-0.4 0.3-0.3 0.3-0.4 0.3-0.4 0-0.3-0.2 0-0.3 0-0.4-0.2-0.4-0.2-0.3-0.7-0.2-2 0.2-1.1-0.2-1.8-1.2-0.6-0.6-0.3-0.3-0.4-0.3-0.6-0.2-0.7 0-0.4 0.2-0.8 0.9-0.2 0.4-0.2 0.3-0.2 0.8 0 0.8 0 0.4 0 0.4-0.2 0.3-2.1 1.1-0.3 0.3-0.5 0.3-0.3 0-0.7-0.5-0.6-0.1-0.5 0.1-0.5 0.3-0.3 0.3-0.1 0.4 0.1 0.4 0 0.4 0 0.8 0.1 0.3 0.3 0.2 0.4 0.1 0.3 0.1 0.3 0.2 0.4 0.1 0.3 0 0.7-0.2 0.3 0 0.3 0.1-0.1 0.8-0.1 0.4 0 0.4 0.1 0.7 0.1 0.4 0 0.4 0 0.8-0.1 0.3-0.1 0.4 0 0.3 0.1 0.3 0.6 0.4 0 0.1 0.2 0.6 0.1 0.3 0 0.4-0.2 0.2-1.8 0.7-0.4 0.4-0.3 0.4 0.1 0.4 0.1 0.4 0.2 0.3 0.7 0.5 0.2 0.2 0.5 0.7 0.3 0.3 0.1 0.4 0 0.6-0.3 0.3-1.6 1.1-0.3 0.4-0.7 1-0.5 0.5-0.8 0.7-0.1 0.3 0.1 0.4 0 0.4-0.1 0.6-0.2 0.4-0.4 0.3-1.4 0.7-0.4 0.1-0.8 0-0.3 0.1-0.4 0.1-0.3 0.1-0.2 0-0.6-0.2-0.4-0.2-0.3-0.2-0.4 0-0.3 0.3 0 0.4 0 0.7-0.1 0.4 0 0.3-0.1 0.8-0.3 0.5-0.2 0.4-0.1 0.8-0.2 0.5-0.3 0.5-0.6 0.4-0.6 0.7-0.2 0.4-0.1 0.4 0.1 0.4 0.2 0.7-0.1 0.3-2.8 1.5-1.5 0.2-0.7 0-0.3-0.1-0.3 0.1-0.2 0.3-0.1 0.8-0.2 0.5-0.4 0.5-0.1 0-0.5 0.4-0.4 0.1-1 0.5-0.2 0.4-0.2 0.3-0.1 0.8-0.1 0.4 0.2 0.3 0 0.3 0.1 0.8 0.4 0.7 0.2 0.2 0.4 0.2 0.4 0.6 0.3 0.5-2.3 1.1-0.5 0.2-0.7 0-0.4-0.1-0.4-0.3-0.2-0.3-0.1-0.4 0.1-0.4 0-0.4-0.1-0.3-0.2-0.3-0.1-0.3 0-0.4 0.1-0.4 0.1-0.3 0.1-0.4-0.2-0.5-0.5-0.7-2-0.9-0.7-0.2-0.5-0.1-0.7 0.1-1.4-0.1-1 0.2-0.8 0.3-0.3 0-1 0.3-0.6-0.4-0.7-2.1 0.9-0.2 1.9-1 0.3-0.2 0.3-0.4 0.1-0.3-0.1-0.4-0.1-0.3-0.5-0.6-1.3-1.1-1.1-0.7-2.5-0.3-0.8-0.4-0.3-0.3-0.2-0.3 0-0.3 0-0.2-0.2-0.2-0.3-0.2-0.3-0.2-0.2-0.4-0.2-0.3-0.4-0.7-0.2-0.8-0.2-0.2-0.2-0.1-0.5 0.4-0.3 0.4-0.1 0.5 0.2 0.8-0.1 0.4-0.2 0.3-0.7 0.4-0.9 0.2-1.2-0.1-2.2-0.5 0.3-0.5 0.1-0.6 0.1-0.4 0-0.4-0.1-0.3-0.2-0.3-1 0.2-0.5 0-0.6-0.3-0.5-0.1-0.5 0-0.5 0.3-0.3-0.1-0.6-0.4-4.2-4.1-1-0.6-0.6-0.1-0.4 0.2-0.2 0.2-0.2-0.1-0.1-0.7 0.2-0.4 0-0.6-0.2-0.7-1.6-2.3-0.7-0.7-1.2-0.5 0.5-0.7 0.2-0.1 0.3-0.2 1.3-2.1 0.4-0.4 0.4-0.3 0.7-0.4 0.3-0.3 0.3-0.4 0-1.9 0-0.7 0.7-1.9 0.2-0.4 0.2-0.2 1.1 0.3 0.3 0 0.7 0.3 0.3 0.2 0.3 0.2 0.4 0.1 0.3-0.1 0.7-0.4 0.4-0.2 0.2-0.4 0.2-0.3-0.2-1 0.1-0.6 0.2-0.9 0.3-0.7 0.1-0.4 0.1-1.1-0.2-0.6-0.2-0.7-0.3-0.5-0.2-0.4 0.1-0.6 0-0.4 0.2-0.5 0.4-0.8 0.1-0.5-0.1-1.3 0-0.4-0.2-0.4-0.3-0.5-1.1-0.7-0.5-0.6-0.3-0.4-0.3-0.7-0.3-0.8 0.1-1.8 0.1-0.4-0.5-1.1-1.4-1.2-0.2-0.3-0.4-0.5-0.3-0.3-2.2-1.9-0.5-0.7-0.3-0.3-0.1-0.4-0.2-0.3-0.3-0.4-2-1.7-1.3-0.8-1.7-1.2-1-0.5-0.5-0.3-0.4-0.4-0.2-0.4-1.1-0.3-3.3 1-0.3-0.4-0.9-0.7-0.4-0.2-0.4-0.1-0.3 0-0.8-0.1-0.3-0.1-0.3-0.3-0.2-0.4-0.1-2-0.3-2-0.1-0.4-0.1-0.3-0.4-0.7 0.1-1.8 0.2-1 0.3-0.4 0.2-0.2 0.3-0.1 0.3-0.2 0.2-0.3 0.3-0.4 0.2-1.2 0.1-0.5 0-0.4 0-0.5 0.2-0.4 0.2-0.3 0.4-0.3 1.2 0.2 0.7 0.2 0.3 0.3 0.2 0.3 0.1 0.4 0 0.4-0.1 0.4 0 0.4 0.1 0.3 0.3 0.2 0.4 0 0.3-0.1 0.7-0.6 0.7-0.3 0.4-0.2 0.4-0.1 0.3-0.1 0.2-0.2-0.2-2.3-0.2-0.5-0.2-0.4-0.3-0.3-0.3-0.6-0.1-0.9 0.1-1.9-0.2-1.5-0.3-0.2-0.1-0.4 0-0.3 0.1-0.4 0.3-0.4 0.3-0.1 0.2-0.2 0.2 0 0.2 0 0.3 0.1 0.8 0.3 0.3-0.1 0.3-0.3 0.2-0.3 0.7-0.9 0.8-0.4 0.4-0.3 0.4-0.5 0.4-0.2 0.4-0.1 0.4 0 0.4-0.2 0.3-0.5 0.4-0.9 0.2-0.5 0.2-0.5 0.1-0.7-0.4-0.5-0.3-0.2-0.2-0.3-0.1-0.4-0.3-0.7-0.7-1-0.3-0.4-0.1-0.4 0.1-0.5 0.4-0.8 0.3-0.3 0.2-0.4 0.1-0.4 0.1-0.5 0-0.4-0.9-1.2-0.6-1.7-0.2-2.7 0.4-1.3 0.1-0.2-0.3-1z m26.8-21.9l0.5-0.1 0.5-0.4 0.3-0.8 0-0.6-0.3-0.2-0.3 0.3-0.6 0.3-0.3 0.3-0.1 0.7 0.3 0.5z m4.6-1.6l0.3-0.3 0-0.5-0.3-0.2-0.4-0.5-0.4-0.2 0-0.6-0.1-0.5-0.3 0-0.3 0-0.5 0.5-0.1 0.4-0.2 0.6-0.1 0.5 0.5 0.4 0.6 0.1 0.8 0.2 0.5 0.1z" id="ESAR" name="Aragon">
+  </path>
+  <path d="M501.6 231.7l0.5 0.4 0.8 0.8 0.3 0.3 0.5 0.2 0.4 0.1 0.4 0 0.4-0.2 0.3 0 0.3 0.1 0.8 0.1 1.3-0.7 0.4-0.1 0.7 0.5 0.4 0 0.5-0.2 0.4-0.2 0.5-0.2 2.8-0.5 0.6-0.3 0.4-0.3 0.2-0.2 0.1-0.4 0-0.4-0.2-0.7 0-0.4 0.2-0.3 0.3-0.3 1.2-1 0.4-0.2 0.8-0.3 0.3-0.2 1.5-0.6 0.8-0.9 0.4-0.2 0.4-0.2 1.2-0.2 0.4-0.3 0.2-0.4 0.1-0.3 0.2-0.4 0.3-0.2 0.4-0.3 0.4-0.3 0.7-0.1 0.5-0.2 0.5-0.2 1.4-1 0.4-0.2 0.5-0.1 0.7 0.2 1.4 0.8 0.4 0.4 0.6 0.7 0.4 0.2 0.8 0.2 0.1 0.3 0 0.3 0.3 0.3 0.5 0.3 0.9 0.3 0.2 0.3 0 0.2-0.3 0.4 0 0.2-0.1 0.2-0.2 0.2 0 0.2-0.1 0.4-0.2 0.2-0.2 0.2 0.1 0.2 0.5 0.3 1.4 0.6 0.9 0.5 0.6 0.5 0.3 0.4 0.6 0.4 1.4 0.7 1.1 0.4 0.5 0.1 0.4-0.2 0.2-0.3 0.2-0.4 0.2-0.4 0.1-0.3 0.1-0.4 0.3-0.2 0.3-0.2 1.4-0.3 0.8-0.5 0.4-0.1 0.3 0.1 0.4 0.5 0.2 0.4 0 0.5-0.1 0.3-0.3 0.7 0.1 0.3 0.2 0.2 0.9 0.1 1.4-0.5 1.6 0.6 1.2 0.9 1.2 1.1 1 1.3 1 0.7 1.6 0.5 1.5-0.1 0.3 0 0.3-0.1 0.3-0.2 0.6-0.5 0.3-0.4 1.4-1.1 2-0.6 0.7-0.1 0.2 0.3 0 0.3-0.4 1-0.1 0.4-0.1 0.5 0.2 2.3 0.3 0.7 0.2 0.4 0.1 0.4 0.7 1.1-1.2 0.6-0.1 0.2-0.2 0.4-0.2 1.3 0 0.6 0.1 0.5-0.3 2.8-0.6 3.9 0 1.4 0.2 0.7 0.3-0.2 0.8-0.1 1.1-0.1 0.4 0.1 0.3 0.1 0.3 0.3 0.3 0.3 0.2 0.3 0.2 0.3 0 0.4-0.1 0.3-0.5 0.7-0.2 0.4-0.1 0.7 0 0.6-0.1 0.5-0.1 1.1 0.1 0.5 0.2 0.2 1.4 0.3 0.5 0.1 0.3-0.1 0.2-0.2 0.5-0.7 0.3-0.5 0.8-0.7 0.3-0.1 0.8-0.1 0.3 0 0.3 0.2 0.1 0.4 0.2 0.7 0 0.5-0.2 0.8 0.1 0.3 0.5 0.7 0.3 0.4 0.1 0.5-0.1 0.4-0.1 0.3-0.2 0.7-0.1 1.2-0.1 0.3-0.1 0.4-0.1 0.3-0.5 0.6-0.1 0.4-0.3 0.3-0.2 0.4-0.4 0.6-0.1 0.3 0.1 0.3 0.3 0.3 0.3 0.3 0.6 0.4 0.3 0.2 1.5 2 0.9 0.9 0.6 0.5 0.3 0.4 0.6 0.4 0.7 0.1 0.3 0.2 0.6 1 1.2 1.4 0.4 0.6 0.5 0.6 0.2 0.2 0.4 0.3 0.5 0.5 2.6 1.3 1-0.6 0.2-0.1 0.3-0.1 0.3-0.1 0.9-0.5 1.4-0.4 0.5-0.2 0.5-0.7 2-1.1 0.5-0.6 0.6 1.7-0.2 0.9-0.6 1.2-0.6 1.7-0.3 0.5-0.4 0.3-0.5 0.1-0.3 0.2-0.3 0.4 0 0.5 0.1 0.5 0.8 1.9 0.7 1.3 0 0.2 0.3 0.3 0.4 0.4 1.2 1.4 0.5 0.9-0.6 0-0.2-0.1-1.4-0.7-0.3-0.2-0.3-0.1-0.7-0.2-0.7 0.2-0.4 0-0.4 0-0.7-0.2-0.3 0-0.3 0.3-0.3 0.3-0.2 0.3-0.6 0.6-0.3 0.3-0.1 0.3-0.2 0.6-0.5 2.2 0 0.7 0.2 0.5 0.2 0.3 0.7 0.4 0.3 0.3 0.1 0.5-0.2 0.3-0.9 0.6-0.4 0.1-0.4 0.1-0.7-0.3-1-0.6-0.4-0.1-0.3-0.1-0.4 0.1-0.3 0.3 0 0.4 0.1 0.3 0.2 0.4 0 0.4 0.1 0.4 0.2 0.2 0.2 0.2 0.1 0.1 0.1 0 0 0.4 0 0.4 0.1 0.3 0.1 0.4 0.2 0.3 0.2 0.3 1.4 0.4 0.3 0.1 1.1 0.2 0.2 0.3 0.2 0.6-0.2 0.7-0.2 1.2-0.2 0.3-0.3 0-1.1-0.2-0.4 0.1-0.4 0.1-0.3 0.2-0.3 0.3-0.3 0.3-0.6 1.1-0.2 0.5-1 3.7-0.4 1-0.4 0.5-0.3 0.2-0.2 0-0.2 0-0.5 0.1-0.6 0.3-1.1 0.1-0.7 0.3-3.2 0.1-0.4 0.2-0.1 0.3 0.1 0.4 0.1 0.4-0.1 0.5-0.2 0.4-0.1 0.2-0.1 0.3-1.2 0.4-1.9 1.2-1.3 1.2-0.2 0.2-0.2 0.2-0.1 0.3-0.1 0.2 0 0.2-0.1 0.3-0.2 0-0.2 0.1-0.5-0.2-0.9 0-0.5 0.1-0.7 0.7-0.2 0.3-0.4 0.5-0.2 0.3-0.2 0.3-0.1 0.3 0 0.3-0.2 0.4-0.3 0.5-1.2 0.8-0.6 0.5-0.2 0.4-0.5 0.7-0.3 0.2-0.6 0.2-1.8 1-0.5 0.5-0.3 0.3-0.3 1.1 0 0.3 0 0.2 0.1 0.3 0.4 0.4 0.1 0.2 0 0.3 0 0.2-0.1 0.6-0.1 0.3 0 0.5 0 0.2 0.1 0.2 0.1 0.2 0.3 0.2 0.1 0.2 0.2 0.3 0.1 0.2 0.1 0.6 0.1 0.2 0.1 0.3 0.2 0.3 0.3 0.7 0.1 0.2 0 0.4 0 0.3 0.1 0.4 0 0.4 0.1 0.4 0 0.4-0.1 0.7-0.3 0.3-0.1 0.4-0.2 0.7 0 0.4 0 0.3-0.2 0.3-1.7 1.4-1.7-0.1-0.8 0.5-0.3 0.3-0.9 0.9-0.9 0.6-0.7 0.1-0.4 0-0.3-0.3-0.2-1.1 0-0.3 0-0.4 0.2-0.2 0.3-0.2 0.4-0.1 0.6-0.4 0.2-0.3-0.1-0.3-0.1-0.3-0.7-0.7-0.5-0.5-0.5-0.1-2.7 0.4-1.3 0.5-0.3 0.2-0.3 0.4-0.3 0.6-0.3 0.3-0.3 0.2-1 0.6-0.4 0.4-0.2 0.3-0.2 0.4-0.1 0.4 0 0.3 0.1 0.4 0.2 0.3 0.2 0.3 0 0.4-0.1 0.3-0.7 0.9-0.2 0.3 0 0.3-0.1 0.3-0.2 0.4-0.4 0.5-0.4 0.3-0.6 0.2-1.7 0.3-0.8 0.1-3 0.6-1 0.5-1.3 1-0.5 0.5-0.7-0.6-5.3-2.2-1-0.3-0.2-0.3 0-0.4-0.2-0.4-0.3-0.5-1.6-1.2-0.5-0.1-0.4 0-0.3 0.1-0.3 0.2-0.2 0.3-0.2 0.3-0.6 0.5-0.2 0.2-0.1 0.3-0.1 0.2-0.6 0-1-0.3-1.9-0.1-0.3-0.3-0.1-0.3 0.1-0.4-0.1-0.4-0.1-0.3-0.8-1.1-0.6-0.5-0.5-0.2-0.6-0.1-1.3-0.1-1 0.1-1.9 0-1.1-0.4-0.5-0.2-0.5-0.2-0.4-0.2-0.1-0.3 0.1-0.4 0.2-0.6 0.2-0.4 0.2-0.3 0.2-0.3-0.1-0.4-0.2-0.4-5.5-1.8-0.6 0.5-0.6-0.4-1.1 0.1-1.1 0.3-0.1 0-0.2-0.1-0.5 0.7-1 0.5-1 0.2-0.6 0-0.6-0.5-0.4-0.4-1.6-4.2-0.2-0.2-0.7-0.5-0.3-0.3-0.1-0.3-0.3-0.7-0.2-0.3-4.2-5.5-1.2-0.9-0.5-0.3 0.5-0.6 0.4-0.5 0.1-0.6-0.5-0.7 0.4-0.6 0.7-2.6 1.7-2.5 0.2-0.7-0.1-0.4-0.2-0.2-0.3-0.1-0.2-0.4 0-0.4-0.1-0.5 0.1-1.2 0.3-1.7 0.1-0.4 0.4-0.7 0-0.2 1.8-1.5 0.6-0.5 0.6-0.2 0.7-0.6 0.6-0.6 0.2-0.5 0.4-0.3 1.8-0.4 0.7-0.4 0.5-0.5 0.5-0.4 0.3-0.2 0-0.7 0.2-0.8-0.6-1.1 0.9-0.7 0.9-1.3 1.3-2.6 0.4-0.5 0.2-0.5 0-0.5-0.5-0.4 0.3-0.9-0.3-1-0.5-0.9-0.7-0.7-0.9-0.6-1.1-0.3-1 0.1-1 0.6-0.5 0.2-0.6-0.1-0.6-0.3-0.4-0.4-0.1-0.5 0.5-1 0.1-0.5-0.5-1-1-0.4-1.1-0.3-1-0.6-0.6-0.8-0.3-1.1 0.1-1.1 0.5-0.9-2-2.5-0.7-0.6-0.3-0.6-0.2-1.1 0-1.2 0.2-0.7 0.3-0.8 0.2-1.2 0-1.1-0.3-0.5-1.7-0.5-0.8-0.4-0.7-0.5-0.3-1.1-0.4-0.5-1.4-0.7-0.6-0.6-1.2-1.6-0.8-0.7-1.3-3.7-0.3-0.7 0-0.1 8.7 0.4 0.5-0.2 0.7-0.3 0.7-0.1 1.7 0 0.6-0.2 0.9 0.6 1.3 0 5.9-0.7 0.6-0.3 0.5-1.1-0.1-0.4-0.1-0.3 0-0.5 0.2-0.5 0.5-0.9 0.2-0.5-0.1-0.4-0.2-0.5 0-0.6 0.3-0.7 0.3-0.3 0.9-0.3 0.4-0.3 1-1.5 0.1-0.5 0.1-0.9 0-0.5 0-0.2-0.1-0.6 0-0.2 0.1-0.3 0.4-0.3 0.1-0.2 0.3-1.3 0.1-0.5-0.1-0.5 0.2-0.6 0.7-1.2-1.6-2.9-0.9-1.1-0.5-0.9-0.5-0.4-0.4-0.2-1.1-0.1-0.5-0.2-0.4-0.7-0.3-1.8-0.4-0.8 0.4-0.6 0.4-1.2 0.3-0.5 0.8-0.3 1.7-1.2 0.5 0 0.3-0.1 0.8 0.1 0.8-0.1 0.7-0.5 0.1-0.3 0-0.4z" id="ESEX" name="Extremadura">
+  </path>
+  <path d="M494.7 57.7l-0.1 0.4-0.1 0.1-1.2 1.1-0.6 0.9-0.4 0.4-0.3 0.2-0.3 0-0.3 0-0.4-0.1-0.4 0-0.5 0.1-0.3 0.3-0.1 0.4-0.1 1.1 0.1 0.3 0.1 0.3 0.6 0.2 0.7 0 0.2 0.2 0.2 0.3 0 0.4 0 0.5 0 0.5 0.2 0.6 0.2 0.6 0.3 0.4 0.5 0.6 0.4 0.1 0.3 0.2 0.3 0.3 0.3 2.4 0.3 0.5 0.2 0.4 0.3 0.3 0.9 0.8 0.3 0 0.3 0.1 0.4 0.6 0.7 0.3 0.3 0.1 0.3 0.2 0 0.3-0.1 0.3-0.2 0.8-0.1 0.6 0.1 0.4 0.3 0.4 0.2 0.3 0.3 0.2 0.4 0.1 0.6-0.3 0.8-0.4 0.4-0.2 0.3-0.2 0.2-0.3 0-0.3 0.2-0.4 0.3-0.2 0.3 0 0.3 0.3 0.4 0.6 0.6 1 0.2 0.6-0.1 0.5-1.5 1.4-0.4 0.2-1.4 0.6-0.4 0-0.4 0-0.3 0.1-0.2 0.1-0.2 0.3-0.1 0.3-0.1 0.4-0.1 0.5-0.3 0.4-0.3 0.2-0.3 0.1-0.3 0.4-0.1 0.6 0.2 0.6 0.3 0.6 0.4 0.2 0.2-0.1 0.2-0.1 0-0.1 0.1-0.1 0-0.2 0-1 0.1-0.1 0.3 0 0.8 1.2 0.1 0.2 0.4 0.3 0.3 0.1 0.4 0.1 0.7-0.1 0.4 0.2 0.9 0.9 0.4 0.5 0.1 0.6 0.2 2.1-0.4 0.5 0 0.5-0.2 0.4-0.7 0.8-0.1 0.7 0.4 1.3 0 0.5-0.2 0.6-0.2 0.5-1.3 1.6-0.9 1.2-0.4 0.4-0.5 0.2-0.3 0-0.3-0.1-0.4 0.1-1 0.9-1.1 0.6-0.2 0.1-0.5 0.7-0.2 0.4 0 0.5 0.1 0.7 0.2 0.5 0.3 0.4 0.3 0.3 0.1 0.4 0 0.3-0.4 0.3-0.3 0.3-0.3 0.3-0.2 0.5 0.1 1.5-0.1 0.6-0.7 1.6-0.1 0.4 0.1 1.1-0.4 1 1.8 0.1 1.8 0.4 0.4-0.1 0.1-0.1 0.1-0.2 0.2-0.1 0.4-0.3 0.8-0.2 0.5 0 0.4 0.2 0.5 0.4 0.2 0.1 2.9 0.8 0.5 1.1-0.1 0.5-0.1 0.9-0.1 0.5-0.2 0.4-0.3 0.4-0.1 0.2-0.3 0.1 2 1.7 1.3 0.9 0.7 0.7 0.1 0.5 0 0.4-0.1 0.4 0.1 0.8-0.1 0.3-0.1 0.4-0.1 0.4-0.5 0.6-0.5 1-0.6 0.5-0.6 0.8-0.1 0.4-0.2 0.7-0.2 0.1-0.8-0.3-0.6 0-0.8 0.2-0.7 0.4-0.6 0.6-1.4 1.4-0.3 0.5-0.2 0.3-0.4 1.5-0.3 0.3-0.4 0.2-0.3 0.2-0.3 0.3-1 1.5-0.5 0.5-0.2 0.5 0.1 0.3 0.3 0.3 0.3 0.2 0.3 0.1 0.8 0 0.3 0.2 0.4 0.6 0 0.2 0.1 0.2-0.7 1.7-0.2 0.4 0 0.4 0.2 0.5-0.1 0.6-0.3-0.2-1 0.7-1.4 0.6-1.3-0.6-1.2-1-1.3-0.9-0.6 0.1-0.7 0.4-0.6 0.5-0.3 0.3-0.1 0.8 0.3 1.7-0.1 0.9-0.5 0.7-0.4 0.5-1.3 0.9-2.9 1-0.7 0.1-1.5-0.1-0.6 0.1-0.5 0.4-1 1.1-0.5 0.5-0.2-0.9-0.4-0.9-0.5-0.7-0.6-0.2-0.3-0.1-0.7-0.4-0.3 0-0.3 0.3 0 0.3-0.1 0.3-0.2 0.4-0.6 0.5-0.8 0.3-0.9 0.1-0.7-0.1-0.7-0.3 0-0.5 0.6-1.8-2.1 0-0.7-0.4-1.2-0.8-0.6-0.2-1.1 0.6-2.5 0.6-1.1 0-0.5 0.1-0.1 0.3-0.2 0.4-0.3 0.3-1.2 0-0.3-1.6-0.1-1.5-0.8 0.3-0.2 0.7-0.2 0.9-0.4 0.7-0.7 0-0.7-0.1-0.6 0.3-0.5 0.5-0.4 0.6-1.3 1.4-0.1 0-1.7 0.6-3.5-0.3 0-0.1 0.2-1.3-0.1-0.7-0.3-0.4-1.4-0.6-0.5-1 0.1-1 0.4-0.9 1.5-2.4 1.2-1.1 1.2-0.8 0.6-0.5 0.4-0.7 0.1-1-0.3-0.8-0.6-0.6-0.8-0.3-0.8 0.1-0.7 0.3-0.7 0.2-0.5-0.4-0.1-0.9 0.1-2.3-0.3-0.9-0.4-0.5-1.2 0.9-0.8 0.3-0.7 0-0.3 0.1-0.3 0.2-1.1 1-0.6 0.3-6.3 1-0.7 0.3-1.4 1-0.8 0.3-1.4 0-0.8 0.2-0.6 0.5-0.4 0.6-0.4 1.1-0.3 0.6-0.9 0.5-1 0.3-0.9 0.5-0.5 0.3-0.4 0.9-0.6 0.9-0.8 0.6-0.8 0.2-0.7 0.4-0.6 0.8-0.7 0.6-0.6-0.2 0.1-0.8-0.8-10.6 0.1-0.9 0.4-0.4 1.6 0 0.8-0.2 0.3-0.5-0.2-0.5-0.8-0.3-0.1-0.4 0.2-0.2 1-0.5 0.1-0.3 0.1-0.5 0.2-0.5 0.4-0.2 0.2-0.2 0.8-0.9 2.1-1.7 0.5-0.2 0.2-0.1 1.3-1.2 0.7-0.3 0.9-0.6 0.2-0.3 0.2-0.4 0-1.7-0.1-0.4-0.1 0-0.4 0.1-0.6 0.6-0.4 1-0.6 1-1 0.4-0.8 0.2-2.2 1-0.4 0.5-0.5 0.1-2.1-0.2-0.8 0.3 0.2-0.7 0.4-1.2 0-0.8 0.3 0 0.5 0.9 0.3-0.4 0-1.8-0.1-0.4-0.1-0.3 0.2-0.1 0.5-0.1 1.5 0.3 0.2-0.1 0.3-0.7 1.5-1.8 0.7-0.7 1.3-0.9 0.6-0.5 0.3-0.8-0.4 0.2-0.3-0.1-0.4-0.1-0.4 0-0.1 0.1-0.1 0.1-0.9 0.5-1 0.8-0.5 0.4-0.9 0.2-1.3 0.1-1.3-0.2-1-0.6-0.3-0.6-0.2-1-0.3-0.6-0.5-0.3-1.4-0.2-0.3-0.2 0.3-0.6 0.7-0.4 0.9-0.4 0.6-0.1 0.5 0.1 0.3 0.5 0 0.5-0.5 0.4 0.3 0.2 0.6 0.2 0.6 0.1 0.4-0.1 0.1-0.6-0.1-0.7 0-0.5 0.5-0.5-0.5-1.9 0-0.9 0.1-0.8 0.4-0.7 0.5-0.4 0.5-0.2 0.5-0.7 1.5-3.3 0.3-1.3-0.2 0-0.3 0.9-0.4 0.9-0.5 0.6-0.7 0.3-0.8-0.3-0.5-0.7-0.4-0.9-0.5-0.4-0.7 1.1 0 0.7 0.4 0.5-0.9 1.2-0.5 0.3-0.6-0.4 0.2-0.6-0.5 0.3-1.4 1 0.6 0.7-0.5 0.4-1.4 0.4-0.1 0.3-0.3 1.3-0.4 0.1-0.3 0.3-0.6 0.7-0.6-0.7-0.1-1-0.2-0.9-0.9-0.4-0.6-0.6 0.2-1.3 0.6-1.4 0.5-0.9 0-0.6 0.1-0.8 0.3-1.1 0.4-0.7 0.2-0.4 0.3-0.4 0.5-0.1 0.1-0.2 1.2-0.6 1-1.5 0.6-0.5 1-0.3 0.3-0.4 0.2-0.8-0.1-0.9-0.8-0.5-0.2 1.3-0.6 0.8-0.9 0.4-1.1 0.1-2.1-0.3-0.8 0.2 0.1 0.9-0.9 1-0.5 0.3-0.8-0.2-0.5-0.4-0.3-0.7-0.2-0.9-0.4-1 0.5 0 0.4-0.2 0.3-0.4 0.2-0.5-0.3-0.7-0.6-0.4-0.7-0.3-0.1-0.4-0.2-0.7 0-0.4 0.1-0.2 0.3-0.4 0.1-0.3 0.1-0.5-0.1-0.4-0.2-0.2-0.7-0.1-0.4-0.2-0.6-1-0.5-0.2 0 0.3 0.2 0.6-0.2 0.3-0.4 0.1-0.2 0-0.2-0.8-0.4 0-0.4 0.3-0.4 0.3-0.3 0.5-0.4 1.1-0.3 0.5-0.2-0.1-0.4-1.3-0.3-0.4 0-0.3 0.2-0.5 0.9-2.3 0-0.4 0.1-0.4 0.1-0.5 0.2-0.3 0.1-0.5-0.2-0.3-0.6-0.5-0.3-1.3 0.3-0.3 0.6 0 0.2-0.5 0.3-1 0.4-0.5 0.5-0.3 0.2-0.7 0.6 0.6 0.5 0.1 0.5-0.2 0.6-0.5 0.2-0.3 0.1-0.2 0.2-0.3 0.4-0.3 0.3-0.2 0.3-0.1 0.7 0 0-0.4-0.7 0.3-0.9 0.2-0.6-0.1 0-0.4-1.3 0.6-0.5-0.1-0.4-0.9 1.9-1.9 1.3-0.7 1.5 0.7 0.7 0 0.7-0.2 0.6-0.2 0.5-0.4 0.5-0.4 0.4-0.7 0.2-0.8 0.3 0 0.8 0.6 1 0 1.1-0.5 0.7-0.5-0.9 0.1-0.4-0.4-0.6-1.2-0.2 0-0.5-0.3-0.3-0.3 0.3-0.2 0.4 0 1.6-0.7 1.7-1.2 1.3-0.3 0.3-0.4 0.3-0.3 0.4-0.1 0.6 0.3 1.2 1.3 0.7 0.3 0.8 0.1 1.5 0.5 0.8 0.1 1.1-0.4 1.4-0.8 1.5-0.5 1.4 0.6 2.1-1 0.4-0.3 0.1-0.5 0.3-0.5 0.4-0.3 0.9-0.2 0.1-0.2 0.1-0.2 0.3-0.2 2.2-0.6 0.1 0.7 0.4 0.6 0.9 0.8 0.5-0.7 0.1-0.5-0.1-1.3 0.4-0.7 0.8 0.1 1.2 0.8 0.6 0.2 0.2 0.5 0.2 0.6 0.3 0.6 0.9 0.9 0.4 0.6 0.3 0.8 0.3-0.9 0-0.8-0.3-1.7 0-0.9 0.2-0.5 0.4-0.4 0.8-0.5-0.8-0.4-0.7-0.1-1.4 0.1-0.7-0.2-1-1.1-0.7-0.2 0.8-0.6 4.1-0.6 0.3-0.1 0.2-0.2 0.2-0.4 0-0.4-0.2-0.1-1 0.5-2.4 0.4 0.1-0.2 0.1-0.1 0.3-0.1-0.1-0.2-0.4-0.2-0.5 0.7-0.8 0.3-1.8 0.1 0.3-0.8 0.2-1.2 0.2-0.8 0.4 0.2 0.6-0.8-0.4-0.3-0.3-0.4-0.2-0.6 0-0.6 0.2 0 0.7 0.1 0.3-0.1 0.9 0.1 1.2-0.6 5.9-4.5 0.1 0.6 0.4 0.4 0.4 0 0.5-0.2-0.4 0-0.2 0 0-0.4 0.2-0.1 0.2-0.2 0.2-0.1-0.8-0.6-0.1-0.6 0.2-0.6 0.1-0.7 0.3-0.4 0.6-0.2 1.3 0 1.2-0.3 1.2-0.7 1-0.9 0.8-1.1 1.1 0.1 0.5 0.8 0.3 1 0.6 0.8 0 0.3-0.3-0.1-0.4-0.1-0.2-0.1-0.3 0.5-0.1 0.5-0.1 0.4 0.3 0.4-0.4 0.4-0.2-0.1-0.3-0.3-0.2 0.3-0.1 0.1-0.2 0.1 0 0.3 2 0.2 0.4-0.5-0.8-1.2 0.5-0.3 0.5 0 1 0.3-0.1-0.2-0.1-0.4-0.1-0.2 0.6-0.6 0.7-0.6 0.8-0.5 1.6-0.4 0.9-0.6 0.7-0.8 0.2-0.9 0.2-0.1 0.3 0.1 0.3 0.4 0.1 0.6-0.2 0.4-0.9 1.1-0.1 0.8 0.2 0.3 0.3-0.1 0.4-0.2 0.1-0.1-0.1-0.3 0.1-0.3 0.3-0.1 0.3 0 0.7-0.4 0.1 0.8 1 1.9-0.1 0.9 0.3-0.1 0.5-0.7 0.4-0.8 0.5 0.2 0.3-0.3 0.4-0.5 0.6-0.2 1.6 0.2 0.5 0.2 3.3 1.9 1.6 0.6 2.6 4.5 1.9 1-0.1 0.2-0.1 0.2-0.1 0.2-0.3 0.1 0 0.4 0.6 0.3 0.3-0.2 0.3-0.3 0.5-0.2 0.6 0 0.8 0.3 1.5 0.2 2.5-0.1 0.7-0.4 0.7 0.4 0.7 0.1 0.5 0.4 0 1.1-0.3 0.6-0.4 0.7-0.2 0.7 0.3 0.7z" id="ESGA" name="Galicia">
+  </path>
+  <path d="M501.6 231.7l0.1-0.5 0.1-0.4 0.3-0.3 1.7-1.3 0.4-0.3 0.7-1.3-1.4-1.3-0.9-1.5-0.3-1.8 0.8-1.8 0.9-1.4 0.1-0.6-0.2-0.9-0.4-0.8-0.5-0.4-0.3-0.6-0.1-0.9 0.3-0.8 0.9-1.8 0.3-0.9 0-0.6-0.1-1-0.3-1.7-0.5-1.8-0.1-0.7 0-1.1 0-0.5 0.2-0.3 0-0.3-0.1-0.6-0.1-0.3 0.1-1.4 0.6-0.2 0.2-0.6-0.2-0.8-0.4-0.3-0.7-0.1-0.3-0.5-0.3-1.1-0.9-2.2-0.6-0.9-1.2-1.4-0.4-0.6-0.1-0.7 0.4-0.7 0.2-1 0.8-0.4 2.5 0.2 1.1-0.1 0.6-0.6 1.6-2.3 0.3-1-0.1-1.3 0.2-0.4 0.5-0.7 1.4-1.2 0.2-0.5 0.3-0.8 1.5-2.1 0.4-0.6 0.8-0.1 2.6 0 0.4-0.3 2.3-1 0.6-0.5 0.8-0.6 1.3-1.3 1.2-2.1 0.2 0 0.5 0.1 0.1-0.1 0.1-0.3 0.1-0.4 0-0.3-0.2 0 0.6-0.5 0.5-0.2 1.3-0.1 0-0.4 1.5-2.5 0.1-0.4-0.2-0.3 0-0.5 0.3-0.5 1-1.1 1.9-2.9-0.4-0.5-0.5-0.8-1.7-1.8-1.8-1.2-2-0.7-3.3-0.7-0.5 0-0.3 0.2-0.3 0.4-0.5 0.4-0.7 0.3-0.4 0.1-1.1-0.4-0.6-0.9-0.2-1.1-0.1-1-0.2-0.5-0.2-0.5-0.2-0.4 0.3-0.5 0.3-0.5 0.1-0.5 1-4.4 0.5-1-1.1-0.4-0.7-0.1-0.3-0.4 0.3-2.3-0.1-0.9-0.6-0.7-1-0.4-0.5 1.2-1.4 0.4-2.8 0.1-1.3-0.3-1.4-2.3-1.3-0.3-0.2 1.7-1 0.6-2.5 0.2-1.1-0.3-1-0.7-0.6-0.3 0.1-0.6-0.2-0.5 0-0.4 0.2-0.4 0.7-1.7-0.1-0.2 0-0.2-0.4-0.6-0.3-0.2-0.8 0-0.3-0.1-0.3-0.2-0.3-0.3-0.1-0.3 0.2-0.5 0.5-0.5 1-1.5 0.3-0.3 0.3-0.2 0.4-0.2 0.3-0.3 0.4-1.5 0.2-0.3 0.3-0.5 1.4-1.4 0.6-0.6 0.7-0.4 0.8-0.2 0.6 0 0.8 0.3 0.2-0.1 0.2-0.7 0.1-0.4 0.6-0.8 0.6-0.5 0.5-1 0.5-0.6 0.1-0.4 0.1-0.4 0.1-0.3-0.1-0.8 0.1-0.4 0-0.4-0.1-0.5-0.7-0.7-1.3-0.9-2-1.7 0.3-0.1 0.1-0.2 0.3-0.4 0.2-0.4 0.1-0.5 0.1-0.9 0.1-0.5-0.5-1.1-2.9-0.8-0.2-0.1-0.5-0.4-0.4-0.2-0.5 0-0.8 0.2-0.4 0.3-0.2 0.1-0.1 0.2-0.1 0.1-0.4 0.1-1.8-0.4-1.8-0.1 0.4-1-0.1-1.1 0.1-0.4 0.7-1.6 0.1-0.6-0.1-1.5 0.2-0.5 0.3-0.3 0.3-0.3 0.4-0.3 0-0.3-0.1-0.4-0.3-0.3-0.3-0.4-0.2-0.5-0.1-0.7 0-0.5 0.2-0.4 0.5-0.7 0.2-0.1 1.1-0.6 1-0.9 0.4-0.1 0.3 0.1 0.3 0 0.5-0.2 0.4-0.4 0.9-1.2 1.3-1.6 0.2-0.5 0.2-0.6 0-0.5-0.4-1.3 0.1-0.7 0.7-0.8 0.2-0.4 0-0.5 0.4-0.5 1.3 0.2 0.8 0.4 0.2 0.5 0.3 0.1 0.5-0.3 0.3-0.3 0.3-0.3 0.3-0.4 0.4-0.2 0.7-0.3 0.8-0.1 1.9 0 0.5 0.1 0.3 0.1 0.3 0.2 1.9 0.2 0.4-0.1 1.4-0.6 0.6-0.1 2.1-1.1 0.2-0.4 0-0.3-0.2-0.3-0.7-0.2-0.4-0.3-0.2-0.3 0.1-0.3 0.2-0.2 1.1 0 0.9-0.3 0.3-0.2 0.1-0.2 0-0.3 0.1-0.3 0.2-0.4 0.2-0.3 0.2-0.4 0.2-0.4 1.1-0.5 0.7 0.2 0.4 0.3 0.3 0.3 0.8 0.2 0.6 0 1.7 0.9 0.8 0.2 0.3-0.1 0.2-0.2 0.1-0.8 0.3-0.3 0.5-0.1 1 0.2 1.1 0.4 0.5 0.2 0.5-0.1 0.8-0.4 0.3-0.3 0.1-0.5 0.1-0.4 0.1-0.3 0.4-0.1 2 0.4 0.5 0 1.2-0.3 0.4 0.3 0.2 0.3 0.2 0.8 0.1 0.4 0.2 0.4 0.2 0.3 1 0.6 0.5 0.4 0.5 0.4 0.5 0.1 0.1 0.3 1.1 0.4 0.3 0.2 0.4 0.1 1.6 0.1 0.7-0.1 0.4-0.1 0.4-0.4 0.1-0.4 0.2-0.3 0.1-0.3 0-0.1 0-0.2 0.1-0.3 0.2-0.3 0.3-0.3 0.2-0.4 0.2-0.3 0.2-0.4 0.4-0.2 0.6-0.2 1-0.1 0.6 0.1 1.1 0.6 0.9 0.2 0.6 0 0.9 0.1 0.3 0.3 0.4 0.2 0.4 0.1 0.4 0 1-0.4 0.7 0 0.3 0 0.2-0.3 0.2-0.3 0.1-0.4 0.2-0.3 2.2 0 0.5-0.1 0.4-0.2 0.3-0.4 0.3-1.1 0.4-0.3 0.5-0.1 2.1 0.3 3.9-0.4 2.1-1.1 0.4 0 0.4 0.2 0.4 0.1 0.5 0 0.6-0.6 0.3-0.5 0.3-0.9 0.1-0.4 0.1-0.4 0.4-0.8 0.4-0.3 0.7-0.4 1.5-0.4 1.3-0.7 0.6-0.6 2.2-1.2 0.4 0 0.4 0 0.3 0.2 0.8 0.6 1.2 1.9-0.2 3 0.1 0.6 0.2 0.9 0.3 0.4 0.4 0.3 1.6 0.9 0.3 0.4 0.2 0.5 0.8 0.8 0.2 0.4 0.3 1.4 0.8 0 0.7-0.2 2 0 1.6-0.3 1.4 0.1 0.5-0.1 1.4-0.7 0.5-0.1 0.6 0 0.4-0.2 0.8-0.4 0.6 0 0.5 0.1 1 0.5 0.4 0.3 0.8 1.4 0.1 0.4 0.1 0.1 0.2 0.4 0.6 0.4 4.1 1.5 0.6 0.4 0.1 0.4-0.1 0.4 0 0.4 0.1 0.7 0.2 0.8 0.1 0.4 0 0.4 0.1 0.4 0 0.4 0.1 0.4 0 0.3 0 0.2 0.1 0.3 0.2 0.3 0.3 0.1 0.3 0.1 0.2-0.1 0.5-0.5 0.4-0.2 1-0.3 0.4 0.2 0.2 0.2 0.1 0.5-0.1 0.3-0.3 0.3-0.3 0.2-0.4 0-0.7 0.2-0.3 0.2-0.1 0.3 0.1 0.3 0.3 0.4 0.8 0.7 0.4 0.1 1.1 0.1 0.4 0.2 0.4 0.2 0.2 0.3 0.4 0.7 1.6-0.4 1.1-2.5 0.3-0.2 0.3-0.2 0.1 0.1 0.1 0.3 0 1.3 0.1 0.4-0.1 0.9 1.4 0.4 0.6-0.1 0.8-0.3 0.5-0.2 1.4-1.3 0.7-0.2 1.4 0 0.4-0.2 0.2-0.4 0-0.3 0-0.4-0.1-0.3-0.3-0.6-0.1-0.4 0.1-0.6-0.1-0.4-0.1-0.4-0.4-0.2-0.4 0-0.5 0.2-0.3 0.4-0.3 0.6-0.3 0.2-0.4 0-0.2-0.3-0.2-0.3 0-0.4-0.2-0.6 0.1-0.3 0.3-0.2 0-0.3 0.1-0.2 1.1-0.1 1.2-0.8 0.3-0.4-0.1-0.4-0.2-0.3-0.3-0.4-0.3-0.2-0.4-0.2-0.3 0.1-0.3 0.2-0.2 0.3-0.4 0.7-0.3 0.3-1 0.6-0.8 0.2-0.4 0-0.4-0.1-0.3-0.3-0.3-0.3-0.1-0.4 0-0.4 0-0.4 0.9-2.6 0.4-0.7 0-0.1 0.3-0.2 0.4-0.2 0.7-0.4 0.9-1 0.6-0.3 0.6-0.2 0.4-0.3 0.5-0.5 0.2-0.5 0-0.5 0-0.5 0.3-0.2 0.3-0.1 0.4-0.1 1.2 0.1 0.3 0 0.4-0.2 0.6-0.5 0.8-0.5 0.4-0.4 0.6-0.6 1-1.3 0.8-0.9 0.6-0.4 0.4 0 0.4 0.1 0.6 0.5 0.4 0.2 1.2 0.2 1.1 0.3 1.1 0.5 0.8 0.2 0.7-0.1 1.2 0.2 1.1-0.1 2.5-1 3.4-2.1 0.4-0.2 0.4-0.1 0.3 0.1 0.2 0.1 0.7 0.6 0.9 0.2 1.3 0 0.9 0.1 0.3 0.2 0.1 0.2 0 0.5-0.7 0.6-0.2 0.4-0.3 0.9 0.1 0.5 0.2 0.3 0.7 0.3 0.2 0.4 0 0.7-0.2 1 0 1.3-0.3 0.6-0.2 0.3-0.2 0.4 0.2 0.2 0.3 0.2 1.2 0.3 1.2 0.1 0.3 0.1 0.5-0.2 0.7-1.6 0.8-0.4 0.3 0.2 0.2 0.2 0 0.3 0 0.3 0.3 0.4 0.8 0.2 0.3 0.4 0.1 0.3-0.1 0.4-0.2 0.4-0.1 0.2-0.1 0-0.1 0.1-0.3 0-0.7 0.1-0.5 0 0 0.5 0.2 0.3 0.3 0.4 0.6 0.4 1.1 0.4 0.2 0.3 0.1 0.3-0.1 0.3-0.1 0.3-0.2 0.1-0.6 0.2-0.3 0-0.5 0.5-0.3 0.2-0.4 0.1-0.8 0-0.7 0.2-0.4 0-0.4-0.1-0.4-0.1-0.8-0.1-0.3-0.1-0.3-0.2-0.3-0.3-0.2-0.7-0.2-0.3-0.4-0.2-0.4-0.1-0.5-0.1-1.4 0.2-0.4 0.3-0.2 0.3-0.2 0.4-0.5 0.7-0.6 0.6-0.2 0.4-0.1 0.4-0.1 0.4 0.2 0.3 0.6 0.5 1.2 1.6 0.3 0.2 0.3 0.2 0.2-0.2 0.1-0.3-0.1-0.3 0.2-0.3 0.2-0.3 0.2-0.3 0.4-0.2 0.4-0.1 0.7 0 0.3-0.2 0.3-0.3 0.6-0.8 0.4-0.1 0.2 0.2 0.2 0.4-0.1 0.6-0.3 0.6-0.4 0.7-0.5 0.6-0.2 0.5-0.2 0.4 0 0.4 0.2 0.4 0.2 0.3 0.3 0.3 0.2 0.4-0.1 0.4-0.2 0.5 0.6-0.1 0.1 0.1 1.1-0.3 1.2-0.6 1.3 0.7 1.1 1.1 0.8 0.5 0.6 0.3 1 1.3 1.1 0.5 2.6 2.2 0.4 0.5 0.2 0.7-2.8 0.9-1.1-0.2-0.6-0.2-2.6-0.4-1.7 0.2-0.7 0.3-0.1 0.4 0.4 0.6 0.2 0.4 0 0.4-0.2 0.5-0.3 0.3-0.3 0.3-0.1 0.4-1.2 1.3-0.1 0.4 0.2 0.3 0.3 0 0.3-0.2 0.4 0 0.3 0 0.2 0.2 0.1 0.4 0 0.4-0.1 0.5-0.3 0.7-0.1 0.4 0.1 0.4 0.6 0.4 0.2 0.3 0.1 0.4 0.3 0.3 0.1 0.4 0 0.3-0.4 1.1 0 1.3 0 0.4 0.1 0.4 0 0.4-0.7 1.2-0.2 0.2-0.8 0.1-0.4 0.2-0.1 0.3 0.2 0.4 0.2 0.2 0.1 0.4 0 1 0.1 0.4 0.1 0.5 0.1 0.3 0.1 0.4 0 0.5 0 0.5-0.1 0.6-0.5 1.7-0.2 0.5-0.5 0.4 0 0.3 1.3 2 0.1 0.4 0.3 0.8 0.3 0.2 0.6 0.4 0.5 0.7 0.1 0.4 0.2 0.3 0.4 0.7 0.6 0.3 0.5 0 0.4 0 0.6 0 0.6-0.1 0.3-0.1 0.4 0 0.3 0.2 0.2 0.3 0.2 0.3 0.1 0.4 0.2 0.4 0.3 1.8 1.6 0.5 1.2-0.6 1.1-0.7 0.5-0.5 0.2-0.5 0-0.4-0.1-0.4 0-0.4 0.1-0.4 0.2-0.4 0.2-0.4 0.5-0.7 0.5-0.3 1-0.1 0.5 0.2 0.3 0.1 0.1 0.4 0.1 0.4 0 0.3-0.2 0.8-0.2 0.4-0.5 0.5-0.2 0.3-0.1 0.4-0.1 0.4-0.1 0.4-0.1 0.4 0.2 0.3 0.6 0.3 0.6 0 0.5 0.1 0.5 0.2 0.7 0.6 0.3 0.1 0.2 0 0.2-0.1 1.4-0.1 1.2 0.2 0.7 0 0-0.1 0.1-0.2 0.1-0.3 0.5-0.7 0.4-0.8 0.2-0.5 0.2-0.3 0.2-0.2 0.2-0.2 0.3-0.2 0.1-0.3 0.1-0.7 0-0.9 0.1-0.4 0.1-0.2 0.3-0.1 0.8 0.2 0.4-0.2 0.9-0.6 0.5-0.5 1.1-0.4 2.5-0.2 2.1 0.3 0.4 0.2 0.2 0.2 0.1 0.3 0.1 0.4 0 0.4 0.2 0.4 0.2 0.4 0.4 0.3 0.4 0 2.3-0.8 0.7-0.1 0.8 0.1 0.6 0.1 0.4 0.3 0.2 0.3 0 0.4-0.2 0.3-0.3 0.3-0.3 0.2-0.3 0.2 0 0.4 0 0.4 0.1 0.4 0.3 0.4 0.9 0.8 0.4 0.7 0.1 0.3 0 0.1 0 0.1-0.1 0-0.1 0.2-0.2 0.2-0.1 0.4 0.1 0.3 0.2 0.8 0.2 0.4 0.4 0.2 2.2 0.6 0.7 0 1 0.5 0.4 0.3 0.4 0.4 0.4 0.1 1-0.1 0.5-0.1 0.4-0.2 0.7-0.5 0.3-0.2 1.6-0.9 0.2 2.7 0.6 1.7 0.9 1.2 0 0.4-0.1 0.5-0.1 0.4-0.2 0.4-0.3 0.3-0.4 0.8-0.1 0.5 0.1 0.4 0.3 0.4 0.7 1 0.3 0.7 0.1 0.4 0.2 0.3 0.3 0.2 0.4 0.5-0.1 0.7-0.2 0.5-0.2 0.5-0.4 0.9-0.3 0.5-0.4 0.2-0.4 0-0.4 0.1-0.4 0.2-0.4 0.5-0.4 0.3-0.8 0.4-0.7 0.9-0.2 0.3-0.3 0.3-0.3 0.1-0.8-0.3-0.3-0.1-0.2 0-0.2 0-0.2 0.2-0.3 0.1-0.3 0.4-0.1 0.4 0 0.3 0.1 0.4 0.3 0.2 0.2 1.5-0.1 1.9 0.1 0.9 0.3 0.6 0.3 0.3 0.2 0.4 0.2 0.5 0.2 2.3-0.2 0.2-0.3 0.1-0.4 0.1-0.4 0.2-0.7 0.3-0.7 0.6-0.3 0.1-0.4 0-0.3-0.2-0.1-0.3 0-0.4 0.1-0.4 0-0.4-0.1-0.4-0.2-0.3-0.3-0.3-0.7-0.2-1.2-0.2-0.4 0.3-0.2 0.3-0.2 0.4 0 0.5 0 0.4-0.1 0.5-0.2 1.2-0.3 0.4-0.2 0.3-0.3 0.2-0.3 0.1-0.2 0.2-0.3 0.4-0.2 1-0.1 1.8 0.4 0.7 0.1 0.3 0.1 0.4 0.3 2 0.1 2 0.2 0.4 0.3 0.3 0.3 0.1 0.8 0.1 0.3 0 0.4 0.1 0.4 0.2 0.9 0.7 0.3 0.4 0 0.8-0.3 1.4 0 1 0.1 0.3 0 0.3-0.3 0.2-0.3-0.1-0.3-0.3-0.2-0.3-0.2-0.3-1-0.6-0.3-0.3-0.3-0.2-0.3-0.1-0.3 0.2-1.3 1.2-0.4 0.1-0.4 0.1-0.9-0.2-0.7 0.1-0.5 0.3-0.5 0.4-0.5 0.3-0.6 0.2-1 0.2-0.6-0.1-0.7-0.4-0.3-0.3-0.5-0.1-0.5 0.1-1.3 0.7-0.5 0-1.1-0.5-0.4-0.3-0.3-0.3-0.2-0.4-0.2-0.8-0.2-0.3-0.3-0.2-0.5-0.2-0.2-0.2-0.1-0.1-0.1-0.3-0.1-0.4-0.2-0.3-0.2-0.4-0.3-0.2-0.4 0.1-0.4 0.2-0.7 0.3-0.4 0-0.3-0.2-0.1-0.3 0.3-0.6 0-0.3-0.2-0.4-0.7-0.4-0.3-0.3 0.1-0.2 0.6-0.4 0.2-0.4 0.1-0.3-0.3-0.3-0.3 0-0.4 0-0.3 0.1-0.3-0.1-0.3-0.3-0.3-0.4-0.6-0.3-1-0.2-0.8-0.2-0.4-0.2-0.2-0.4-0.2-0.4-0.4-0.3-0.5-0.1-0.4 0-0.4 0.2-0.4 0.3-0.4 0.2-1 0.1-1.5-0.5-0.5-0.2-0.3-0.4-0.3-0.7-0.1-0.4-0.1-0.4-0.2-0.4-0.7-0.3-0.5-0.1-0.5 0.1-0.3 0.2-0.2 0.3-0.3 0.3-0.1 0.4-0.6 0.4-0.9 0.2-2.7 0.3-1.4 0-4.7-1.1-0.8 0.5-1.2 1.4-1.3 0-0.4 0.3-2 0.4-2-0.1-1.1-0.5-0.1 0.2 0.1 0.2 0.2 0.4 0.2 0.3 0 0.4-0.1 0.8-0.1 0.4-0.3 0.2-0.9 0.2-3.1 2.4-0.4 0.1-0.7-0.1-1.9 0.4-1.2 0.8-0.5 0.4-0.3 0.4-0.2 0.4-0.7 0.9-0.8 0.9-1.8 1.2-0.6 0.5-0.4 0.5-0.3 0.8-0.3 0.4-0.2 0.4-0.5 0.9-0.4 0.3-0.4 0.2-3.5 1.2-0.4 0.3-0.4 0.5-0.3 0.5-0.6 0.7-0.5 1-0.2 0.4 0 0.4 0.1 0.7 0 0.4-0.1 0.4-0.3 0.5-0.2 0.4 0 0.4-0.1 0.8-0.1 0.4-0.3 0.8-0.1 0.4-0.2 0.4-0.2 0.2-0.3 0.1-0.9 0.2-0.4 0-0.3-0.2-0.5-0.1-0.5 0-0.8 0.4-0.4 0.4-1.5 2.4-0.2 0.3-1.2 1.7-0.2 1 0 0.4-0.2 0.9 0 0.8-0.1 0.3-0.4 0.4-0.4 0.1-0.4 0.2-0.8 0.3-0.7 0.1-0.4-0.1-0.3-0.1-0.3-0.3-0.3-0.6-0.2-0.2-0.3 0-0.2 0.3 0 0.5 0.2 0.4 0.1 0.4 0 0.3 0 0.4-0.2 0.6-0.1 0.2-0.1 0.2-0.1 0.1-0.3 0.2-0.3 0.3-0.3 0.5 0 0.6 0 0.4 0 0.8 0 0.3 0.1 0.3-0.1 0.2 0 0.7 0.1 0.3 0 0.4 0 0.4-0.2 0.4-0.3 1.1 0.2 0.8-0.1 0.3-0.4 0.2-1.1 0.1-0.3 0.1-0.2 0-0.2 0-0.3-0.1-0.3-0.1-0.2 0-0.3 0-0.2 0.2-0.3 0.1-0.3 0.4-0.2 0.3-0.1 0.9 0 0.3-0.1 0.4-0.1 0.5-0.4 0.8-0.3 0.5-0.5 0.3-0.4 0.1-0.7 0.1-0.2-0.1-0.2-0.2-0.5-0.7-0.2-0.2-0.3 0-0.3 0.3 0 0.4 0.1 0.4 0.2 0.7 0.1 0.4-0.1 0.4-0.2 0.3-0.5 1.1-0.4 1.8-0.5 0.9-1.3 0.5-0.9 0.3-0.6 0-0.5-0.1-0.8-0.4-0.3-0.2-0.2-0.3-0.1-0.4-0.2-1.3-0.1-0.3-0.1-0.4 0.1-0.4-0.2-0.3-0.5-0.1-0.8 0.3-1.9 0.3-0.9 0-0.2 0.2-0.2 0.8-0.1 0.4-0.1 0.5-0.4 0.6-0.7 0.6-0.9 0.5-0.4 0.4-0.7 0.5-0.4 0.3-0.4 0.7-0.1 0.4-0.1 0.4-0.2 0.3-0.3 0.3-0.9 0.6-0.6 0.3-0.9 0.2-0.6-0.2-0.2-0.2-0.2-1.5-0.3-0.3-0.4 0.1-1.1 0.3-0.5 0.2-0.3 0.3-0.3 0.4-0.2 0.3-1.6 1.2-0.2 0.2-0.2 0.2-0.4 0.2-0.7 0.1-0.9 0-0.5-0.4-1.1-0.5-4-0.5-0.7-1.1-0.1-0.4-0.2-0.4-0.3-0.7-0.2-2.3 0.1-0.5 0.1-0.4 0.4-1 0-0.3-0.2-0.3-0.7 0.1-2 0.6-1.4 1.1-0.3 0.4-0.6 0.5-0.3 0.2-0.3 0.1-0.3 0-1.5 0.1-1.6-0.5-1-0.7-1-1.3-1.2-1.1-1.2-0.9-1.6-0.6-1.4 0.5-0.9-0.1-0.2-0.2-0.1-0.3 0.3-0.7 0.1-0.3 0-0.5-0.2-0.4-0.4-0.5-0.3-0.1-0.4 0.1-0.8 0.5-1.4 0.3-0.3 0.2-0.3 0.2-0.1 0.4-0.1 0.3-0.2 0.4-0.2 0.4-0.2 0.3-0.4 0.2-0.5-0.1-1.1-0.4-1.4-0.7-0.6-0.4-0.3-0.4-0.6-0.5-0.9-0.5-1.4-0.6-0.5-0.3-0.1-0.2 0.2-0.2 0.2-0.2 0.1-0.4 0-0.2 0.2-0.2 0.1-0.2 0-0.2 0.3-0.4 0-0.2-0.2-0.3-0.9-0.3-0.5-0.3-0.3-0.3 0-0.3-0.1-0.3-0.8-0.2-0.4-0.2-0.6-0.7-0.4-0.4-1.4-0.8-0.7-0.2-0.5 0.1-0.4 0.2-1.4 1-0.5 0.2-0.5 0.2-0.7 0.1-0.4 0.3-0.4 0.3-0.3 0.2-0.2 0.4-0.1 0.3-0.2 0.4-0.4 0.3-1.2 0.2-0.4 0.2-0.4 0.2-0.8 0.9-1.5 0.6-0.3 0.2-0.8 0.3-0.4 0.2-1.2 1-0.3 0.3-0.2 0.3 0 0.4 0.2 0.7 0 0.4-0.1 0.4-0.2 0.2-0.4 0.3-0.6 0.3-2.8 0.5-0.5 0.2-0.4 0.2-0.5 0.2-0.4 0-0.7-0.5-0.4 0.1-1.3 0.7-0.8-0.1-0.3-0.1-0.3 0-0.4 0.2-0.4 0-0.4-0.1-0.5-0.2-0.3-0.3-0.8-0.8-0.5-0.4z m105-22l-0.9-0.2-0.8 0.8-0.1 1.3 2.5-0.2-0.7-1.7z m66.1-112.7l0.6 0.1 0.3-0.1 0.4-0.1 0.3 0 0.2 0.1 0.1 0.3 0.2 0.2 0.4 0.3 0.3 0 0.5 0 0.1 0.2-0.1 0.4-0.1 0.3 0 0.2-0.4 0.8-0.2 0.2-0.2 0.2-0.5 0.1-0.2 0.2-0.1 0.2 0 0.3 0.1 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.4 0.6 0.3 0.2 0.2 0.1 0.3-0.1 0.2-0.2 0.4-0.4 0.2-0.2 0.3 0 0.1 0.1 0.2 0.3 0 0.4 0.2 0.5 0 0.7-0.1 0.2-0.4 0.2-0.5 0.1-0.2-0.1-0.1-0.3-0.2-0.1-0.2 0-3.2-0.1-2-0.9-2.7-0.6-2.5-1.2-1.1-0.8-1-1-0.2-0.5 0.1-0.3 0.6-0.7 0.8-1.3 0.2-0.3 0.5-0.1 2.5-0.1 1.1 0.1 0.5 0.1 0.6 0.3 2.4 0.7z" id="ESCL" name="Castilla y León">
+  </path>
+  <path d="M786.3 207.7l1.1 0.2 0.8-0.2 0.2 0.2 0.1 0.4 0.2 0.4 0.5 0.5 0.9 0.2 0.5 0.4 0.4 0.4-0.1 0.3-0.2 0.3-0.2 0.5 0 0.5 0.3 0.7 0.4 0.4 0.9 0.5 2.9 1 1.2 0.7 0.5 0.4 0.3 0.3 0 0.4 0.1 0.4 0.3 0.5 0.4 0.2 2.5 1.1 0.2 0.2-0.3 0.6-0.6 1.6-0.7 1-0.7 0.8-0.6 0.9-0.2 1.3-1.1 1.1-2.8 5.5-0.5 0.5-1 0.9-0.6 0.6-1.4 1.9-2.4 2.1-2.4 4.9-1.1 1.2-2.1 1.2-1 1.6-1.8 3.7-1 1.6-2.5 2.8-4.2 7-0.2 0.6-0.1 1.2-0.3 0.9-0.4 0.7-1 1-0.6 0.8-0.4 0.9-0.3 0.9-0.2 0.7-1.3 1.8-0.4 0.9-0.3 1.9 0.1 2.6 0.3 2.2 0.8 3.5 2.5 5.6 0.4 0.8 0.5 0.9-0.5 0.4-0.5 0.4 0.2 1 0.4 1.9 0.7 1.7 1 1.9 1.1 2.1 1.5 2.6 0.6 0.8 1.5 1.2 1.5 1.6 0.8 0.6 1.1 0.3 1.9 0.2 1.9 0.6 1.8 1 1.2 1.4-0.1 0.1-0.5 0.3 0.5 0.2 0.3 0.3 1.1 0.9 0.4-0.1 0.3 0.6 0 0.9-0.3 0.4-0.7 0-0.7 0.2-0.6 0.3-0.6 0.5-0.5 1.1 0 0.2-0.2 0.1-0.8 0.1-0.3 0.1-0.5 0.6-0.5 0.2-0.4 0.4-0.4 0.8 0.3 0.7-0.8-0.2-0.6 0.1-0.5 0.3-0.7 0.1-1.3 0.1-0.5 0.1-0.6 0.5-0.5 0.9 0 0.7 0.1 0.7-0.3 0.8-0.6 0.6-0.6 0.3-1.7 0-1.8 0.4-1 0.4-1.3 0.9-3.9 1.6-0.6 0.5-0.2 0.6-0.3 0.2-1.5 1.6-0.5 0.8-0.1 1 0 0.5-0.2 0.2-1.3 0.1-0.5 0.2-0.5 0.4-0.1 0.8-1.5-0.1-0.3 2.1 0.6 4.7-0.5 0.6-0.7 0.1-1.4-0.1-0.9 0.3-0.8 0.6-0.6 0.8-0.4 0.8-0.2 0.7-0.2 0.8-0.1 2.2-0.2 3.4-0.1 0.9-0.4 0.5-1 0.4-0.8 0.8-0.4 0.7-1.6 4.1-0.1 0.8 0 0.1-0.8 0.1-0.3 0-0.1-0.1-0.2-0.3-0.3-0.2-0.4-0.2-0.7-0.2-0.3-0.2-1.7-1.8-0.4-0.3-1.1-1.3-0.2-0.4-0.5-1-0.6-0.9-0.2-0.3-0.5-0.8-0.6-1.4-0.9-1.3-0.1-0.2-0.3-0.3-0.3-0.3-0.2-0.5-0.2-1-0.1-1 0.2-0.9 0.2-0.6 1.2-1.8 0.3-0.7 0.1-0.4 0.3-1.6 0.1-0.4 0.2-0.9 0-0.6-0.6-2.1-0.4-0.7-0.2-0.2-0.5-0.3-1.5-0.5-0.8-0.1-0.4-0.2-0.1-0.5-0.1-0.8-0.1-2.1 0.1-0.8 0.3-0.5 0.3-0.4 1.5-1.4 0.3-0.4 0.2-0.3 0.1-0.4-0.1-1.2 0.1-0.8 0.4-1.5 0-1.3-0.6-3.3 0.6-0.2 0.2 0 1 0.1 0.8-0.1 0.7-0.3 1.3-0.9 0.1-0.2 0-0.2-0.2-0.4-0.3-0.3-0.4-0.6-0.3-0.3-0.3-0.6-0.3-0.6-0.2-1 0-0.4 0.2-0.4 0.4-0.1 0.3-0.3 0.5-0.3 0-0.9 0.2-0.2 0.1-0.4 0-0.2-0.6-1.6 0-0.4 0.2-0.8 0-0.4-0.2-0.5-1.3-2.3-0.5-0.3-0.4-0.2-0.4-0.1-0.3 0.1-0.2 0-0.6 0.5-0.8 0.1-1.1 0-1.1 0.2-1.1 0.1-0.6-0.3-0.7-0.5-3.9-4.7-0.3-0.5-0.2-0.8 0-0.6 0.1-0.4 0.1-0.4 0-0.3 0.2-0.4 0.4-0.7 0.2-0.4 0.2-0.8 0.2-0.4 0.5-0.6 0.2-0.3 0.3-0.3 0.3-0.8 0.1-0.3 0.2-0.5 0.1-0.3 0.1-0.3 0.1-0.4 0.1-0.8 0-0.3 0-0.4-0.1-0.4 0.1-0.9 0.1-0.3 0.2-0.4-0.1-0.4-0.2-0.5-5.4-1.7-0.4 0-0.3 0-0.5-0.2-1.8-1.2-0.9-0.3-0.3 0-0.3 0.1-0.2 0.1-0.3-0.1-0.3 0.1-0.2 0-0.1-0.4 0-0.3-0.1-0.3 0-0.3-0.2-0.2-0.3-0.1-0.1-0.2-0.1-0.2-0.3-0.1-0.2-0.2-0.1-0.3-0.1-0.2-0.6-0.1-0.2-0.5-0.2-0.1-0.2-0.2-0.1-0.2 0-0.3 0-0.3 0.2-0.4 0.3-0.8-0.1-0.6 0.1-0.2 0.2-0.2 0.1-0.1 0-0.1 0-0.1-0.1 0-0.1-0.2 0-0.5 0-0.2 0-0.3 0.1-0.2 0.1-0.3 0-0.1 0-0.1-0.1-0.2-0.1-0.1 0-0.2 0-0.2 0-0.2 0.2-0.5 0.2-0.2 0.3-0.2 0.5-0.4 0.4-0.6 1.5-2.9 0.2-0.3 0.9-1 0.8-0.6 0.3-0.1 0.4-0.1 0.3 0.1 0.7 0.3 0.4 0.2 0.3 0.1 0.8 0 0.3-0.1 0.4-0.1 0.3-0.3 0.2-0.3 0.2-0.4 0-0.5-0.1-0.8-0.1-0.4 0-0.4 0.2-0.5 0.9-1.7 0.4-0.6 0.3-0.4 0.3-0.9 0.7-2.7 0.1-0.8 0-0.8 0.1-0.9 0-0.4-0.1-0.3-0.2-0.5-0.1-0.2 0.1-0.3 0.3-0.4 1.6-0.7 0.5-0.4 0.6 0.4 1-0.3 0.3 0 0.8-0.3 1-0.2 1.4 0.1 0.7-0.1 0.5 0.1 0.7 0.2 2 0.9 0.5 0.7 0.2 0.5-0.1 0.4-0.1 0.3-0.1 0.4 0 0.4 0.1 0.3 0.2 0.3 0.1 0.3 0 0.4-0.1 0.4 0.1 0.4 0.2 0.3 0.4 0.3 0.4 0.1 0.7 0 0.5-0.2 2.3-1.1-0.3-0.5-0.4-0.6-0.4-0.2-0.2-0.2-0.4-0.7-0.1-0.8 0-0.3-0.2-0.3 0.1-0.4 0.1-0.8 0.2-0.3 0.2-0.4 1-0.5 0.4-0.1 0.5-0.4 0.1 0 0.4-0.5 0.2-0.5 0.1-0.8 0.2-0.3 0.3-0.1 0.3 0.1 0.7 0 1.5-0.2 2.8-1.5 0.1-0.3-0.2-0.7-0.1-0.4 0.1-0.4 0.2-0.4 0.6-0.7 0.6-0.4 0.3-0.5 0.2-0.5 0.1-0.8 0.2-0.4 0.3-0.5 0.1-0.8 0-0.3 0.1-0.4 0-0.7 0-0.4 0.3-0.3 0.4 0 0.3 0.2 0.4 0.2 0.6 0.2 0.2 0 0.3-0.1 0.4-0.1 0.3-0.1 0.8 0 0.4-0.1 1.4-0.7 0.4-0.3 0.2-0.4 0.1-0.6 0-0.4-0.1-0.4 0.1-0.3 0.8-0.7 0.5-0.5 0.7-1 0.3-0.4 1.6-1.1 0.3-0.3 0-0.6-0.1-0.4-0.3-0.3-0.5-0.7-0.2-0.2-0.7-0.5-0.2-0.3-0.1-0.4-0.1-0.4 0.3-0.4 0.4-0.4 1.8-0.7 0.2-0.2 0-0.4-0.1-0.3-0.2-0.6 0-0.1-0.6-0.4-0.1-0.3 0-0.3 0.1-0.4 0.1-0.3 0-0.8 0-0.4-0.1-0.4-0.1-0.7 0-0.4 0.1-0.4 0.1-0.8-0.3-0.1-0.3 0-0.7 0.2-0.3 0-0.4-0.1-0.3-0.2-0.3-0.1-0.4-0.1-0.3-0.2-0.1-0.3 0-0.8 0-0.4-0.1-0.4 0.1-0.4 0.3-0.3 0.5-0.3 0.5-0.1 0.6 0.1 0.7 0.5 0.3 0 0.5-0.3 0.3-0.3 2.1-1.1 0.2-0.3 0-0.4 0-0.4 0-0.8 0.2-0.8 0.2-0.3 0.2-0.4 0.8-0.9 0.4-0.2 0.7 0 0.6 0.2 0.4 0.3 0.3 0.3 0.6 0.6 1.8 1.2 1.1 0.2 2-0.2 0.7 0.2 0.2 0.3 0.2 0.4 0 0.4 0 0.3 0.3 0.2 0.4 0 0.4-0.3 0.3-0.3 0.4-0.3 0.3-0.2 0.5-0.1 0.6-0.1 1.5-0.1 1.1-0.4z m-65.5 30.8l2.2 0.5 1.2 0.1 0.9-0.2 0.7-0.4 0.2-0.3 0.1-0.4-0.2-0.8 0.1-0.5 0.3-0.4 0.5-0.4 0.2 0.1 0.2 0.2 0.2 0.8 0.4 0.7 0.2 0.3 0.2 0.4 0.3 0.2 0.3 0.2 0.2 0.2 0 0.2 0 0.3 0.2 0.3 0.3 0.3 0.8 0.4 2.5 0.3 1.1 0.7 1.3 1.1 0.5 0.6 0.1 0.3 0.1 0.4-0.1 0.3-0.3 0.4-0.3 0.2-1.9 1-0.9 0.2-0.7 0.2-0.3 0.1-0.8 0.1-0.7 0.1-0.4 0.1-0.4 0.2-0.6-0.1-1.1-0.4-2.6-0.4-0.4 0-0.4-0.1-0.3-0.3-1.2-3.4-0.1-0.6-0.1-0.4-0.2-0.3-1-0.5-0.2-0.3-0.2-0.3 0.1-1z" id="ESVC" name="Comunidad Valenciana">
+  </path>
+  <path d="M738.1 316.7l0.6 3.3 0 1.3-0.4 1.5-0.1 0.8 0.1 1.2-0.1 0.4-0.2 0.3-0.3 0.4-1.5 1.4-0.3 0.4-0.3 0.5-0.1 0.8 0.1 2.1 0.1 0.8 0.1 0.5 0.4 0.2 0.8 0.1 1.5 0.5 0.5 0.3 0.2 0.2 0.4 0.7 0.6 2.1 0 0.6-0.2 0.9-0.1 0.4-0.3 1.6-0.1 0.4-0.3 0.7-1.2 1.8-0.2 0.6-0.2 0.9 0.1 1 0.2 1 0.2 0.5 0.3 0.3 0.3 0.3 0.1 0.2 0.9 1.3 0.6 1.4 0.5 0.8 0.2 0.3 0.6 0.9 0.5 1 0.2 0.4 1.1 1.3 0.4 0.3 1.7 1.8 0.3 0.2 0.7 0.2 0.4 0.2 0.3 0.2 0.2 0.3 0.1 0.1 0.3 0 0.8-0.1 0.2 2-0.2 0.5-1.1-1.3-1 2.7-0.5 0.4-0.9 0.3-0.3 0.7 0.1 0.9 1.3 2.4 0.4 0.5 1.3 0.9 1 0.4 0.8 0.1 0.3-0.6 0.7 0.5 0.3 0.5-0.1 0.7-0.6 0.4-0.4 0.4-0.3 0.2-0.4 0-0.3-0.3-0.4 0.3-1.1 0.4-0.7 0.1-1.1 0.7-1.6 0-0.5 0.1-0.5 0.2-1 0.7-0.4-0.3-1.6-0.7-1.3-0.3-2.6-0.1-0.7 0.1-0.6 0.3-0.5 0.3-0.2 0.5 0.1 0.5 0.5 0.9-1.3-0.3-1.2-0.3-0.3-0.6-0.2-0.4-0.8-0.1-1.2-0.5-0.6-0.2-0.6 0.6-0.1 0.5-1.2 0-1.3-0.2-1.2 0.6-0.7 0.4-1.8 1.8-0.6 0.4-0.8 0.2-0.3 0.1-0.3 0.3-0.3 0.2-0.1 0.3-0.1 0.2-0.4 1.7-0.1 0.3-0.3 0.3-0.3-0.1-0.2-0.1-0.3-0.1-0.3 0.3-0.8 0.7-0.4 0.1-0.6 0.1-2 0.9-1 0.6-3.6-2.9-0.4-0.2-2.1-0.4-0.2 0-0.2 0.2 0 0.2-0.1 0.2-0.2 0-0.3-0.2-0.3-0.2-0.5-0.5-6.1-9.3-0.3-0.5-0.2-0.3-0.1-0.5-0.1-0.9 0.1-0.4 0-0.8 0-0.4 0.2-0.5 0.1-0.7 0-0.3-0.1-0.5-0.2-1.9 0.1-0.3 0.3-0.8 0-0.3 0-0.9 0.1-0.4 0.2-0.3 0.4-0.6 0-0.3-0.3-0.3-3.8-0.5-1.4-0.7-0.5-0.2-1.9 0.1-1.5-1-0.9-0.5-1.2-1.4-0.8-1.3-0.6-1 0-0.1-0.3-0.3-1.4-1.1 0.6-1.8 0.2-0.4 1.5-1.7 1.2-1.7 1.2-2.4 0.4-0.7 1.2-1.1 0.5-0.3 0.4-0.2 0.8-0.1 0.5-0.3 1.7-1.6 1.1-1.2 0.6-0.4 0.5-0.1 0.3 0 0.3 0.2 0.7 0.7 0.2 0.1 0.4 0.1 1-0.4 1.3-0.3 0.7-0.2 1-0.5 1.5-1.2 2.1-1.3 0.1-0.3 0-0.3 0.1-0.1 0.2 0 0.5-0.1 0.3-0.3 0.2-0.1 0.4-0.2 0.3 0 0.3 0.1 0.5 0.3 0.2 0.1 0.7-0.1 0.2 0 0.2 0.2 0.2 0.2 0.2 0.2 0 0.2 0 0.3-0.1 0.3 0 0.2 0 0.3 0.1 0.3 0.2 0.2 0.1 0.2 0.3 0.2 0.5 0.2 0.3 0.2 0.4 0 0.4 0 2.4-0.8 3-2.4 0.3-0.4 0.2-0.4 0.1-0.3 0-0.5 0-0.4-0.2-1.2 0-0.9-0.1-1.6-0.1-0.8-0.2-0.7-0.2-0.3-0.1-0.2 0-0.3 0-0.3 0-0.3 0.2-0.3 0.4-0.9 0.4-0.3 0.5-0.4 0.2-0.3 0.2-0.4 0.1-0.7-0.1-0.4 0.2-0.8 0.6-1.5 1.3-1.5 0.7-0.6 0.5-0.3 0.4 0.1 0.2 0.2 0.2 0.3 0.3 0.2 0.4 0 2.3-1.3 1-1 0.4-0.3 0.4-0.2 2.4-0.7 0.4 0.1 1.5 0.5 0.3 0.2 0.2 0.2 0.1 0.4 0 0.4 0.1 0.3 0.2 0.4 1.1 1 2.3 1.7z m11.6 46.6l-0.3 1.1 0 1.2 0.6 1.9-0.8-0.9-0.2-1.5 0-1.7-0.1-1.5 0.2 0 0 0.1 0 0.1 0.1 0.2 0.1 0.2 0.2 0.5 0.2 0.3z" id="ESMC" name="Murcia">
+  </path>
+  <path d="M498.6 340.2l0.6-0.5 5.5 1.8 0.2 0.4 0.1 0.4-0.2 0.3-0.2 0.3-0.2 0.4-0.2 0.6-0.1 0.4 0.1 0.3 0.4 0.2 0.5 0.2 0.5 0.2 1.1 0.4 1.9 0 1-0.1 1.3 0.1 0.6 0.1 0.5 0.2 0.6 0.5 0.8 1.1 0.1 0.3 0.1 0.4-0.1 0.4 0.1 0.3 0.3 0.3 1.9 0.1 1 0.3 0.6 0 0.1-0.2 0.1-0.3 0.2-0.2 0.6-0.5 0.2-0.3 0.2-0.3 0.3-0.2 0.3-0.1 0.4 0 0.5 0.1 1.6 1.2 0.3 0.5 0.2 0.4 0 0.4 0.2 0.3 1 0.3 5.3 2.2 0.7 0.6 0.5-0.5 1.3-1 1-0.5 3-0.6 0.8-0.1 1.7-0.3 0.6-0.2 0.4-0.3 0.4-0.5 0.2-0.4 0.1-0.3 0-0.3 0.2-0.3 0.7-0.9 0.1-0.3 0-0.4-0.2-0.3-0.2-0.3-0.1-0.4 0-0.3 0.1-0.4 0.2-0.4 0.2-0.3 0.4-0.4 1-0.6 0.3-0.2 0.3-0.3 0.3-0.6 0.3-0.4 0.3-0.2 1.3-0.5 2.7-0.4 0.5 0.1 0.5 0.5 0.7 0.7 0.1 0.3 0.1 0.3-0.2 0.3-0.6 0.4-0.4 0.1-0.3 0.2-0.2 0.2 0 0.4 0 0.3 0.2 1.1 0.3 0.3 0.4 0 0.7-0.1 0.9-0.6 0.9-0.9 0.3-0.3 0.8-0.5 1.7 0.1 1.7-1.4 0.2-0.3 0-0.3 0-0.4 0.2-0.7 0.1-0.4 0.3-0.3 0.1-0.7 0-0.4-0.1-0.4 0-0.4-0.1-0.4 0-0.3 0-0.4-0.1-0.2-0.3-0.7-0.2-0.3-0.1-0.3-0.1-0.2-0.1-0.6-0.1-0.2-0.2-0.3-0.1-0.2-0.3-0.2-0.1-0.2-0.1-0.2 0-0.2 0-0.5 0.1-0.3 0.1-0.6 0-0.2 0-0.3-0.1-0.2-0.4-0.4-0.1-0.3 0-0.2 0-0.3 0.3-1.1 0.3-0.3 0.5-0.5 1.8-1 0.6-0.2 0.3-0.2 0.5-0.7 0.2-0.4 0.6-0.5 1.2-0.8 0.3-0.5 0.2-0.4 0-0.3 0.1-0.3 0.2-0.3 0.2-0.3 0.4-0.5 0.2-0.3 0.7-0.7 0.5-0.1 0.9 0 0.5 0.2 0.2-0.1 0.2 0 0.1-0.3 0-0.2 0.1-0.2 0.1-0.3 0.2-0.2 0.2-0.2 1.3-1.2 1.9-1.2 1.2-0.4 0.1-0.3 0.1-0.2 0.2-0.4 0.1-0.5-0.1-0.4-0.1-0.4 0.1-0.3 0.4-0.2 3.2-0.1 0.7-0.3 1.1-0.1 2.3 1.7 1.3 0.6 0.9 0 0.5-0.1 1.2 0 0.4 0.2 0.1 0.4 0.1 0.8 0 0.4 0.1 0.8 0.2 0.5 0.5 0.5 0.8 0.6 0.6 0.2 0.5 0.1 0.8 0.1 0.5 0.1 1.7 0.8 0.5 0.3 0.3 0.4 0.1 0.3 0.8 0.5 0.7 0.2 1.4 1.2 0.4 0.4 0.2 0.5 0.3 0.4 0.3 0.3 0.4 0.1 0.4 0 0.5 0.2 0.5 0.4 0.6 0.3 1.1 0.9 1.1 1.2 0.8 1.1 0.4 0.5 0.4 0.2 1.8 0.9 1 0.3 0.6 0.1 2.6 1.1 0.4 0.1 0.6-0.1 0.1-1.9 0.1-0.4 0.3-0.3 0.3-0.1 0.9 0 0.8 0.1 1.5 0.5 11.5 0.5 1.3-0.2 0.8-0.4 0.4-0.8 0.3-0.3 0.6-0.5 0.6-0.1 0.6-0.1 0.5 0.1 0.3 0.2 0.7 0.2 0.4-0.1 0.2-0.1 0.4 0 1 0.4 0.8 0.1 2.1 0.6 0.5-0.1 0.5-0.1 0.3-0.2 0.1-0.3 0.2-1.1 0.2-0.4 0.4-0.3 0.5-0.1 0.4 0.1 0.2 0.3 0.2 0.3 0 0.4 0.1 0.3 0.2 0.4 0.3 0.1 1.3 0.4 0.7 0.1 0.5 0 0.5-0.1 1-0.4 1-0.6 0.5-0.7 0.2-0.3 0.1-0.3 0.1-0.4 0.1-0.4 0.3-0.3 0.7-0.4 0.9-0.1 0.6 0 0.5 0.2 0.7 0.3 0.8 0.3 0.7 0.1 2.9 0.2 1.3 0.4 0.6 0 0.4-0.2 0.6-0.6 1.1-0.7 0.4 0 0.3 0.2 0.3 0.3 0.9 1.3 0.6 0.7 0.3 0.2 0.2-0.2 0.1-0.3 0-0.6 0.3-0.3 0.8-0.6 0.6-0.3 0.6-0.1 0.5 0 0.5 0.1 0.4 0.1 0.3 0.3 0.4 0.3 0.2 0 0.2-0.1 0.1-0.1 0.1-0.1 0.2-0.1 0.1 0 0-0.1 0.1-0.2 0.4-0.3 0.2-0.2 1.2-0.6 0.2-0.1 0.1-0.1 0.1 0 0.6-0.4 0.8-0.7 0.1-0.2 0.5-0.4 1.5 0.9 1.8 0.8 0.7-0.3 0.6-0.2 0.6-0.1 1.2 0.1 0.6 0.2 0.4 0.2 0.1 0.1 0 0.2-0.2 0.6 0.1 0.7 0.1 0.4 0 0.7-0.1 0.4 0 0.4 0.1 0.3 0.1 0.3 0.4 0.4 2.8 0.8 0.1 0.3-0.1 0.7 0.1 0.4 0 0.4 0.2 0.4 0.1 0.7 0 0.8 0 0.5 0.1 0.5 0.2 0.5 1.3 0.8 0.3 0.5 0.1 0.4 0 0.3-0.1 0.3 0 0.4-0.1 0.3-0.1 0.3-0.2 0.3-0.2 0.1-0.1 0.2 0 0.2 0.2 0.7 0.1 0.4-0.1 0.4-2.5 3.3-0.4 0.7-0.2 0.3-0.6 0.6-0.5 0.7 3.3 1.6 4.3 1.2 0.4 0.1 0.5-0.2 1.4 1.1 0.3 0.3 0 0.1 0.6 1 0.8 1.3 1.2 1.4 0.9 0.5 1.5 1 1.9-0.1 0.5 0.2 1.4 0.7 3.8 0.5 0.3 0.3 0 0.3-0.4 0.6-0.2 0.3-0.1 0.4 0 0.9 0 0.3-0.3 0.8-0.1 0.3 0.2 1.9 0.1 0.5 0 0.3-0.1 0.7-0.2 0.5 0 0.4 0 0.8-0.1 0.4 0.1 0.9 0.1 0.5 0.2 0.3 0.3 0.5 6.1 9.3 0.5 0.5 0.3 0.2 0.3 0.2 0.2 0 0.1-0.2 0-0.2 0.2-0.2 0.2 0 2.1 0.4 0.4 0.2 3.6 2.9-0.1 0.6-0.3 0.4-0.8-0.1-0.3 0.4-0.3 0.9-0.5 1.1-1.2 1.7-2.4 2.4-1 1.4-0.7 2.1-0.3 1.8-0.5 1.3-0.2 1.4-1.2 3.1-0.9 1.4 0 0.7 0.1 0.4 0.2 0.4 0 0.4 0 0.5-0.2 0.3-0.3 0.1-0.9 0-0.3 0.2-0.5 0.5-1.4 0.9-0.6 0.7-0.4 2.1-0.5 0.6-0.6 0.5-0.6 0.7-0.2 0.4-0.2 1-0.2 0.4-0.4 0.2-0.4 0.1-0.4 0.2-0.4 0.9-0.7 0.5-0.8 0.4-0.8 0.1-1.5-0.5-1.1-1.2-1-1.3-1.1-1.2-1.4-0.9-0.8-0.3-1-0.1-0.7 0.1-1.3 0.7-0.8 0.2-0.4-0.1-1.1-0.5-0.5-0.1-3.2 0.6-0.7 0.4-0.8 1.9-0.8 2.2-1 1.1-0.2 0.2-0.5 0.4-1 0.5-1.4 0.2-0.7-0.3-0.8 0.4-1.1-0.8-0.8-0.6-0.7-0.3-0.4 0.1-0.3 0.4-0.4 0.2-0.4-0.3-1.1-1.5-1.2-0.8-0.7 0-2.2 0.7-3.6-0.6-2.1 0.1-1.2 0.1-2.9-0.5-4.1 0.5-0.6 0.4-0.5 0.6-0.8 0.6-1.5 0.9-2.5 0-1.6-1.3-0.8 0.1-0.6 0.3-1.4-0.7-0.6-0.8-1.3 0.1-1.3 0.1-0.6 0.5-2.1 0.2-1.8-0.5-1.1-0.4-1.4-0.5-2.1 0.5-2.9 0.8-3.8-1.1-1 0.3-1.2 0.9-3.5 0.5-1.1 0.1-7.2-0.5-0.7 0.2-0.5 0.4-1.2 2-0.2 0.4-0.6 0.6-0.4 0.8-0.2 0.8-1.1 2-2.6 0.3-1.1 2.2-1.4 0.9-0.4 0.2-0.8 0.4-1.7 0.4-1.7-0.1-4.7-0.6-0.9 0-0.4 0.1-0.4 0.4-2.9 2-2.8 0.2-1.8 1.2-0.5 0.2-1.5 0.1-0.7 0.3-0.5 0.3-0.5 0.7-1.1 2 0 0.4-0.7 1.9-0.4 0.7-0.2 0.2-0.3 0.3-0.3 0.2-0.7 0.3 0.1 0.4 0.1 0.4-0.4 0.7-1.3 2.5-0.2 0.5-0.2 2.3-0.8 0-0.3-1.1-0.7-0.4-0.9-0.4-0.8 0-0.2 0.5-0.3 0.4-0.2 0.6 0 0.7 0.3 0.7-0.2 0.4 0.1 0.7 0.2 0.5 0.1 0.4-0.1 0.6-0.3 0.3-0.2 0.3-0.9 0.3-4 1.5-0.6 0.4-1.3 0.3-0.7-1.5-1.7-0.9-0.7-0.6-0.9 0.4-0.9-0.3-0.8-0.5-1.7-0.5-0.6-0.6-0.9-1.2-2.6-2.6-0.8-0.5-0.9 0-1.8 0.3-2.1-0.6-1.1-1.4-0.8-1.7-0.9-1.5-2.2-1.2-0.2-0.7-0.1-0.8-0.3-0.9-0.4-0.9-1.4-1.6-0.9-2.2-0.6-1.5-0.9-1.7-0.9-0.8-0.4-0.4 0.5-0.2 0.4 0.1 1.3 1.1 0.3 0.5-0.2 0.4 0.3 0.5 0.6 0.7 0.5-0.1 0.3-0.3 0.5-0.7 0.8-1-0.3 0-0.8 0.3-0.7-0.1-0.3-0.8 0.2-1.5-0.3-1-2-1.8-0.4-0.3-2.7-0.1-0.8-0.2-0.6-0.7-0.5-2-0.4-0.9-0.6-1-0.2-0.9 0.2-0.9 0.7-0.8 0.8-0.4 1.5-0.6 0.5-0.4 0.4-1.2-0.3-2.1 0.2-1.2 1.4-1.2 2.9 0.2 0.3 0.1 1.2-1.6-0.8 0.6-1 0.4-1 0-0.8-0.6-1.7 0.6-0.5 0.4-0.3 0.2-0.3 1.1 0.3 3-0.3 0.6-1.4 0-1.1-1.5-1.4-3.3-0.9-1.6-1.1-1.2-9.9-7.2-1.1-0.6-0.9-0.2-0.7-0.3-1.7-1.4-0.8-0.4-0.8-0.4-0.7-1.2-0.3-1.3 0.3-0.6 0.5-0.4 1.4-2.1 0.4-0.9-2 2.3-1.1 0.8-1.3 0 0 0.3 0.9 1.4 0.4 0.8 0.1 0.6-0.6 0.1-3.5-1.8-1.3-0.4-1.6-0.5-1.1 0.4 1.2 0.2 0.5 0.3-9.8 0.2-0.6 0.3-0.8 0.7-0.7 0.1-0.7-0.3-0.7-0.3-0.6-2.3-0.2-1.1 0.3-0.8-0.4-1.7-0.3-4-0.7-1.6 0.1-0.6-0.1-1.1-0.3-1.2-0.3-1-0.2-0.3-0.7-0.6-0.3-0.3-0.3-0.5-0.1-0.1 0-0.2-0.1-0.4-0.2-0.7-0.1 0-0.1 0 0-0.6 0.1-0.2 0.4-0.5 0.1-0.2 0.1-0.3 0-0.2-0.1-0.3 0.4-0.3 1-1.1 0.3-0.4 0.2-0.8 0.4-2.5 0.5-1.5 0.7-1 3.8-3.2 1.1-2 0.4-1.7 0.9-2.4 0.2-0.9 0-0.5-0.1-0.5 0-0.4 0.2-0.3 1.3-0.3 0.4-0.3 0.6 0.1 0.5 0.1 0.5 0.1 0.5-0.3 0.5-0.1 0.3-0.2 0.4-0.6 0.4-1.1 0.4-0.4 0.7 0.1 2.3 1 1-0.2 0.3-1.2 0.4-0.6 0.4-1.6 0.7-1.6 0.6-1.7 0.3-0.7 0.4-1.5-0.1-0.1z" id="ESAN" name="Andalucía">
+  </path>
+  <path d="M503.5 89.3l-0.2-2.1-0.1-0.6-0.4-0.5-0.9-0.9-0.4-0.2-0.7 0.1-0.4-0.1-0.3-0.1-0.4-0.3-0.1-0.2-0.8-1.2-0.3 0-0.1 0.1 0 1 0 0.2-0.1 0.1 0 0.1-0.2 0.1-0.2 0.1-0.4-0.2-0.3-0.6-0.2-0.6 0.1-0.6 0.3-0.4 0.3-0.1 0.3-0.2 0.3-0.4 0.1-0.5 0.1-0.4 0.1-0.3 0.2-0.3 0.2-0.1 0.3-0.1 0.4 0 0.4 0 1.4-0.6 0.4-0.2 1.5-1.4 0.1-0.5-0.2-0.6-0.6-1-0.4-0.6-0.3-0.3-0.3 0-0.3 0.2-0.2 0.4 0 0.3-0.2 0.3-0.3 0.2-0.4 0.2-0.8 0.4-0.6 0.3-0.4-0.1-0.3-0.2-0.2-0.3-0.3-0.4-0.1-0.4 0.1-0.6 0.2-0.8 0.1-0.3 0-0.3-0.3-0.2-0.3-0.1-0.7-0.3-0.4-0.6-0.3-0.1-0.3 0-0.9-0.8-0.3-0.3-0.2-0.4-0.3-0.5-0.3-2.4-0.3-0.3-0.3-0.2-0.4-0.1-0.5-0.6-0.3-0.4-0.2-0.6-0.2-0.6 0-0.5 0-0.5 0-0.4-0.2-0.3-0.2-0.2-0.7 0-0.6-0.2-0.1-0.3-0.1-0.3 0.1-1.1 0.1-0.4 0.3-0.3 0.5-0.1 0.4 0 0.4 0.1 0.3 0 0.3 0 0.3-0.2 0.4-0.4 0.6-0.9 1.2-1.1 0.1-0.1 0.1-0.4 0.1 0.3 0.2 0 0.2-0.9 0.2-0.9 0.2-0.8 0.6-0.4 0.3-1.3 2.3-0.5 4-0.2 0.6 0.2 2.4-0.2 1.7 0.5 1 0.1 2.3-1.2 2 0.2 2.1 0.8 1.5 0.8 0.4-0.3 0.4-0.1 1.1 0-0.1-0.3-0.1-0.6-0.1-0.3 0.6 0.1 0.9 0.6 0.6 0.1 2.1-0.4 2.1 0 0.5-0.1 1.1-0.5 1-0.2 0.2-0.3 0.3-0.3 0.6-0.1 1.3 1 0.5 0.1 3.1 0.4 0.6-0.4 0.7 0.4 0.6-0.3 0.6-0.5 0.6-0.3 4.7 0 0.2-0.5-0.3-0.4-0.1-0.5 0.5-0.5-0.1-0.2-0.1-0.4-0.1-0.2 1.3 0 0.5-0.2 0.2-0.7 0.2-0.6 0.7 0.1 1.3 0.6 0.9 0.8 2.2 2.6 0.7 1.2 0.3 0 0.2-0.8 0.3 0.3 0.5 0.9 2.1 0.4 8.1-0.4 1.3 0.4 0.1 0.7-0.5 0.9-0.7 0.7 0.2 0.4 0.5-0.3 0.8-0.3 0.4-0.2 0.3-0.4 0.1-0.3 0.2-0.3 0.6-0.1 1.7 0.1 0.7 0.3 2.9 1.9 1.4 0.5 3.5 0.2 0.9 0.3 0.5 0.7 0.4-0.3 2.9 0.8 0.3-0.1 0.6-0.5 0.4-0.1 0.5 0.1 0.9 0.5 2.9 0.6 3.3 1.6 0.8 0.2 8.9 0.8 0 0.4 0 0.7-0.3 0.7-0.5 0.9-0.1 0.4 0 0.3 0.2 0.2 0.4 1 0.1 0.8-0.1 0.6-0.1 0.4-0.2 0.4-0.3 0.2-0.4 0.1-0.2-0.2-0.2-0.6-0.3-0.2-0.7-0.2-0.5 0-0.4 0-0.6 0.4-0.3 0.3-0.1 0.3-0.2 0.2-0.4 0.2-0.9 0.1-0.4 0-0.3-0.1-0.4 0-0.5 0.1-0.5 0.3-0.2 0.3-0.1 0.4 0.1 0.8-0.1 0.4 0 0.3 0 0.5-0.1 0.5-0.3 0.6-0.3 0.2-0.4 0-0.8-0.1-0.4 0.1-0.4 0.1-1.2 0.2-0.4-0.1-1.2-1.9-0.8-0.6-0.3-0.2-0.4 0-0.4 0-2.2 1.2-0.6 0.6-1.3 0.7-1.5 0.4-0.7 0.4-0.4 0.3-0.4 0.8-0.1 0.4-0.1 0.4-0.3 0.9-0.3 0.5-0.6 0.6-0.5 0-0.4-0.1-0.4-0.2-0.4 0-2.1 1.1-3.9 0.4-2.1-0.3-0.5 0.1-0.4 0.3-0.3 1.1-0.3 0.4-0.4 0.2-0.5 0.1-2.2 0-0.2 0.3-0.1 0.4-0.2 0.3-0.2 0.3-0.3 0-0.7 0-1 0.4-0.4 0-0.4-0.1-0.4-0.2-0.3-0.3-0.9-0.1-0.6 0-0.9-0.2-1.1-0.6-0.6-0.1-1 0.1-0.6 0.2-0.4 0.2-0.2 0.4-0.2 0.3-0.2 0.4-0.3 0.3-0.2 0.3-0.1 0.3 0 0.2 0 0.1-0.1 0.3-0.2 0.3-0.1 0.4-0.4 0.4-0.4 0.1-0.7 0.1-1.6-0.1-0.4-0.1-0.3-0.2-1.1-0.4-0.1-0.3-0.5-0.1-0.5-0.4-0.5-0.4-1-0.6-0.2-0.3-0.2-0.4-0.1-0.4-0.2-0.8-0.2-0.3-0.4-0.3-1.2 0.3-0.5 0-2-0.4-0.4 0.1-0.1 0.3-0.1 0.4-0.1 0.5-0.3 0.3-0.8 0.4-0.5 0.1-0.5-0.2-1.1-0.4-1-0.2-0.5 0.1-0.3 0.3-0.1 0.8-0.2 0.2-0.3 0.1-0.8-0.2-1.7-0.9-0.6 0-0.8-0.2-0.3-0.3-0.4-0.3-0.7-0.2-1.1 0.5-0.2 0.4-0.2 0.4-0.2 0.3-0.2 0.4-0.1 0.3 0 0.3-0.1 0.2-0.3 0.2-0.9 0.3-1.1 0-0.2 0.2-0.1 0.3 0.2 0.3 0.4 0.3 0.7 0.2 0.2 0.3 0 0.3-0.2 0.4-2.1 1.1-0.6 0.1-1.4 0.6-0.4 0.1-1.9-0.2-0.3-0.2-0.3-0.1-0.5-0.1-1.9 0-0.8 0.1-0.7 0.3-0.4 0.2-0.3 0.4-0.3 0.3-0.3 0.3-0.5 0.3-0.3-0.1-0.2-0.5-0.8-0.4-1.3-0.2z" id="ESAS" name="Asturias">
+  </path>
+  <path d="M652.1 64.6l0 0.4 0 1.6-0.2 0.5-0.2 0.4-1.8 0.9-0.3-0.1-0.9-0.3-1.1 0.1-2.5-0.1-0.5 0.2-0.5 0.4-3.4 2.5-0.4 0.6-0.1 0.5 0.1 0.3 0.1 0.5 0 0.4-0.1 0.4 0 0.4 0.2 0.3 0.2 0.4 0.3 1.2 0 0.7-1.1 0.1-1.2-0.2-0.7 0.1-0.8-0.2-1.1-0.5-1.1-0.3-1.2-0.2-0.4-0.2-0.6-0.5-0.4-0.1-0.4 0-0.6 0.4-0.8 0.9-1 1.3-0.6 0.6-0.4 0.4-0.8 0.5-0.6 0.5-0.4 0.2-0.3 0-1.2-0.1-0.4 0.1-0.3 0.1-0.3 0.2 0 0.5 0 0.5-0.2 0.5-0.5 0.5-0.4 0.3-0.6 0.2-0.6 0.3-0.9 1-0.7 0.4-0.4 0.2-0.3 0.2 0 0.1-0.4 0.7-0.9 2.6 0 0.4 0 0.4 0.1 0.4 0.3 0.3 0.3 0.3 0.4 0.1 0.4 0 0.8-0.2 1-0.6 0.3-0.3 0.4-0.7 0.2-0.3 0.3-0.2 0.3-0.1 0.4 0.2 0.3 0.2 0.3 0.4 0.2 0.3 0.1 0.4-0.3 0.4-1.2 0.8-1.1 0.1-0.1 0.2 0 0.3-0.3 0.2-0.1 0.3 0.2 0.6 0 0.4 0.2 0.3 0.2 0.3 0.4 0 0.3-0.2 0.3-0.6 0.3-0.4 0.5-0.2 0.4 0 0.4 0.2 0.1 0.4 0.1 0.4-0.1 0.6 0.1 0.4 0.3 0.6 0.1 0.3 0 0.4 0 0.3-0.2 0.4-0.4 0.2-1.4 0-0.7 0.2-1.4 1.3-0.5 0.2-0.8 0.3-0.6 0.1-1.4-0.4 0.1-0.9-0.1-0.4 0-1.3-0.1-0.3-0.1-0.1-0.3 0.2-0.3 0.2-1.1 2.5-1.6 0.4-0.4-0.7-0.2-0.3-0.4-0.2-0.4-0.2-1.1-0.1-0.4-0.1-0.8-0.7-0.3-0.4-0.1-0.3 0.1-0.3 0.3-0.2 0.7-0.2 0.4 0 0.3-0.2 0.3-0.3 0.1-0.3-0.1-0.5-0.2-0.2-0.4-0.2-1 0.3-0.4 0.2-0.5 0.5-0.2 0.1-0.3-0.1-0.3-0.1-0.2-0.3-0.1-0.3 0-0.2 0-0.3-0.1-0.4 0-0.4-0.1-0.4 0-0.4-0.1-0.4-0.2-0.8-0.1-0.7 0-0.4 0.1-0.4-0.1-0.4-0.6-0.4-4.1-1.5-0.6-0.4-0.2-0.4-0.1-0.1-0.1-0.4-0.8-1.4-0.4-0.3-1-0.5-0.5-0.1-0.6 0-0.8 0.4-0.4 0.2-0.6 0-0.5 0.1-1.4 0.7-0.5 0.1-1.4-0.1-1.6 0.3-2 0-0.7 0.2-0.8 0-0.3-1.4-0.2-0.4-0.8-0.8-0.2-0.5-0.3-0.4-1.6-0.9-0.4-0.3-0.3-0.4-0.2-0.9-0.1-0.6 0.2-3 0.4 0.1 1.2-0.2 0.4-0.1 0.4-0.1 0.8 0.1 0.4 0 0.3-0.2 0.3-0.6 0.1-0.5 0-0.5 0-0.3 0.1-0.4-0.1-0.8 0.1-0.4 0.2-0.3 0.5-0.3 0.5-0.1 0.4 0 0.3 0.1 0.4 0 0.9-0.1 0.4-0.2 0.2-0.2 0.1-0.3 0.3-0.3 0.6-0.4 0.4 0 0.5 0 0.7 0.2 0.3 0.2 0.2 0.6 0.2 0.2 0.4-0.1 0.3-0.2 0.2-0.4 0.1-0.4 0.1-0.6-0.1-0.8-0.4-1-0.2-0.2 0-0.3 0.1-0.4 0.5-0.9 0.3-0.7 0-0.7 0-0.4 0.1 0 0.1 0.1 1.1 1 0.8-0.8 1.2-0.2 1.1 0.3 0.8 0.7 0.2 0 0.5-0.7 0.3-0.2 1.9 0.2 5-0.5 1.2-0.9 2.5-0.8 1-0.1 1.8 0 0.2-0.2 0-0.2 0.1-0.3 0.3-0.1 0.3 0.1 1 0.7 0.2-0.3 0.2-0.1 0.2 0 0.2 0-0.1-0.1-0.4-0.3 0-0.4 1.4-1 0.7-0.3 0.6 0.2 0.5-0.3 0.2 0 0.2 0.3 1.1-0.7 1.3-0.3 1.2 0.2 1.1 0.8-1.8 0.8-0.7 0.5-0.6 0.6 0.5 0.5 0.2 0.2 0.2 0.1-0.2 0-0.1 0 0 0.1 0 0.2 0.4 0.1 0.4-0.1 0.6-0.3 0.3-0.3 0.5-0.8 0.2-0.1 0.3 0.1 0.4 0.5 0.4 0.2 0.1-0.3-0.1-0.5-0.2-0.5-0.3-0.2 0-0.4 0.6 0.1 0.2 0.1 0.3 0.2 0.1-0.3 0.2-0.1-0.3-0.4 0.5-0.2 1.1-0.1 0.5-0.3 0.4-0.4 0.5-0.2 3-1 1.1 0.1-0.1 1 0.7 0 0.5 0.4 0.5 0.5 0.3 0.2 2.8 0.5 0.2 0.2 0.2 0.3 0 0.3-0.1 0.5-0.1 0.1-0.3-0.1-0.3 0.1-0.2-0.2-0.4-0.2-0.3-0.1-0.2 0.3-0.1 0.3-0.4 0.3-0.6 0.4 0.8 0.1 0.4 0.7 0.4 0.2 0.6-1 0.4 0.6 0.6 0.1 1.2-0.4 0.6 0.1 1.9 0.7 2.5 0.4 1.8 0.7 0.6 0.1 0.4 0.2 0.9 1.1 1.1 0.3z m-4.8 6.8l0.1 0.6-1.3 0.6-0.2-0.3 0-2.2 0.7 0.3 0.7 1z" id="ESCB" name="Cantabria">
+  </path>
+  
+  <path d="M841 315.5l1.6-0.7 0.7 0.8-0.1 1.2-0.9 0.2-1.4 0-2-1.3-0.7-0.4-0.7 0.6-0.4 0.3-0.7 0.9-0.6 0.4-0.6-0.2 0.2-1-0.2-0.4 0-0.5 0.2-0.4 0.2-0.5 0-0.4-0.2-0.2-0.2-0.2 0.2-0.3 0.5-0.6 0.3 0.3 0.4-0.2 0.4-0.6 0.2-0.8 0.1 0 0.1 0 0 0.2 0 0.1 2 2.8 1.6 0.9z m3.2-21.5l-0.2 0.5 0.3 1 0.6 1.8-0.7 0-0.5 0.4-0.3 0.7-0.2 0.8-0.2 0.3-1.4 1-1.3 1.9-0.5 0.4-1.1 0.6-0.4 0.6-0.2-0.2-0.2-0.3-0.2-0.2-0.6 0.9-0.6 0.3-0.4 1.7-0.1 1.3-1.3 0-0.4-1-0.7-0.6-0.6 0.3-0.3 0-0.1-0.1-0.4 0.1-0.3-0.7-0.7-0.2-0.7 0.2-0.3 0.7-1.2-0.9-0.5-0.6-0.2-0.9 0.5-1.2 0.1-0.8-0.3-0.6 0.3-0.4 0.4-0.2 0.5-0.1 0.4 0.3 0.3-0.3 0.4-0.1 1 0.1-0.4-2.2 0.1-1.3 0.4-0.5 0.6-0.2 0.6-0.5 1-1.1 0.2 0 0.4 0.4 0.8-0.7 0.4 0.3 0.8-0.6 1.1-0.6 1.2-0.3 0.8 0.1 0.4-0.5 0.6-0.2 0.5 0 0.7 0.6 0.3 0.1 0.7 0 0.5 0.1 0.3 0.3 0.3 0.3z m70.7-36.2l1.1 0.3 2.3 1.4 1.4 0.1-0.2 0.5 0 0.5 0.1 0.4 0.1 0.4-0.2 0.3-0.2 0.2-0.1 0.3 0.2 0.7-0.5 1.4-0.5 0.8-0.5 0.3-0.7 0.2-0.4 0.6-0.2 0.9 0.3 0.8-1.6 1.5-1.7 2-1.3 2.6-0.4 2.9-0.4-0.3-0.1-0.1-0.7 2.2-1.2 1.3-3.7 2.3-1.6 1.4-0.3 0.5-0.2 0.2-0.3 0.2-0.4 0.2-0.2-0.2-1.1-1.7-0.2-0.2-0.7-0.3-0.2-0.2-0.2-0.5-0.1-0.5-0.1-0.5-0.3-0.2-0.4-0.1-0.6-0.6-0.4-0.1-0.5 0.1-0.6 0.2-0.4 0.1-3.5-0.3-1.6-0.6-1-1.3-0.4-2.8-0.6-0.4 0.1-0.9 0.6-1.2-0.4-1.1-1.2-1.1-1.3-0.8-1.1-0.3-0.9 0.3-2.6 1.4-0.5 0.6-0.5 1.5-1 1-1.1 0.2-0.7-1.4-0.1-0.1-0.1-0.4 0.1-0.3 0.4-0.3-1.1-1.1-0.4 0.5-0.3 0.2-0.2-0.2-0.3-0.5-1.1 0.7-0.2 0.1-0.4-0.3-0.4-1-0.7-0.6-0.2-0.9 0-1.1 0.3-0.8 2.9-1.8 0.8-0.2 0.8-0.5 1.9-2.1 0.6-0.3 0.9-0.1 0.6-0.3 0.7-0.5 1.3-1.4 0.2-0.3 0.2-0.6 0.1-0.2 0.2 0 0.5 0.1 0.2-0.1 0.9-1 0.2-0.2 0.2-0.1 0.8-1 0.2-0.2 0.3-0.1 1.2-0.6 0.6-0.5 0.5-0.5 0.4-0.3 0.6-0.2 0.2-0.1 0.2-0.5 0.2-0.1 0.8 0.1 0.4-0.1 1.2-0.5 2.4-1.7 1.3-0.3 2.3-0.2 2.2-0.6 4.2-1.7 0.5 0.7 0.2-0.2 0.2-0.1 0.5 0.3-0.4 0.3-1.5 0.7-0.5 0.1-0.6 0.3-0.5 0.6-0.5 0.4-0.5-0.2-0.3 0 0 1.7 1.4 0.2 3.1-0.8 0 0.3-0.4 0.3-0.1 0.3 0.1 0.4-0.2 0.4-0.2 0.3-0.2 0.2-0.7 0.2-1.3 0.4-0.3 0.4 0 1.1 0.4 1.1 1.1 1.1 1.3 0.7 1.2 0.3 2.7 0 0.8-0.3 1.2-1.2 0.6-0.3z m38.3-7.4l0.1 0.7 0.9 1.5 0.3 0.8-0.2 0-0.2-0.3-0.3-0.3-0.3-0.3-0.3-0.2-0.2 3.5-2 0.3-2.9-1.4-6.6-4.4-1.3-0.5-1.6 0-3 0.6-1.5-0.6 0.2-0.6 0-0.8 0.1-0.7 0.5-0.4-0.3-0.3-0.9-0.3-0.3-0.3-0.4-0.7 0-0.2 0.1-0.3 0.1-0.6 0.5-0.7 2.8-0.6 1 0.4 3.9-0.4 1.6 0.1 0.5-0.1 0.6-0.3 0.6-0.5 0.5-0.3 0.1 0.7 0.3 0.4 0.9 0.7 0 0.2-0.1 0.3 0 0.4 0.3 0.2 0.2-0.1 0.3-0.4 0.4-0.6-0.1-0.8 0.3-0.2 0.3 0.3-0.2 0.7 0.2 0.4 1.2 0.7 0.2 0.4 0.2 0.3 0.4 0.4 0.2 0.1 0.6 0.1 0.3 0.2 0.4 0.5 0.4 0.9-0.1 0.8-0.7 0.3 0.6 0.3 0.7-0.1 0.5 0.2 0.2 0.9z m-53.3 39.7l-0.1 1.4-0.8 1.2-1.3-0.1-0.7-1.7 1.1-1.1 1.6-0.7 0.2 1z" id="ESIB" name="Islas Baleares">
+  </path>
+  <path d="M732.4 245.8l0.7 2.1-0.5 0.4-1.6 0.7-0.3 0.4-0.1 0.3 0.1 0.2 0.2 0.5 0.1 0.3 0 0.4-0.1 0.9 0 0.8-0.1 0.8-0.7 2.7-0.3 0.9-0.3 0.4-0.4 0.6-0.9 1.7-0.2 0.5 0 0.4 0.1 0.4 0.1 0.8 0 0.5-0.2 0.4-0.2 0.3-0.3 0.3-0.4 0.1-0.3 0.1-0.8 0-0.3-0.1-0.4-0.2-0.7-0.3-0.3-0.1-0.4 0.1-0.3 0.1-0.8 0.6-0.9 1-0.2 0.3-1.5 2.9-0.4 0.6-0.5 0.4-0.3 0.2-0.2 0.2-0.2 0.5 0 0.2 0 0.2 0 0.2 0.1 0.1 0.1 0.2 0 0.1 0 0.1-0.1 0.3-0.1 0.2 0 0.3 0 0.2 0 0.5 0.1 0.2 0.1 0 0 0.1 0 0.1-0.1 0.1-0.2 0.2-0.1 0.2 0.1 0.6-0.3 0.8-0.2 0.4 0 0.3 0 0.3 0.1 0.2 0.2 0.2 0.2 0.1 0.2 0.5 0.6 0.1 0.1 0.2 0.1 0.3 0.2 0.2 0.3 0.1 0.1 0.2 0.1 0.2 0.3 0.1 0.2 0.2 0 0.3 0.1 0.3 0 0.3 0.1 0.4 0.2 0 0.3-0.1 0.3 0.1 0.2-0.1 0.3-0.1 0.3 0 0.9 0.3 1.8 1.2 0.5 0.2 0.3 0 0.4 0 5.4 1.7 0.2 0.5 0.1 0.4-0.2 0.4-0.1 0.3-0.1 0.9 0.1 0.4 0 0.4 0 0.3-0.1 0.8-0.1 0.4-0.1 0.3-0.1 0.3-0.2 0.5-0.1 0.3-0.3 0.8-0.3 0.3-0.2 0.3-0.5 0.6-0.2 0.4-0.2 0.8-0.2 0.4-0.4 0.7-0.2 0.4 0 0.3-0.1 0.4-0.1 0.4 0 0.6 0.2 0.8 0.3 0.5 3.9 4.7 0.7 0.5 0.6 0.3 1.1-0.1 1.1-0.2 1.1 0 0.8-0.1 0.6-0.5 0.2 0 0.3-0.1 0.4 0.1 0.4 0.2 0.5 0.3 1.3 2.3 0.2 0.5 0 0.4-0.2 0.8 0 0.4 0.6 1.6 0 0.2-0.1 0.4-0.2 0.2 0 0.9-0.5 0.3-0.3 0.3-0.4 0.1-0.2 0.4 0 0.4 0.2 1 0.3 0.6 0.3 0.6 0.3 0.3 0.4 0.6 0.3 0.3 0.2 0.4 0 0.2-0.1 0.2-1.3 0.9-0.7 0.3-0.8 0.1-1-0.1-0.2 0-0.6 0.2-2.3-1.7-1.1-1-0.2-0.4-0.1-0.3 0-0.4-0.1-0.4-0.2-0.2-0.3-0.2-1.5-0.5-0.4-0.1-2.4 0.7-0.4 0.2-0.4 0.3-1 1-2.3 1.3-0.4 0-0.3-0.2-0.2-0.3-0.2-0.2-0.4-0.1-0.5 0.3-0.7 0.6-1.3 1.5-0.6 1.5-0.2 0.8 0.1 0.4-0.1 0.7-0.2 0.4-0.2 0.3-0.5 0.4-0.4 0.3-0.4 0.9-0.2 0.3 0 0.3 0 0.3 0 0.3 0.1 0.2 0.2 0.3 0.2 0.7 0.1 0.8 0.1 1.6 0 0.9 0.2 1.2 0 0.4 0 0.5-0.1 0.3-0.2 0.4-0.3 0.4-3 2.4-2.4 0.8-0.4 0-0.4 0-0.3-0.2-0.5-0.2-0.3-0.2-0.1-0.2-0.2-0.2-0.1-0.3 0-0.3 0-0.2 0.1-0.3 0-0.3 0-0.2-0.2-0.2-0.2-0.2-0.2-0.2-0.2 0-0.7 0.1-0.2-0.1-0.5-0.3-0.3-0.1-0.3 0-0.4 0.2-0.2 0.1-0.3 0.3-0.5 0.1-0.2 0-0.1 0.1 0 0.3-0.1 0.3-2.1 1.3-1.5 1.2-1 0.5-0.7 0.2-1.3 0.3-1 0.4-0.4-0.1-0.2-0.1-0.7-0.7-0.3-0.2-0.3 0-0.5 0.1-0.6 0.4-1.1 1.2-1.7 1.6-0.5 0.3-0.8 0.1-0.4 0.2-0.5 0.3-1.2 1.1-0.4 0.7-1.2 2.4-1.2 1.7-1.5 1.7-0.2 0.4-0.6 1.8-0.5 0.2-0.4-0.1-4.3-1.2-3.3-1.6 0.5-0.7 0.6-0.6 0.2-0.3 0.4-0.7 2.5-3.3 0.1-0.4-0.1-0.4-0.2-0.7 0-0.2 0.1-0.2 0.2-0.1 0.2-0.3 0.1-0.3 0.1-0.3 0-0.4 0.1-0.3 0-0.3-0.1-0.4-0.3-0.5-1.3-0.8-0.2-0.5-0.1-0.5 0-0.5 0-0.8-0.1-0.7-0.2-0.4 0-0.4-0.1-0.4 0.1-0.7-0.1-0.3-2.8-0.8-0.4-0.4-0.1-0.3-0.1-0.3 0-0.4 0.1-0.4 0-0.7-0.1-0.4-0.1-0.7 0.2-0.6 0-0.2-0.1-0.1-0.4-0.2-0.6-0.2-1.2-0.1-0.6 0.1-0.6 0.2-0.7 0.3-1.8-0.8-1.5-0.9-0.5 0.4-0.1 0.2-0.8 0.7-0.6 0.4-0.1 0-0.1 0.1-0.2 0.1-1.2 0.6-0.2 0.2-0.4 0.3-0.1 0.2 0 0.1-0.1 0-0.2 0.1-0.1 0.1-0.1 0.1-0.2 0.1-0.2 0-0.4-0.3-0.3-0.3-0.4-0.1-0.5-0.1-0.5 0-0.6 0.1-0.6 0.3-0.8 0.6-0.3 0.3 0 0.6-0.1 0.3-0.2 0.2-0.3-0.2-0.6-0.7-0.9-1.3-0.3-0.3-0.3-0.2-0.4 0-1.1 0.7-0.6 0.6-0.4 0.2-0.6 0-1.3-0.4-2.9-0.2-0.7-0.1-0.8-0.3-0.7-0.3-0.5-0.2-0.6 0-0.9 0.1-0.7 0.4-0.3 0.3-0.1 0.4-0.1 0.4-0.1 0.3-0.2 0.3-0.5 0.7-1 0.6-1 0.4-0.5 0.1-0.5 0-0.7-0.1-1.3-0.4-0.3-0.1-0.2-0.4-0.1-0.3 0-0.4-0.2-0.3-0.2-0.3-0.4-0.1-0.5 0.1-0.4 0.3-0.2 0.4-0.2 1.1-0.1 0.3-0.3 0.2-0.5 0.1-0.5 0.1-2.1-0.6-0.8-0.1-1-0.4-0.4 0-0.2 0.1-0.4 0.1-0.7-0.2-0.3-0.2-0.5-0.1-0.6 0.1-0.6 0.1-0.6 0.5-0.3 0.3-0.4 0.8-0.8 0.4-1.3 0.2-11.5-0.5-1.5-0.5-0.8-0.1-0.9 0-0.3 0.1-0.3 0.3-0.1 0.4-0.1 1.9-0.6 0.1-0.4-0.1-2.6-1.1-0.6-0.1-1-0.3-1.8-0.9-0.4-0.2-0.4-0.5-0.8-1.1-1.1-1.2-1.1-0.9-0.6-0.3-0.5-0.4-0.5-0.2-0.4 0-0.4-0.1-0.3-0.3-0.3-0.4-0.2-0.5-0.4-0.4-1.4-1.2-0.7-0.2-0.8-0.5-0.1-0.3-0.3-0.4-0.5-0.3-1.7-0.8-0.5-0.1-0.8-0.1-0.5-0.1-0.6-0.2-0.8-0.6-0.5-0.5-0.2-0.5-0.1-0.8 0-0.4-0.1-0.8-0.1-0.4-0.4-0.2-1.2 0-0.5 0.1-0.9 0-1.3-0.6-2.3-1.7 0.6-0.3 0.5-0.1 0.2 0 0.2 0 0.3-0.2 0.4-0.5 0.4-1 1-3.7 0.2-0.5 0.6-1.1 0.3-0.3 0.3-0.3 0.3-0.2 0.4-0.1 0.4-0.1 1.1 0.2 0.3 0 0.2-0.3 0.2-1.2 0.2-0.7-0.2-0.6-0.2-0.3-1.1-0.2-0.3-0.1-1.4-0.4-0.2-0.3-0.2-0.3-0.1-0.4-0.1-0.3 0-0.4 0-0.4-0.1 0-0.1-0.1-0.2-0.2-0.2-0.2-0.1-0.4 0-0.4-0.2-0.4-0.1-0.3 0-0.4 0.3-0.3 0.4-0.1 0.3 0.1 0.4 0.1 1 0.6 0.7 0.3 0.4-0.1 0.4-0.1 0.9-0.6 0.2-0.3-0.1-0.5-0.3-0.3-0.7-0.4-0.2-0.3-0.2-0.5 0-0.7 0.5-2.2 0.2-0.6 0.1-0.3 0.3-0.3 0.6-0.6 0.2-0.3 0.3-0.3 0.3-0.3 0.3 0 0.7 0.2 0.4 0 0.4 0 0.7-0.2 0.7 0.2 0.3 0.1 0.3 0.2 1.4 0.7 0.2 0.1 0.6 0-0.5-0.9-1.2-1.4-0.4-0.4-0.3-0.3 0-0.2-0.7-1.3-0.8-1.9-0.1-0.5 0-0.5 0.3-0.4 0.3-0.2 0.5-0.1 0.4-0.3 0.3-0.5 0.6-1.7 0.6-1.2 0.2-0.9-0.6-1.7-0.5 0.6-2 1.1-0.5 0.7-0.5 0.2-1.4 0.4-0.9 0.5-0.3 0.1-0.3 0.1-0.2 0.1-1 0.6-2.6-1.3-0.5-0.5-0.4-0.3-0.2-0.2-0.5-0.6-0.4-0.6-1.2-1.4-0.6-1-0.3-0.2-0.7-0.1-0.6-0.4-0.3-0.4-0.6-0.5-0.9-0.9-1.5-2-0.3-0.2-0.6-0.4-0.3-0.3-0.3-0.3-0.1-0.3 0.1-0.3 0.4-0.6 0.2-0.4 0.3-0.3 0.1-0.4 0.5-0.6 0.1-0.3 0.1-0.4 0.1-0.3 0.1-1.2 0.2-0.7 0.1-0.3 0.1-0.4-0.1-0.5-0.3-0.4-0.5-0.7-0.1-0.3 0.2-0.8 0-0.5-0.2-0.7-0.1-0.4-0.3-0.2-0.3 0-0.8 0.1-0.3 0.1-0.8 0.7-0.3 0.5-0.5 0.7-0.2 0.2-0.3 0.1-0.5-0.1-1.4-0.3-0.2-0.2-0.1-0.5 0.1-1.1 0.1-0.5 0-0.6 0.1-0.7 0.2-0.4 0.5-0.7 0.1-0.3 0-0.4-0.2-0.3-0.2-0.3-0.3-0.3-0.3-0.3-0.3-0.1-0.4-0.1-1.1 0.1-0.8 0.1-0.3 0.2-0.2-0.7 0-1.4 0.6-3.9 0.3-2.8-0.1-0.5 0-0.6 0.2-1.3 0.2-0.4 0.1-0.2 1.2-0.6 4 0.5 1.1 0.5 0.5 0.4 0.9 0 0.7-0.1 0.4-0.2 0.2-0.2 0.2-0.2 1.6-1.2 0.2-0.3 0.3-0.4 0.3-0.3 0.5-0.2 1.1-0.3 0.4-0.1 0.3 0.3 0.2 1.5 0.2 0.2 0.6 0.2 0.9-0.2 0.6-0.3 0.9-0.6 0.3-0.3 0.2-0.3 0.1-0.4 0.1-0.4 0.4-0.7 0.4-0.3 0.7-0.5 0.4-0.4 0.9-0.5 0.7-0.6 0.4-0.6 0.1-0.5 0.1-0.4 0.2-0.8 0.2-0.2 0.9 0 1.9-0.3 0.8-0.3 0.5 0.1 0.2 0.3-0.1 0.4 0.1 0.4 0.1 0.3 0.2 1.3 0.1 0.4 0.2 0.3 0.3 0.2 0.8 0.4 0.5 0.1 0.6 0 0.9-0.3 1.3-0.5 0.9 0.6 0.6 0.2 0.5-0.1 0.4-0.2 0.2-0.3 0.4-0.4 0.5-0.3 1.2-0.5 0.6-0.4 0.4-0.4 0.2-0.5 1.2-1.2 0.3-0.4 0.2-0.4 0.5-0.8 0.2 0 0.2 0 0.3 0.2 0.1 0.4 0.1 0.3-0.1 0.8 0 0.4 0.1 0.3 0.3 0.8 0.3 0.3 0.3 0.3 0.6 0.2 0.6 0.7 0.2 0 0.2-0.1 0.5-0.5 0.3-0.3 0.3-0.5 0.3-0.6 0.3-0.3 0.4-0.3 1-0.2 1-0.6 0.4 0 0.3 0.3 0.3 0.3 1.1 1.1 0.6 0.2 0.8 0.2 0.5-0.2 0.4-0.3 0.4-0.3 0.3 0.1 0.9 0.3 0.4 0.3 0.3 0.3 0.2 0.4 0.2 0.3 0.4 0.3 0.5 0.3 2.2 0.7 1.2 0.6 2 0.5 0.2 0.1 0.2 0.2 0.2 0.3 0.4 0.4 0.4 0 0.7-0.2 0.3 0.1 0.3 0.2 0.6 0.9 0.3 0.2 0.2 0.2 0.5 0.1 1-0.2 0.6 0.1 0.6 0.2 0.8 0.1 1.9 0.9 0.4 0.4 0.2 0.3 0 0.2 0 0.5-0.1 0.3-0.3 1.1-0.1 0.2-0.4 0.5 0 0.2-0.2 0.2-0.5 0.3-0.3 0.1-0.5 0.3-1.9 2-0.7 0.5-0.7 0.3-0.2 0.1-0.7 0.8-0.2 0.2-0.5 0-2.5 0.8-0.5 0.3-0.3 0.3 0.1 0.4 0.5 0.4 1.3 0.8 0.6 0.1 0.5-0.1 0.3-0.4 0.7-0.5 0.3-0.1 0.6-0.6 0.4-0.4 0.2-0.3 0.3-0.1 0.5-0.2 0.7 0 0.5-0.2 0.7-0.5 0.9-0.3 0.4-0.2 0.1-0.3-0.1-0.7 0.2-0.2 0.6-0.3 0.8-0.2 0.3-0.3 0.3-0.2 0.3-0.1 1.6-0.4 0.4-0.2 0.2-0.3 0.2-0.6 0.6-0.4 3.8 0.1 1.4-0.6 0.8 0.6 0.4 0.1 0.5-0.2 1.7-0.3 2.5-1.3 1.6-0.5 0.7 0.4 0.2 0.2 0 0.5 2.1-0.1 0.8-0.2 0.6-0.5 0.4-0.5 0.2-0.4 0-0.3-0.1-0.4-0.2-0.3-0.2-0.3-0.2-0.4-0.1-0.4-0.1-0.4-0.1-0.4 0.2-0.2 0.1-0.1 0.3 0.1-0.4-2.1 0-1.1 0-0.5-0.1-0.6-0.4-1-0.3-0.6-0.5-0.4-0.4 0.1-1 0.8-0.3 0.3-0.3 0.3-0.3 0.3-0.3 0-0.3-0.4-0.1-0.7 0.1-0.6 0.1-0.5 0.1-0.4 0.1-0.5 0.1-0.6 0.2-0.4 0.6-0.6 0.2-0.3 0-0.2 0.1-0.3 0.1-0.5 0.2-0.2 0-0.3 0-0.2 0-0.5 0-0.2 0.1-0.2 0.1-0.5-0.2-0.5-0.6-1.1-0.5-0.4-0.4-0.2-0.4-0.1-0.3-0.2-0.1-0.4 0-1.5-0.1-1.1 0-0.2 0-0.2-0.1-0.3-0.9-0.9-0.3-0.2-0.3-0.3-0.3-0.1-0.3-0.1-0.3 0.1-0.3 0.1-0.2 0.2-0.3 0.1-0.2 0-0.2-0.1-0.1-0.2 0.1-0.2 0.1-0.2 0.1-0.1 0-0.3-0.1-0.4-0.1-0.4-0.5-0.5-0.4-0.2-0.2-0.4-0.2-0.4 0.1-1.5 0.2-1.1-0.3-0.1-0.2 0.1-0.3 0.1-0.3 0-0.4-0.3-0.5-0.5-0.5-1-0.4-0.5-0.3 0-0.1 0.3-0.2 0.2-0.6 0-0.6 0.1-0.3-0.1-0.3-0.3-0.2-0.3-0.2-0.3 0.2-0.5 0.5-0.7 0.1-0.3 0-0.4-0.1-0.4-0.1-0.7-0.1-0.6-0.2-0.5-0.3-0.4-1.2-0.3-0.3-0.2-0.1-0.2 0-0.2 0.2-0.2 0.1-0.2 0.3-0.5 0.2-0.5 0-0.4 0.3-1.5 0.1-0.3 0.1-0.2 0.2-0.1 0.2-0.1 0.2-0.2 0.2-0.3 0-0.6-0.2-0.4 0-0.4 0.2-0.4 0.1-0.5 0.2-0.4 0.1-0.4 0.4-1.2 0.1-0.4 0.2-0.4 0.3-0.7 0.1-0.5 0-0.8-0.6-1.6-0.5-1.8-0.4-0.2-0.3-0.1-0.9-0.5-0.3-0.2-0.4-0.4-0.4-0.7-1.5-1.5-0.2-1 0.7 0.1 0.4-0.1 3.1-2.4 0.9-0.2 0.3-0.2 0.1-0.4 0.1-0.8 0-0.4-0.2-0.3-0.2-0.4-0.1-0.2 0.1-0.2 1.1 0.5 2 0.1 2-0.4 0.4-0.3 1.3 0 1.2-1.4 0.8-0.5 4.7 1.1 1.4 0 2.7-0.3 0.9-0.2 0.6-0.4 0.1-0.4 0.3-0.3 0.2-0.3 0.3-0.2 0.5-0.1 0.5 0.1 0.7 0.3 0.2 0.4 0.1 0.4 0.1 0.4 0.3 0.7 0.3 0.4 0.5 0.2 1.5 0.5 1-0.1 0.4-0.2 0.4-0.3 0.4-0.2 0.4 0 0.5 0.1 0.4 0.3 0.2 0.4 0.2 0.4 0.4 0.2 0.8 0.2 1 0.2 0.6 0.3 0.3 0.4 0.3 0.3 0.3 0.1 0.3-0.1 0.4 0 0.3 0 0.3 0.3-0.1 0.3-0.2 0.4-0.6 0.4-0.1 0.2 0.3 0.3 0.7 0.4 0.2 0.4 0 0.3-0.3 0.6 0.1 0.3 0.3 0.2 0.4 0 0.7-0.3 0.4-0.2 0.4-0.1 0.3 0.2 0.2 0.4 0.2 0.3 0.1 0.4 0.1 0.3 0.1 0.1 0.2 0.2 0.5 0.2 0.3 0.2 0.2 0.3 0.2 0.8 0.2 0.4 0.3 0.3 0.4 0.3 1.1 0.5 0.5 0 1.3-0.7 0.5-0.1 0.5 0.1 0.3 0.3 0.7 0.4 0.6 0.1 1-0.2 0.6-0.2 0.5-0.3 0.5-0.4 0.5-0.3 0.7-0.1 0.9 0.2 0.4-0.1 0.4-0.1 1.3-1.2 0.3-0.2 0.3 0.1 0.3 0.2 0.3 0.3 1 0.6 0.2 0.3 0.2 0.3 0.3 0.3 0.3 0.1 0.3-0.2 0-0.3-0.1-0.3 0-1 0.3-1.4 0-0.8 3.3-1 1.1 0.3 0.2 0.4 0.4 0.4 0.5 0.3 1 0.5 1.7 1.2 1.3 0.8 2 1.7 0.3 0.4 0.2 0.3 0.1 0.4 0.3 0.3 0.5 0.7 2.2 1.9 0.3 0.3 0.4 0.5 0.2 0.3 1.4 1.2 0.5 1.1-0.1 0.4-0.1 1.8 0.3 0.8 0.3 0.7 0.3 0.4 0.5 0.6 1.1 0.7 0.3 0.5 0.2 0.4 0 0.4 0.1 1.3-0.1 0.5-0.4 0.8-0.2 0.5 0 0.4-0.1 0.6 0.2 0.4 0.3 0.5 0.2 0.7 0.2 0.6-0.1 1.1-0.1 0.4-0.3 0.7-0.2 0.9-0.1 0.6 0.2 1-0.2 0.3-0.2 0.4-0.4 0.2-0.7 0.4-0.3 0.1-0.4-0.1-0.3-0.2-0.3-0.2-0.7-0.3-0.3 0-1.1-0.3-0.2 0.2-0.2 0.4-0.7 1.9 0 0.7 0 1.9-0.3 0.4-0.3 0.3-0.7 0.4-0.4 0.3-0.4 0.4-1.3 2.1-0.3 0.2-0.2 0.1-0.5 0.7 1.2 0.5 0.7 0.7 1.6 2.3 0.2 0.7 0 0.6-0.2 0.4 0.1 0.7 0.2 0.1 0.2-0.2 0.4-0.2 0.6 0.1 1 0.6 4.2 4.1 0.6 0.4 0.3 0.1 0.5-0.3 0.5 0 0.5 0.1 0.6 0.3 0.5 0 1-0.2 0.2 0.3 0.1 0.3 0 0.4-0.1 0.4-0.1 0.6-0.3 0.5-0.1 1 0.2 0.3 0.2 0.3 1 0.5 0.2 0.3 0.1 0.4 0.1 0.6 1.2 3.4 0.3 0.3 0.4 0.1 0.4 0 2.6 0.4 1.1 0.4 0.6 0.1 0.4-0.2 0.4-0.1 0.7-0.1 0.8-0.1 0.3-0.1 0.7-0.2z" id="ESCM" name="Castilla la Mancha">
+  </path>
+  <path d="M606.6 209.7l0.7 1.7-2.5 0.2 0.1-1.3 0.8-0.8 0.9 0.2z m-11.9 25.5l0.5-0.9 0.4-1.8 0.5-1.1 0.2-0.3 0.1-0.4-0.1-0.4-0.2-0.7-0.1-0.4 0-0.4 0.3-0.3 0.3 0 0.2 0.2 0.5 0.7 0.2 0.2 0.2 0.1 0.7-0.1 0.4-0.1 0.5-0.3 0.3-0.5 0.4-0.8 0.1-0.5 0.1-0.4 0-0.3 0.1-0.9 0.2-0.3 0.3-0.4 0.3-0.1 0.2-0.2 0.3 0 0.2 0 0.3 0.1 0.3 0.1 0.2 0 0.2 0 0.3-0.1 1.1-0.1 0.4-0.2 0.1-0.3-0.2-0.8 0.3-1.1 0.2-0.4 0-0.4 0-0.4-0.1-0.3 0-0.7 0.1-0.2-0.1-0.3 0-0.3 0-0.8 0-0.4 0-0.6 0.3-0.5 0.3-0.3 0.3-0.2 0.1-0.1 0.1-0.2 0.1-0.2 0.2-0.6 0-0.4 0-0.3-0.1-0.4-0.2-0.4 0-0.5 0.2-0.3 0.3 0 0.2 0.2 0.3 0.6 0.3 0.3 0.3 0.1 0.4 0.1 0.7-0.1 0.8-0.3 0.4-0.2 0.4-0.1 0.4-0.4 0.1-0.3 0-0.8 0.2-0.9 0-0.4 0.2-1 1.2-1.7 0.2-0.3 1.5-2.4 0.4-0.4 0.8-0.4 0.5 0 0.5 0.1 0.3 0.2 0.4 0 0.9-0.2 0.3-0.1 0.2-0.2 0.2-0.4 0.1-0.4 0.3-0.8 0.1-0.4 0.1-0.8 0-0.4 0.2-0.4 0.3-0.5 0.1-0.4 0-0.4-0.1-0.7 0-0.4 0.2-0.4 0.5-1 0.6-0.7 0.3-0.5 0.4-0.5 0.4-0.3 3.5-1.2 0.4-0.2 0.4-0.3 0.5-0.9 0.2-0.4 0.3-0.4 0.3-0.8 0.4-0.5 0.6-0.5 1.8-1.2 0.8-0.9 0.7-0.9 0.2-0.4 0.3-0.4 0.5-0.4 1.2-0.8 1.9-0.4 0.2 1 1.5 1.5 0.4 0.7 0.4 0.4 0.3 0.2 0.9 0.5 0.3 0.1 0.4 0.2 0.5 1.8 0.6 1.6 0 0.8-0.1 0.5-0.3 0.7-0.2 0.4-0.1 0.4-0.4 1.2-0.1 0.4-0.2 0.4-0.1 0.5-0.2 0.4 0 0.4 0.2 0.4 0 0.6-0.2 0.3-0.2 0.2-0.2 0.1-0.2 0.1-0.1 0.2-0.1 0.3-0.3 1.5 0 0.4-0.2 0.5-0.3 0.5-0.1 0.2-0.2 0.2 0 0.2 0.1 0.2 0.3 0.2 1.2 0.3 0.3 0.4 0.2 0.5 0.1 0.6 0.1 0.7 0.1 0.4 0 0.4-0.1 0.3-0.5 0.7-0.2 0.5 0.2 0.3 0.2 0.3 0.3 0.3 0.3 0.1 0.6-0.1 0.6 0 0.2-0.2 0.1-0.3 0.3 0 0.4 0.5 0.5 1 0.5 0.5 0.4 0.3 0.3 0 0.3-0.1 0.2-0.1 0.3 0.1-0.2 1.1-0.1 1.5 0.2 0.4 0.2 0.4 0.4 0.2 0.5 0.5 0.1 0.4 0.1 0.4 0 0.3-0.1 0.1-0.1 0.2-0.1 0.2 0.1 0.2 0.2 0.1 0.2 0 0.3-0.1 0.2-0.2 0.3-0.1 0.3-0.1 0.3 0.1 0.3 0.1 0.3 0.3 0.3 0.2 0.9 0.9 0.1 0.3 0 0.2 0 0.2 0.1 1.1 0 1.5 0.1 0.4 0.3 0.2 0.4 0.1 0.4 0.2 0.5 0.4 0.6 1.1 0.2 0.5-0.1 0.5-0.1 0.2 0 0.2 0 0.5 0 0.2 0 0.3-0.2 0.2-0.1 0.5-0.1 0.3 0 0.2-0.2 0.3-0.6 0.6-0.2 0.4-0.1 0.6-0.1 0.5-0.1 0.4-0.1 0.5-0.1 0.6 0.1 0.7 0.3 0.4 0.3 0 0.3-0.3 0.3-0.3 0.3-0.3 1-0.8 0.4-0.1 0.5 0.4 0.3 0.6 0.4 1 0.1 0.6 0 0.5 0 1.1 0.4 2.1-0.3-0.1-0.1 0.1-0.2 0.2 0.1 0.4 0.1 0.4 0.1 0.4 0.2 0.4 0.2 0.3 0.2 0.3 0.1 0.4 0 0.3-0.2 0.4-0.4 0.5-0.6 0.5-0.8 0.2-2.1 0.1 0-0.5-0.2-0.2-0.7-0.4-1.6 0.5-2.5 1.3-1.7 0.3-0.5 0.2-0.4-0.1-0.8-0.6-1.4 0.6-3.8-0.1-0.6 0.4-0.2 0.6-0.2 0.3-0.4 0.2-1.6 0.4-0.3 0.1-0.3 0.2-0.3 0.3-0.8 0.2-0.6 0.3-0.2 0.2 0.1 0.7-0.1 0.3-0.4 0.2-0.9 0.3-0.7 0.5-0.5 0.2-0.7 0-0.5 0.2-0.3 0.1-0.2 0.3-0.4 0.4-0.6 0.6-0.3 0.1-0.7 0.5-0.3 0.4-0.5 0.1-0.6-0.1-1.3-0.8-0.5-0.4-0.1-0.4 0.3-0.3 0.5-0.3 2.5-0.8 0.5 0 0.2-0.2 0.7-0.8 0.2-0.1 0.7-0.3 0.7-0.5 1.9-2 0.5-0.3 0.3-0.1 0.5-0.3 0.2-0.2 0-0.2 0.4-0.5 0.1-0.2 0.3-1.1 0.1-0.3 0-0.5 0-0.2-0.2-0.3-0.4-0.4-1.9-0.9-0.8-0.1-0.6-0.2-0.6-0.1-1 0.2-0.5-0.1-0.2-0.2-0.3-0.2-0.6-0.9-0.3-0.2-0.3-0.1-0.7 0.2-0.4 0-0.4-0.4-0.2-0.3-0.2-0.2-0.2-0.1-2-0.5-1.2-0.6-2.2-0.7-0.5-0.3-0.4-0.3-0.2-0.3-0.2-0.4-0.3-0.3-0.4-0.3-0.9-0.3-0.3-0.1-0.4 0.3-0.4 0.3-0.5 0.2-0.8-0.2-0.6-0.2-1.1-1.1-0.3-0.3-0.3-0.3-0.4 0-1 0.6-1 0.2-0.4 0.3-0.3 0.3-0.3 0.6-0.3 0.5-0.3 0.3-0.5 0.5-0.2 0.1-0.2 0-0.6-0.7-0.6-0.2-0.3-0.3-0.3-0.3-0.3-0.8-0.1-0.3 0-0.4 0.1-0.8-0.1-0.3-0.1-0.4-0.3-0.2-0.2 0-0.2 0-0.5 0.8-0.2 0.4-0.3 0.4-1.2 1.2-0.2 0.5-0.4 0.4-0.6 0.4-1.2 0.5-0.5 0.3-0.4 0.4-0.2 0.3-0.4 0.2-0.5 0.1-0.6-0.2-0.9-0.6z" id="ESMD" name="Comunidad de Madrid">
+  </path>
+      
+              </g>
+              
+            </g>
+            <!-- BEGUES -->
+            <g class="proj-pin" onclick="openProject('begues')" style="cursor:pointer;">
+              <circle cx="845" cy="178" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
+              <circle cx="845" cy="178" r="9" fill="#399439"/>
+              <rect x="796" y="140" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="845" y="153" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
+              <rect x="806" y="159" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="845" y="170" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
+            </g>
+            <!-- FREGACEDOS -->
+            <g class="proj-pin" onclick="openProject('fregacedos')" style="cursor:pointer;">
+              <circle cx="627" cy="218" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
+              <circle cx="627" cy="218" r="9" fill="#399439"/>
+              <rect x="574" y="180" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="627" y="193" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
+              <rect x="589" y="199" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
+              <text x="627" y="210" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
+            </g>
+            <!-- MUTXAMEL -->
+            <g class="proj-pin" onclick="openProject('mutxamel')" style="cursor:pointer;">
+              <circle cx="756" cy="336" r="18" fill="none" stroke="#C8201E" stroke-width="1.5" opacity="0.8" class="pulse"/>
+              <circle cx="756" cy="336" r="9" fill="#C8201E"/>
+              <rect x="710" y="298" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
+              <text x="756" y="311" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
+              <rect x="706" y="317" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
+              <text x="756" y="328" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
+            </g>
+            <!-- ENTRENUCLEOS -->
+            <g class="proj-pin" onclick="openProject('entrenucleos')" style="cursor:pointer;">
+              <circle cx="566" cy="410" r="13" fill="none" stroke="#6B7280" stroke-width="1.2" opacity="0.5"/>
+              <circle cx="566" cy="410" r="7" fill="#6B7280"/>
+              <rect x="511" y="372" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
+              <text x="566" y="385" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
+              <rect x="519" y="391" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
+              <text x="566" y="402" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><h3>Proyectos</h3></div>
+        <div class="proj-list-item" onclick="openProject('begues')">
+          <div class="proj-dot" style="background:var(--green);"></div>
+          <div><div class="proj-list-name">BEGUES I &amp; II</div><div class="proj-list-loc">Olesa de Bonesvalls, Barcelona</div></div>
+          <div class="proj-list-mw">100 MW (2×50)</div><span>›</span>
+        </div>
+        <div class="proj-list-item" onclick="openProject('fregacedos')">
+          <div class="proj-dot" style="background:var(--green);"></div>
+          <div><div class="proj-list-name">FREGACEDOS I, II &amp; V</div><div class="proj-list-loc">Humanes de Madrid, Madrid</div></div>
+          <div class="proj-list-mw">15 MW (3×5)</div><span>›</span>
+        </div>
+        <div class="proj-list-item" onclick="openProject('mutxamel')">
+          <div class="proj-dot" style="background:var(--red);"></div>
+          <div><div class="proj-list-name">MUTXAMEL <span style="font-size:10px;color:var(--red);">⚠️ Atención</span></div><div class="proj-list-loc">Mutxamel, Alicante</div></div>
+          <div class="proj-list-mw">5 MW</div><span>›</span>
+        </div>
+        <div class="proj-list-item" onclick="openProject('entrenucleos')" style="opacity:0.65;">
+          <div class="proj-dot" style="background:var(--grey);"></div>
+          <div><div class="proj-list-name">ENTRENÚCLEOS</div><div class="proj-list-loc">Dos Hermanas, Sevilla</div></div>
+          <div class="proj-list-mw">49 MW</div><span>›</span>
+        </div>
+        <div class="proj-list-item" onclick="openProject('custom_nuevas_oportunidades')" style="background:var(--blue-l);">
+          <div class="proj-dot" style="background:var(--blue);"></div>
+          <div><div class="proj-list-name" style="color:var(--blue);">NUEVAS OPORTUNIDADES</div><div class="proj-list-loc">Pipeline · En análisis</div></div>
+          <div class="proj-list-mw" style="color:var(--blue);">—</div><span>›</span>
+        </div>
+      </div>
+    </div>
+    <!-- Feed + Opp -->
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:12px;">
+      <div class="card">
+        <div class="card-hdr">
+          <h3>Últimas actualizaciones</h3>
+          <span class="tag tag-navy" id="feedCount">5 resultados</span>
+        </div>
+        <div id="updatesFeed"></div>
+      </div>
+      <div class="opp-card" onclick="openProject('custom_nuevas_oportunidades')">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+          <div style="width:36px;height:36px;background:rgba(57,148,57,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">💡</div>
+          <span class="tag" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-size:9.5px;">PIPELINE</span>
+        </div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:4px;">Nuevas Oportunidades</div>
+        <div style="font-size:11px;opacity:0.6;margin-bottom:14px;" id="oppText">Finalizando contacto con propietarios...</div>
+        <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;">Abrir análisis →</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT PAGE -->
+<div id="page-project" class="proj-page">
+  <div class="proj-ficha" id="projFicha">
+    <button class="btn btn-sec" style="font-size:11px;margin-bottom:12px;padding:5px 11px;" onclick="showPage('portfolio')">← Volver al portfolio</button>
+    <div class="proj-ficha-name" id="projFichaName"></div>
+    <div class="proj-ficha-loc" id="projFichaLoc"></div>
+    <div id="projFichaBadge"></div>
+    <div class="ficha-specs" id="projFichaSpecs"></div>
+  </div>
+  <div class="tabs-bar">
+    <div class="tab on" id="tab-updates" onclick="showTab('updates')">📋 Updates</div>
+    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">📅 Cronograma</div>
+    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">📁 Documentación</div>
+  </div>
+  <div class="tab-content">
+    <!-- UPDATES TAB -->
+    <div id="tc-updates" style="padding:20px 28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;">REPORTING SEMANAL</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy);margin-top:2px;" id="updatesWeekTitle">Semana del 28/09 al 04/10</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-sec" onclick="navWeek(-1)">‹</button>
+          <div class="pos-rel">
+            <button class="week-sel-btn" onclick="toggleCal()">📅 <span id="weekSelLbl">02/10/2026</span> ▾</button>
+            <div class="cal-popup" id="calPopup" style="display:none;"></div>
+          </div>
+          <button class="btn btn-sec" onclick="navWeek(1)">›</button>
+          <button class="btn btn-primary" id="addUpdateBtn" style="display:none;" onclick="openAddUpdate()">+ Añadir novedad</button>
+        </div>
+      </div>
+      <div id="updatesContent"></div>
+    </div>
+    <!-- CRONOGRAMA TAB -->
+    <div id="tc-cronograma" style="display:none;padding:20px 28px;">
+      <div style="font-size:18px;font-weight:800;color:var(--navy);margin-bottom:16px;" id="ganttTitle">Cronograma · MUTXAMEL</div>
+      <div id="ganttContainer"></div>
+    </div>
+    <!-- DOCUMENTACION TAB -->
+    <div id="tc-documentacion" style="display:none;padding:20px 28px;">
+      <div style="font-size:18px;font-weight:800;color:var(--navy);margin-bottom:16px;" id="docsTitle">Documentación</div>
+      <div id="docsContent"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /body -->
+
+<!-- PASSWORD MODAL -->
+<div class="modal-bg" id="pwdModal">
+  <div class="pwd-card">
+    <div style="font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px;">🔒 Acceso editor</div>
+    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:20px;">Introduce la contraseña para editar.</div>
+    <div class="form-row"><input class="form-input" type="password" id="pwdInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPwd()"></div>
+    <div style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;" id="pwdErr">Contraseña incorrecta</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="checkPwd()">Desbloquear</button>
+      <button class="btn btn-sec" onclick="closeModal('pwdModal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD UPDATE MODAL -->
+<div class="modal-bg" id="addUpdateModal">
+  <div class="modal">
+    <div class="modal-hdr"><h2>+ Nueva novedad</h2><button class="modal-close" onclick="closeModal('addUpdateModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row"><label class="form-lbl">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl">Estado</label>
+        <select class="form-input form-select" id="newStatus">
+          <option value="yellow">🟡 En curso</option><option value="red">🔴 Bloqueado</option><option value="green">🟢 Cerrado</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-lbl">Impacto</label>
+        <select class="form-input form-select" id="newImpact">
+          <option value="none">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-lbl">Descripción</label><textarea class="form-input form-textarea" id="newText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl">¿Requiere atención?</label>
+        <select class="form-input form-select" id="newAttention"><option value="0">No</option><option value="1">Sí ⚠️</option></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-sec" onclick="closeModal('addUpdateModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveUpdate()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ───────────────────────────────────────────────────────────────────
+const DB = {
+  "2026-09-11": {
+    "begues": [
+      {
+        "activities": [
+          {
+            "date": "29/07",
+            "text": "Reunión con autoridad ambiental — resultado positivo",
+            "type": "admin"
+          }
+        ],
+        "impact": "permitting",
+        "status": "yellow",
+        "attention": false,
+        "text": "Reunión con la autoridad ambiental celebrada el 29 de julio — confirman que la línea de evacuación debe ir soterrada y no aprecian obstáculos para la emisión favorable del permiso ambiental.",
+        "topic": "Estado permitting"
+      }
+    ],
+    "custom_nuevas_oportunidades": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "El 10/09 se activó la suscripción a la plataforma Temos AI para identificar oportunidades de acceso y conexión, posicionándonos estratégicamente en ubicaciones clave antes de que aflore la capacidad disponible.",
+        "topic": "Análisis"
+      }
+    ],
+    "fregacedos": [
+      {
+        "activities": [
+          {
+            "date": "10/09",
+            "text": "Separatas presentadas al Ayuntamiento",
+            "type": "doc"
+          },
+          {
+            "date": "11/09",
+            "text": "Llamada de seguimiento con el Ayuntamiento para confirmar recepción",
+            "type": "admin"
+          }
+        ],
+        "impact": "permitting",
+        "status": "yellow",
+        "attention": false,
+        "text": "Separatas de Fregacedos I y V enviadas al Ayuntamiento el 10 de septiembre para revisión y confirmación de la servidumbre de paso.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [
+          {
+            "date": "08/09",
+            "text": "Paquete de documentación completo presentado",
+            "type": "doc"
+          }
+        ],
+        "impact": "schedule",
+        "status": "yellow",
+        "attention": false,
+        "text": "Paquete de documentación completo presentado durante agosto. Pendiente subir documentación técnica de Fregacedos I por limitaciones de tamaño de archivo.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "mutxamel": [
+      {
+        "activities": [
+          {
+            "date": "08/09",
+            "text": "Llamada con Univergy — reiteran la disputa de costes",
+            "type": "call"
+          },
+          {
+            "date": "10/09",
+            "text": "Discusión interna con Grace sobre posición legal y próximos pasos",
+            "type": "internal"
+          }
+        ],
+        "impact": "legal",
+        "status": "red",
+        "attention": true,
+        "text": "Univergy alega que los costes asociados a la actualización de la documentación quedan fuera del alcance del DSA. Pendiente decisión interna sobre si proceder con el pago.",
+        "topic": "Diseño técnico"
+      }
+    ]
+  },
+  "2026-09-18": {
+    "begues": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades. Pendiente presentar la documentación actualizada.",
+        "topic": "Estado permitting"
+      }
+    ],
+    "custom_nuevas_oportunidades": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "Estamos evaluando las oportunidades identificadas por la plataforma Temos AI para presentar una propuesta de 3-5 opciones y solicitar aprobación presupuestaria en las próximas semanas.",
+        "topic": "Análisis"
+      }
+    ],
+    "fregacedos": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades por parte del Ayuntamiento.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [
+          {
+            "date": "",
+            "text": "Numerosas llamadas con Industria para resolver limitación de tamaño de archivos",
+            "type": "admin"
+          },
+          {
+            "date": "",
+            "text": "Preparación de la documentación cumpliendo requisitos de la plataforma",
+            "type": "doc"
+          }
+        ],
+        "attention": false,
+        "impact": "schedule",
+        "status": "yellow",
+        "text": "La documentación de Fregacedos I fue recibida correctamente el 14/09 y trasladada al expediente. Próximos pasos: seguimiento del análisis ambiental.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "mutxamel": [
+      {
+        "activities": [
+          {
+            "date": "16/09",
+            "text": "Email enviado a Univergy rechazando la cotización enviada",
+            "type": "email"
+          }
+        ],
+        "attention": true,
+        "impact": "legal",
+        "status": "red",
+        "text": "Hemos rechazado la cotización de Univergy por modificación de trazado. Univergy contraargumenta que los trabajos fueron ejecutados correctamente. Hemos solicitado reunión para negociar una solución técnica y contractual.",
+        "topic": "Diseño técnico"
+      }
+    ]
+  },
+  "2026-09-25": {
+    "begues": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades. Pendiente presentar la documentación actualizada.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [
+          {
+            "date": "",
+            "text": "Llamadas con EFENER para definir el layout y resolver dudas planteadas",
+            "type": "call"
+          },
+          {
+            "date": "",
+            "text": "Preparación de documentación técnica de equipos y subida al VDR con EFENER",
+            "type": "doc"
+          },
+          {
+            "date": "23/09",
+            "text": "Reunión con FFV y ALTANO para valorar alternativas a la línea de evacuación",
+            "type": "call"
+          }
+        ],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "Se ha avanzado en la definición del layout con EFENER. Reunión con ALTANO para valorar alternativas al trazado. Aceptado presupuesto CIVILE para informe de inundabilidad. ICU favorable del Ayuntamiento de Olesa de Bonesvalls obtenido el 23/09.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "custom_nuevas_oportunidades": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "Continuamos el análisis de oportunidades incorporando las modificaciones de la 3ª MAP del MITECO. Completaremos la evaluación la próxima semana.",
+        "topic": "Análisis"
+      }
+    ],
+    "fregacedos": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "schedule",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "mutxamel": [
+      {
+        "activities": [
+          {
+            "date": "25/09",
+            "text": "Llamada con SACYR para coordinar reunión con Univergy sobre documentación de línea de evacuación",
+            "type": "call"
+          },
+          {
+            "date": "25/09",
+            "text": "Preparación de forecast trimestral: análisis de pagos pendientes RTB y Univergy",
+            "type": "doc"
+          }
+        ],
+        "attention": false,
+        "impact": "legal",
+        "status": "red",
+        "text": "No hay novedades.",
+        "topic": "Diseño técnico"
+      }
+    ]
+  },
+  "2026-10-02": {
+    "begues": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades. Pendiente presentar la documentación actualizada.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [
+          {
+            "date": "",
+            "text": "Reuniones con EFENER para terminar de definir el layout",
+            "type": "call"
+          },
+          {
+            "date": "29/09",
+            "text": "EFENER envía un borrador del layout para nuestra revisión y aprobación",
+            "type": "doc"
+          }
+        ],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "Tras recibir el informe previo de inundabilidad de CIVILE, no hay conclusión clara sobre la posible afección de la Riera de Begues. Se requiere estudio hidrológico completo. Layout acordado con EFENER en zonas alejadas de la Riera, pendiente revisión final.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "custom_nuevas_oportunidades": [
+      {
+        "activities": [
+          {
+            "date": "02/10",
+            "text": "Análisis de oportunidades y preparación de documento resumen con presupuestos y justificación",
+            "type": "doc"
+          }
+        ],
+        "attention": false,
+        "impact": "none",
+        "status": "yellow",
+        "text": "Se han analizado las oportunidades de proyecto y se está finalizando el contacto con propietarios en zonas seleccionadas para evaluar disponibilidad de terrenos y precios. La propuesta se enviará en los próximos días.",
+        "topic": "Análisis"
+      }
+    ],
+    "fregacedos": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "schedule",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "mutxamel": [
+      {
+        "activities": [
+          {
+            "date": "28/09",
+            "text": "Reunión con UNIVERGY y SACYR para discutir puntos pendientes del trazado de línea",
+            "type": "call"
+          },
+          {
+            "date": "30/09",
+            "text": "Reunión con UNIVERGY para proponer disolución de contratos, bien acogida por Univergy",
+            "type": "call"
+          },
+          {
+            "date": "01/10",
+            "text": "Email enviado a UNIVERGY solicitando que nos trasladen una propuesta económica",
+            "type": "email"
+          }
+        ],
+        "attention": true,
+        "impact": "legal",
+        "status": "red",
+        "text": "Reunión con Univergy el 30/09 para proponer la disolución de los contratos y salida limpia del SPA y DSA. Univergy aceptó el planteamiento. Se solicita a Univergy que presente la propuesta inicial para comenzar las negociaciones formales.",
+        "topic": "Diseño técnico"
+      }
+    ]
+  }
+};
+const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Land", "start": "2022-12-16", "end": "2025-01-30", "pct": 75, "color": "#2E86AB"}, {"id": "T001", "level": 2, "num": "1.1", "name": "BESS Land Agreement Signing", "start": "2022-12-16", "end": "2022-12-16", "pct": 100, "color": "#2E86AB"}, {"id": "T002", "level": 2, "num": "1.2", "name": "Land Notarization", "start": "2025-01-10", "end": "2025-01-30", "pct": 0, "color": "#2E86AB"}, {"id": "T003", "level": 2, "num": "1.3", "name": "Land Registration", "start": "2025-01-30", "end": "2025-02-14", "pct": 0, "color": "#2E86AB"}, {"id": "S2", "level": 1, "num": "2", "name": "Grid Connection", "start": "2023-01-26", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "T004", "level": 2, "num": "2.1", "name": "Guarantee Issuance", "start": "2023-01-26", "end": "2023-01-26", "pct": 100, "color": "#399439"}, {"id": "T005", "level": 2, "num": "2.2", "name": "Guarantee Posting", "start": "2023-01-26", "end": "2023-02-02", "pct": 100, "color": "#399439"}, {"id": "T006", "level": 2, "num": "2.3", "name": "CACG confirmation", "start": "2023-02-02", "end": "2023-05-02", "pct": 100, "color": "#399439"}, {"id": "T007", "level": 2, "num": "2.4", "name": "Request Access & Connection permits", "start": "2023-05-02", "end": "2023-05-04", "pct": 100, "color": "#399439"}, {"id": "T008", "level": 2, "num": "2.5", "name": "Access and Connection Permits", "start": "2023-05-04", "end": "2023-08-31", "pct": 100, "color": "#399439"}, {"id": "T009", "level": 2, "num": "2.6", "name": "CTE Payment", "start": "2023-11-30", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "S3", "level": 1, "num": "3", "name": "Permits", "start": "2023-02-02", "end": "2026-03-06", "pct": 25, "color": "#E8A838"}, {"id": "S31", "level": 2, "num": "3.1", "name": "Environmental Permit", "start": "2024-02-28", "end": "2024-06-10", "pct": 25, "color": "#E8A838"}, {"id": "T010", "level": 3, "num": "3.1.1", "name": "Environmental Permit request", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T011", "level": 3, "num": "3.1.2", "name": "Request + Consultations", "start": "2024-02-28", "end": "2024-03-19", "pct": 0, "color": "#E8A838"}, {"id": "T012", "level": 3, "num": "3.1.3", "name": "Environmental Permit resolution", "start": "2024-02-28", "end": "2024-05-21", "pct": 0, "color": "#E8A838"}, {"id": "T013", "level": 3, "num": "3.1.4", "name": "Publication in Official Gazettes", "start": "2024-05-21", "end": "2024-06-10", "pct": 0, "color": "#E8A838"}, {"id": "S32", "level": 2, "num": "3.2", "name": "AAP and AAC", "start": "2024-02-28", "end": "2026-03-06", "pct": 50, "color": "#E8A838"}, {"id": "T016", "level": 3, "num": "3.2.1", "name": "AAP/AAC request", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T017", "level": 3, "num": "3.2.2", "name": "AAP/AAC Admission for Processing", "start": "2024-04-18", "end": "2024-04-18", "pct": 100, "color": "#E8A838"}, {"id": "T018", "level": 3, "num": "3.2.3", "name": "Publication in Diario Información", "start": "2025-01-09", "end": "2025-01-29", "pct": 100, "color": "#E8A838"}, {"id": "T019", "level": 3, "num": "3.2.4", "name": "Publication in DOGV", "start": "2025-01-10", "end": "2025-01-30", "pct": 100, "color": "#E8A838"}, {"id": "T020", "level": 3, "num": "3.2.5", "name": "Allegations + Responses", "start": "2025-01-30", "end": "2025-07-10", "pct": 100, "color": "#E8A838"}, {"id": "T021", "level": 3, "num": "3.2.6", "name": "Updated PTA submission", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T022", "level": 3, "num": "3.2.7", "name": "AAP/AAC resolution (M2 & M3)", "start": "2024-05-21", "end": "2024-09-09", "pct": 0, "color": "#E8A838"}, {"id": "S33", "level": 2, "num": "3.3", "name": "Urban Permit", "start": "2023-02-02", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "T023", "level": 3, "num": "3.3.1", "name": "ICU request", "start": "2023-02-02", "end": "2023-02-02", "pct": 100, "color": "#E8A838"}, {"id": "T024", "level": 3, "num": "3.3.2", "name": "ICU resolution", "start": "2023-02-02", "end": "2023-05-11", "pct": 100, "color": "#E8A838"}, {"id": "T025", "level": 3, "num": "3.3.3", "name": "Updated ICU request", "start": "2024-09-13", "end": "2024-09-13", "pct": 100, "color": "#E8A838"}, {"id": "T026", "level": 3, "num": "3.3.4", "name": "Updated ICU resolution", "start": "2024-09-13", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "S34", "level": 2, "num": "3.4", "name": "Building Permit", "start": "2024-09-09", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T027", "level": 3, "num": "3.4.1", "name": "Working License (LO) request", "start": "2024-09-09", "end": "2025-01-10", "pct": 0, "color": "#E8A838"}, {"id": "T028", "level": 3, "num": "3.4.2", "name": "LO registration in Land Registry", "start": "2025-01-10", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "S4", "level": 1, "num": "4", "name": "Sectorial Permits", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T029", "level": 3, "num": "4.1.1", "name": "CV-800 Road - Occupation Auth.", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T030", "level": 3, "num": "4.2.1", "name": "CHJ - Public Hydraulic Domain", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T031", "level": 3, "num": "4.3.1", "name": "Cattle Road Occupation Auth.", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "M1", "level": 0, "num": "", "name": "✅ FULLY PERMITTED", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#05233D", "milestone": true}];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let allData = JSON.parse(JSON.stringify(DB));
+let currentWeek = '2026-10-02';
+let currentProjId = null;
+let isEditor = false;
+let lang = 'es';
+let calOpen = false;
+let calYear = 2026;
+let calMonth = 9;
+
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const STATUS_MAP = {
+  red:{lbl:'Bloqueado',cls:'s-red',sbar:'sbar-red'},
+  yellow:{lbl:'En curso',cls:'s-yellow',sbar:'sbar-yellow'},
+  green:{lbl:'Cerrado',cls:'s-green',sbar:'sbar-green'},
+  grey:{lbl:'Stand-by',cls:'s-grey',sbar:'sbar-grey'}
+};
+const IMPACT_LABELS = {permitting:'Permitting',schedule:'Schedule',legal:'Legal',capex:'CAPEX',none:''};
+const ICONS = {
+  call:'<svg width="14" height="14" viewBox="0 0 16 16" fill="#05233D"><path d="M5.5 2.5C5.5 2.5 4 2 3 3s-.5 3 1 4.5S7 10 8.5 11.5s3.5 2 4.5 1 .5-2.5.5-2.5L11 8.5s-.5-.5-1 0l-.5.5s-.5.5-1 0C7.5 8.5 7 8 6.5 7.5l-1-1c-.5-.5 0-1 0-1L6 5s.5-.5 0-1L5.5 2.5z"/></svg>',
+  email:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="#05233D" stroke-width="1.3"/><path d="M1.5 5.5l6.5 4 6.5-4" stroke="#05233D" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  admin:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2.5 4v4c0 3 2.5 5.5 5.5 6 3-.5 5.5-3 5.5-6V4L8 1.5z" stroke="#05233D" stroke-width="1.2"/><path d="M5.5 8l1.5 1.5 3-3" stroke="#05233D" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  doc:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h6l3 3v10h-9V1.5z" stroke="#05233D" stroke-width="1.2" stroke-linejoin="round"/><line x1="5.5" y1="7.5" x2="10.5" y2="7.5" stroke="#05233D" stroke-width="1" stroke-linecap="round"/><line x1="5.5" y1="10" x2="10.5" y2="10" stroke="#05233D" stroke-width="1" stroke-linecap="round"/></svg>',
+  internal:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2" stroke="#05233D" stroke-width="1.2"/><circle cx="10.5" cy="5" r="2" stroke="#05233D" stroke-width="1.2"/><path d="M1.5 13c0-2.2 1.8-4 4-4h5c2.2 0 4 1.8 4 4" stroke="#05233D" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  site:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6c0-2.5-2-4.5-4.5-4.5z" stroke="#05233D" stroke-width="1.2"/><circle cx="8" cy="6" r="1.5" fill="#05233D"/></svg>'
+};
+const META = {
+  begues:{name:'BEGUES I & II',loc:'Olesa de Bonesvalls, Barcelona',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'100 MW (2×50)'},{l:'Tensión',v:'400 kV'},{l:'SET',v:'SET Begues'},{l:'Línea',v:'7.58 km'},{l:'Operador',v:'REE'}]},
+  fregacedos:{name:'FREGACEDOS I, II & V',loc:'Humanes de Madrid, Madrid',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'15 MW (3×5)'},{l:'Tensión',v:'15 kV'},{l:'SET',v:'SET C. Fregacedos'},{l:'Operador',v:'i-DE'}]},
+  mutxamel:{name:'MUTXAMEL',loc:'Mutxamel, Alicante',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'5 MW'},{l:'Tensión',v:'20 kV'},{l:'SET',v:'SET El Cantalar'},{l:'Línea',v:'2.5 km'},{l:'Operador',v:'i-DE'}]},
+  entrenucleos:{name:'ENTRENÚCLEOS',loc:'Dos Hermanas, Sevilla',status:'Stand-by',sc:'grey',specs:[{l:'Potencia',v:'49 MW'},{l:'Tensión',v:'220 kV'},{l:'SET',v:'SET Entrenúcleos'},{l:'Operador',v:'REE'}]},
+  custom_nuevas_oportunidades:{name:'NUEVAS OPORTUNIDADES',loc:'Pipeline · En análisis',status:'En análisis',sc:'blue',specs:[{l:'Herramienta',v:'Temos AI'},{l:'Fase',v:'Identificación'}]}
+};
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function init(){
+  renderFeed();
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function showPage(page){
+  document.getElementById('page-portfolio').style.display = page==='portfolio' ? '' : 'none';
+  document.getElementById('page-project').classList.toggle('on', page==='project');
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  if(page==='portfolio') document.getElementById('nav-portfolio').classList.add('active');
+}
+
+function openProject(pid){
+  currentProjId = pid;
+  showPage('project');
+  // Sidebar
+  document.querySelectorAll('.sb-proj-item').forEach(e=>e.classList.remove('active'));
+  const el = document.getElementById('nav-'+pid);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('[id^="sub-"]').forEach(e=>e.style.display='none');
+  const sub = document.getElementById('sub-'+pid);
+  if(sub) sub.style.display='block';
+  // Ficha
+  const m = META[pid]||{};
+  document.getElementById('projFichaName').textContent = m.name||pid;
+  document.getElementById('projFichaLoc').innerHTML = '📍 '+(m.loc||'');
+  const smap = {yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
+  document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
+  document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
+  showTab('updates');
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function showTab(tab){
+  ['updates','cronograma','documentacion'].forEach(t=>{
+    document.getElementById('tc-'+t).style.display = t===tab ? '' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  });
+  if(tab==='updates') renderUpdates();
+  if(tab==='cronograma') renderGantt();
+  if(tab==='documentacion') renderDocs();
+}
+
+// ── UPDATES ────────────────────────────────────────────────────────────────
+function renderUpdates(){
+  const pid = currentProjId;
+  if(!pid) return;
+  const weeks = Object.keys(allData).sort();
+  const idx = weeks.indexOf(currentWeek);
+
+  const [y,m,d] = currentWeek.split('-');
+  document.getElementById('weekSelLbl').textContent = `${d}/${m}/${y}`;
+  document.getElementById('updatesWeekTitle').textContent = `Semana del ${weekRange(currentWeek)}`;
+  document.getElementById('addUpdateBtn').style.display = isEditor ? '' : 'none';
+
+  const wd = allData[currentWeek]||{};
+  const issues = wd[pid]||[];
+  let html = '';
+
+  // Nav context
+  const prevWk = idx>0 ? weeks[idx-1] : null;
+  const nextWk = idx<weeks.length-1 ? weeks[idx+1] : null;
+
+  if(nextWk){
+    const ni = (allData[nextWk]||{})[pid]||[];
+    if(ni.length){
+      const [ny,nm,nd]=nextWk.split('-');
+      html+=`<div onclick="currentWeek='${nextWk}';renderUpdates()" style="background:var(--green-s-l);border:1px solid var(--green-s-b);border-radius:8px;padding:11px 16px;margin-bottom:16px;cursor:pointer;display:flex;gap:10px;align-items:center;">
+        <span style="font-size:11px;font-weight:700;color:var(--green-s);">↑ Semana siguiente disponible · ${nd}/${nm}/${ny} — ${ni.map(i=>i.topic).join(' · ')}</span></div>`;
+    }
+  }
+
+  if(issues.length){
+    html+=`<div style="border:1.5px solid var(--navy);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+      <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+        <span style="color:#fff;font-size:12px;font-weight:700;">📅 Semana actual · ${d}/${m}/${y}</span>
+        <span style="margin-left:auto;background:rgba(57,148,57,0.25);color:#7dcc7d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} novedad${issues.length>1?'es':''}</span>
+      </div>`;
+    issues.forEach(iss=>{
+      const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+      const acts=iss.activities||[];
+      const imp=IMPACT_LABELS[iss.impact]||'';
+      html+=`<div class="issue-row">
+        <div class="issue-top-row">
+          <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
+          <div class="i-topic">${iss.topic||''}</div>
+          <div class="i-text">${iss.text||''}</div>
+          <div class="i-meta">
+            <span class="status-tag ${st.cls}">${st.lbl}</span>
+            ${imp?`<span class="impact-tag">${imp}</span>`:''}
+            ${iss.attention?`<span class="status-tag s-red">⚠️ Atención</span>`:''}
+          </div>
+        </div>
+        ${acts.length?`<div class="act-section"><div class="act-title">Actividad</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
+      </div>`;
+    });
+    html+=`</div>`;
+  } else {
+    html+=`<div style="background:var(--bg);border:1.5px dashed var(--border-2);border-radius:8px;padding:32px;text-align:center;margin-bottom:20px;">
+      <div style="font-size:13px;color:var(--text-3);">Sin novedades para esta semana</div>
+      ${isEditor?`<button class="btn btn-primary" style="margin-top:12px;" onclick="openAddUpdate()">+ Añadir novedad</button>`:''}
+    </div>`;
+  }
+
+  const prevWeeks = weeks.filter(w=>w<currentWeek).slice(-3).reverse();
+  if(prevWeeks.length){
+    html+=`<div class="prev-week-hdr">Semanas anteriores</div>`;
+    prevWeeks.forEach(wk=>{
+      const issP=(allData[wk]||{})[pid]||[];
+      if(!issP.length) return;
+      const [wy,wm,wd2]=wk.split('-');
+      html+=`<div style="opacity:0.78;margin-bottom:10px;">
+        <div style="padding:8px 0 6px;"><span class="prev-week-date">${wd2}/${wm}/${wy}</span></div>`;
+      issP.forEach(iss=>{
+        const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+        const acts=iss.activities||[];
+        html+=`<div class="issue-row" style="border-radius:6px;border:1px solid var(--border);overflow:hidden;margin-bottom:6px;">
+          <div class="issue-top-row">
+            <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
+            <div class="i-topic">${iss.topic||''}</div>
+            <div class="i-text" style="font-size:12.5px;color:var(--text-2);">${iss.text||''}</div>
+            <div class="i-meta"><span class="status-tag ${st.cls}">${st.lbl}</span></div>
+          </div>
+          ${acts.length?`<div class="act-section"><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text}</span><span class="act-date">${a.date}</span></div>`).join('')}</div></div>`:''}
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+  }
+  document.getElementById('updatesContent').innerHTML = html;
+}
+
+function weekRange(iso){
+  const d=new Date(iso);
+  const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
+  const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+  return `${f(mon)} al ${f(sun)}/${sun.getFullYear()}`;
+}
+
+function navWeek(dir){
+  const weeks=Object.keys(allData).sort();
+  const idx=weeks.indexOf(currentWeek);
+  const ni=idx+dir;
+  if(ni>=0&&ni<weeks.length){ currentWeek=weeks[ni]; renderUpdates(); }
+}
+
+// ── CALENDAR ───────────────────────────────────────────────────────────────
+function toggleCal(){
+  calOpen=!calOpen;
+  const p=document.getElementById('calPopup');
+  p.style.display=calOpen?'block':'none';
+  if(calOpen){ const d=new Date(currentWeek); calYear=d.getFullYear(); calMonth=d.getMonth(); renderCal(); }
+}
+function renderCal(){
+  const weeks=Object.keys(allData);
+  const y=calYear,m=calMonth;
+  const first=new Date(y,m,1),last=new Date(y,m+1,0);
+  const startDow=(first.getDay()+6)%7;
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <button onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal()" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">‹</button>
+    <span style="font-size:13px;font-weight:700;color:var(--navy);">${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m]} ${y}</span>
+    <button onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal()" style="background:none;border:1px solid var(--border);border-radius:4px;width:26px;height:26px;cursor:pointer;">›</button>
+  </div><div class="cal-grid">`;
+  ['L','M','X','J','V','S','D'].forEach(d=>h+=`<div class="cal-dow">${d}</div>`);
+  for(let i=0;i<startDow;i++) h+=`<div class="cal-day other-month"></div>`;
+  for(let day=1;day<=last.getDate();day++){
+    const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const hasData=weeks.includes(iso);
+    const isSel=iso===currentWeek;
+    h+=`<div class="cal-day${hasData?' has-data':''}${isSel?' selected':''}" onclick="currentWeek='${iso}';toggleCal();renderUpdates();">${day}</div>`;
+  }
+  h+=`</div>`;
+  document.getElementById('calPopup').innerHTML=h;
+}
+document.addEventListener('mousedown',e=>{
+  if(calOpen&&!document.getElementById('calPopup').contains(e.target)&&!e.target.closest('.week-sel-btn')){
+    calOpen=false;document.getElementById('calPopup').style.display='none';
+  }
+});
+
+// ── FEED ───────────────────────────────────────────────────────────────────
+function renderFeed(){
+  const wd=allData[currentWeek]||{};
+  const names={begues:'BEGUES I & II',fregacedos:'FREGACEDOS I, II & V',mutxamel:'MUTXAMEL',entrenucleos:'ENTRENÚCLEOS',custom_nuevas_oportunidades:'NUEVAS OPORTUNIDADES'};
+  const items=[];
+  Object.entries(wd).forEach(([pid,issues])=>issues.forEach(iss=>items.push({pid,iss})));
+  items.sort((a,b)=>({red:0,yellow:1,green:2}[a.iss.status]||1)-({red:0,yellow:1,green:2}[b.iss.status]||1));
+  document.getElementById('feedCount').textContent=items.length+' resultados';
+  document.getElementById('updatesFeed').innerHTML=items.map(({pid,iss})=>{
+    const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+    return `<div class="update-item" onclick="openProject('${pid}')">
+      <span class="update-badge ${st.cls}">${st.lbl}</span>
+      <div>
+        <div class="update-proj">${names[pid]||pid} · <span style="font-weight:500;">${iss.topic}</span></div>
+        <div class="update-text">${(iss.text||'').slice(0,90)}${(iss.text||'').length>90?'…':''}</div>
+        <div class="update-date">02/10/2026</div>
+      </div>
+    </div>`;
+  }).join('');
+  const opp=(wd.custom_nuevas_oportunidades||[])[0];
+  if(opp) document.getElementById('oppText').textContent=(opp.text||'').slice(0,120);
+}
+
+// ── GANTT ──────────────────────────────────────────────────────────────────
+function renderGantt(){
+  const pid=currentProjId;
+  const m=META[pid]||{};
+  document.getElementById('ganttTitle').textContent=`Cronograma · ${m.name||pid}`;
+  if(pid!=='mutxamel'){
+    document.getElementById('ganttContainer').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);">
+      <div style="font-size:32px;margin-bottom:10px;">📅</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Cronograma no disponible</div>
+      <div style="font-size:12px;">El cronograma de ${m.name||pid} se añadirá próximamente.</div>
+    </div>`;
+    return;
+  }
+  const tasks=TASKS;
+  const minDate=new Date('2022-12-01'), maxDate=new Date('2026-06-01');
+  const months=[];
+  let cur=new Date(minDate.getFullYear(),minDate.getMonth(),1);
+  while(cur<=maxDate){months.push(new Date(cur));cur.setMonth(cur.getMonth()+1);}
+  const today=new Date();
+  const todayPct=Math.max(0,Math.min(100,(today-minDate)/(maxDate-minDate)*100));
+  const CW=38;
+  let html=`<div style="overflow-x:auto;"><table style="width:${240+months.length*CW}px;border-collapse:collapse;">
+  <thead><tr>
+    <th style="width:240px;background:var(--navy);color:rgba(255,255,255,0.7);font-size:10px;padding:8px 12px;text-align:left;position:sticky;top:0;">Tarea</th>
+    ${months.map(mn=>`<th style="width:${CW}px;background:var(--navy);color:rgba(255,255,255,0.7);font-size:9.5px;padding:8px 2px;text-align:center;">${['E','F','M','A','My','Jn','Jl','Ag','S','O','N','D'][mn.getMonth()]}${String(mn.getFullYear()).slice(2)}</th>`).join('')}
+  </tr></thead><tbody>`;
+  tasks.forEach(task=>{
+    const isPhase=task.level===1;
+    const isMile=task.milestone;
+    const start=new Date(task.start),end=new Date(task.end||task.start);
+    const left=Math.max(0,(start-minDate)/(maxDate-minDate)*100);
+    const width=Math.max(0.3,(end-start)/(maxDate-minDate)*100);
+    const visible=start<=maxDate&&end>=minDate;
+    const indent=task.level===1?0:task.level===2?12:24;
+    const pctColor=task.pct===100?'#16803C':task.pct>0?task.color:'var(--grey)';
+    html+=`<tr style="border-bottom:1px solid var(--border);${isPhase?'background:#F7F9FB;':''}">
+      <td style="padding:6px 10px 6px ${10+indent}px;font-size:${isPhase?'12':'11.5'}px;font-weight:${isPhase?700:400};color:var(--navy);border-right:2px solid var(--border-2);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;" title="${task.name}">${isMile?'◆ ':''}${task.name}</span>
+          ${!isMile?`<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;background:${task.pct===100?'var(--green-s-l)':task.pct>0?'var(--blue-l)':'var(--grey-l)'};color:${pctColor};">${task.pct}%</span>`:''}
+        </div>
+      </td>
+      <td colspan="${months.length}" style="padding:0;position:relative;height:32px;">
+        ${visible&&!isMile?`<div style="position:absolute;top:7px;left:${left}%;width:${width}%;height:18px;border-radius:3px;background:${task.color}22;border:1px solid ${task.color}66;">
+          <div style="height:100%;width:${task.pct}%;background:${task.color};border-radius:2px;opacity:0.7;"></div>
+        </div>`:''}
+        ${isMile&&visible?`<div style="position:absolute;top:50%;left:${left}%;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:var(--navy);"></div>`:''}
+        <div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,0,0,0.5);"></div>
+      </td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('ganttContainer').innerHTML=html;
+}
+
+// ── DOCS ───────────────────────────────────────────────────────────────────
+const DEFAULT_DOCS={
+  mutxamel:[{name:'Contrato DSA - Univergy',cat:'Contratos',type:'PDF',ver:'v1.2',status:'En revisión',date:'2026-09-30',url:'',notes:'En disputa. Ver updates.'}],
+  begues:[{name:'Informe inundabilidad CIVILE',cat:'Permisos ambientales',type:'PDF',ver:'v1.0',status:'Vigente',date:'2026-09-25',url:'',notes:'No concluyente. Requiere estudio hidrológico.'}],
+  fregacedos:[{name:'Separatas Ayuntamiento',cat:'Permisos ambientales',type:'PDF',ver:'v1.0',status:'Vigente',date:'2026-09-10',url:'',notes:'Fregacedos I y V.'}]
+};
+let extraDocs={};
+function renderDocs(){
+  const pid=currentProjId;
+  const m=META[pid]||{};
+  document.getElementById('docsTitle').textContent=`Documentación · ${m.name||pid}`;
+  document.getElementById('addDocBtn')&&(document.getElementById('addDocBtn').style.display=isEditor?'':'none');
+  const docs=[...((DEFAULT_DOCS[pid]||[])),...(extraDocs[pid]||[])];
+  if(!docs.length){
+    document.getElementById('docsContent').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);"><div style="font-size:32px;">📂</div><div style="font-size:14px;font-weight:600;margin-top:10px;">Sin documentos</div></div>`;
+    return;
+  }
+  const sColor={Vigente:'background:var(--green-s-l);color:var(--green-s);',En revisión:'background:var(--yellow-l);color:var(--yellow);',Borrador:'background:var(--blue-l);color:var(--blue);',Obsoleto:'background:var(--grey-l);color:var(--grey);'};
+  const icons={PDF:'📄',Word:'📝',Excel:'📊',PowerPoint:'📋',Link:'🔗',Otro:'📁'};
+  document.getElementById('docsContent').innerHTML=`<table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <thead><tr>${['Documento','Categoría','Versión','Estado','Fecha','Enlace'].map(h=>`<th style="background:var(--bg);padding:9px 14px;font-size:10.5px;font-weight:700;color:var(--text-2);text-align:left;border-bottom:2px solid var(--border);">${h}</th>`).join('')}</tr></thead>
+    <tbody>${docs.map(doc=>`<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 14px;"><div style="font-size:13px;font-weight:600;">${icons[doc.type]||'📁'} ${doc.name}</div>${doc.notes?`<div style="font-size:11px;color:var(--text-3);margin-top:2px;">${doc.notes}</div>`:''}</td>
+      <td style="padding:10px 14px;font-size:12px;color:var(--text-2);">${doc.cat}</td>
+      <td style="padding:10px 14px;font-size:12px;">${doc.ver}</td>
+      <td style="padding:10px 14px;"><span style="${sColor[doc.status]||''}font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;">${doc.status}</span></td>
+      <td style="padding:10px 14px;font-size:11.5px;color:var(--text-3);">${doc.date}</td>
+      <td style="padding:10px 14px;">${doc.url?`<a href="${doc.url}" target="_blank" style="color:var(--blue);font-size:11px;">Abrir →</a>`:'—'}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ── EDITOR ─────────────────────────────────────────────────────────────────
+function showPwdModal(){openModal('pwdModal');}
+function checkPwd(){
+  if(document.getElementById('pwdInput').value==='Mars.2026'){
+    isEditor=true;
+    document.getElementById('editorBtn').style.display='none';
+    document.getElementById('editorBadge').style.display='flex';
+    document.getElementById('pwdInput').value='';
+    closeModal('pwdModal');
+    toast('✏️ Modo editor activado');
+    if(currentProjId) document.getElementById('addUpdateBtn').style.display='';
+  } else {
+    document.getElementById('pwdErr').style.display='block';
+    setTimeout(()=>document.getElementById('pwdErr').style.display='none',2000);
+  }
+}
+function exitEditor(){
+  isEditor=false;
+  document.getElementById('editorBtn').style.display='';
+  document.getElementById('editorBadge').style.display='none';
+  document.getElementById('addUpdateBtn').style.display='none';
+  toast('Modo editor desactivado');
+}
+
+// ── ADD UPDATE ──────────────────────────────────────────────────────────────
+function openAddUpdate(){openModal('addUpdateModal');}
+function saveUpdate(){
+  const pid=currentProjId; if(!pid) return;
+  if(!allData[currentWeek]) allData[currentWeek]={};
+  if(!allData[currentWeek][pid]) allData[currentWeek][pid]=[];
+  allData[currentWeek][pid].push({
+    topic:document.getElementById('newTopic').value||'Sin título',
+    status:document.getElementById('newStatus').value,
+    impact:document.getElementById('newImpact').value,
+    text:document.getElementById('newText').value,
+    attention:document.getElementById('newAttention').value==='1',
+    activities:[]
+  });
+  closeModal('addUpdateModal');
+  renderUpdates();
+  toast('Novedad guardada');
+}
+
+// ── UTILS ───────────────────────────────────────────────────────────────────
+function setLang(l){ lang=l; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on')); }
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500);}
+function exportData(){
+  const b=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='pd_data.json';a.click();
+}
+document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('on');}));
+
+// ── START ───────────────────────────────────────────────────────────────────
+init();
+
+</script>
+</body>
+</html>
