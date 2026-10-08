@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-1810 -->
+<!-- BUILD:20261008-2042 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-1810';
+  const BUILD='20261008-2042';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -513,7 +513,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- PROJECT PAGE -->
 <div id="page-project" class="proj-page">
   <div class="proj-ficha" id="projFicha">
-    <button class="btn btn-sec" style="font-size:11px;margin-bottom:12px;padding:5px 11px;" onclick="showPage('portfolio')">← Volver al portfolio</button>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+      <button class="btn btn-sec" style="font-size:11px;padding:5px 11px;" onclick="showPage('portfolio')">← Volver al portfolio</button>
+    </div>
     <div style="position:relative;display:inline-block;">
       <div id="projFichaNameWrap" style="display:flex;align-items:center;gap:8px;">
         <div class="proj-ficha-name" id="projFichaName"></div>
