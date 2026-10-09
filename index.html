@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261008-2050 -->
+<!-- BUILD:20261009-0935 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261008-2050';
+  const BUILD='20261009-0935';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -500,9 +500,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="page-hdr">
     <div class="page-hdr-left">
       <h2 data-i18n="navSemanal">Actualización semanal</h2>
-      <p>Novedades de todos los proyectos · <span id="semanalWeekSubtitle"></span></p>
+      <p><span id="semanalWeekSubtitle"></span></p>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <!-- Project filter -->
+      <div style="position:relative;">
+        <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span id="semanalProjFilterLbl">Todos los proyectos</span>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="semanalProjFilterDrop" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.16);z-index:200;min-width:240px;"></div>
+      </div>
+      <!-- Week nav -->
       <button onclick="navWeekSemanal(-1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">‹</button>
       <div style="position:relative;">
         <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Semana del <span id="weekSelLblSemanal">—</span></button>
@@ -1070,6 +1080,12 @@ document.addEventListener('mousedown',e=>{
       el.style.display='none';
     }
   });
+  // Close semanal project filter dropdown
+  const sfDrop=document.getElementById('semanalProjFilterDrop');
+  const sfBtn=document.getElementById('semanalProjFilterBtn');
+  if(sfDrop&&!sfDrop.contains(e.target)&&sfBtn&&!sfBtn.contains(e.target)){
+    sfDrop.style.display='none';
+  }
 });
 function showPage(page){
   document.getElementById('nav-cronograma').classList.remove('active');
@@ -1375,19 +1391,60 @@ function renderFeed(){
 }
 
 // ── SEMANAL PAGE ──────────────────────────────────────────────────────────
+let semanalFilterPid=null; // null = todos los proyectos
+function buildSemanalProjFilter(){
+  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
+  const drop=document.getElementById('semanalProjFilterDrop');
+  if(!drop) return;
+  const pids=['begues','fregacedos','mutxamel','entrenucleos'];
+  let html=`<div class="proj-sw-item${semanalFilterPid===null?' active':''}" onclick="setSemanalFilter(null)" style="padding:8px 12px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+    <div class="psw-info"><div class="psw-name" style="font-size:12px;font-weight:700;color:var(--navy);">Todos los proyectos</div></div>
+  </div>
+  <div style="height:1px;background:var(--border);margin:4px 0;"></div>`;
+  html+=pids.map(pid=>{
+    const m=META[pid]||{};
+    const city=(m.loc||'').split(',')[0];
+    const isActive=semanalFilterPid===pid;
+    return `<div class="proj-sw-item${isActive?' active':''}" onclick="setSemanalFilter('${pid}')" style="padding:8px 12px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+      <div class="psw-info" style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+        <div class="psw-name" style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;">${m.name||pid}</div>
+        <div class="psw-loc" style="font-size:10px;color:var(--text-3);">📍 ${city}</div>
+      </div>
+      <span class="psw-badge" style="${smap[m.sc]||''}font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:auto;flex-shrink:0;">● ${m.status||''}</span>
+    </div>`;
+  }).join('');
+  drop.innerHTML=html;
+}
+function toggleSemanalProjFilter(){
+  const drop=document.getElementById('semanalProjFilterDrop');
+  if(!drop) return;
+  const opening=drop.style.display==='none';
+  drop.style.display=opening?'block':'none';
+  if(opening) buildSemanalProjFilter();
+}
+function setSemanalFilter(pid){
+  semanalFilterPid=pid;
+  const lbl=document.getElementById('semanalProjFilterLbl');
+  if(lbl) lbl.textContent=pid?(META[pid]||{}).name||pid:'Todos los proyectos';
+  const drop=document.getElementById('semanalProjFilterDrop');
+  if(drop) drop.style.display='none';
+  renderSemanal();
+}
 function renderSemanal(){
   const names={begues:'BEGUES I & II',fregacedos:'FREGACEDOS I, II & V',mutxamel:'MUTXAMEL',entrenucleos:'ENTRENÚCLEOS',custom_nuevas_oportunidades:'NUEVAS OPORTUNIDADES'};
   const projOrder=['begues','fregacedos','mutxamel','entrenucleos','custom_nuevas_oportunidades'];
   const dotColor={begues:'var(--green)',fregacedos:'var(--green)',mutxamel:'var(--red)',entrenucleos:'var(--grey)',custom_nuevas_oportunidades:'var(--blue)'};
   const [y,m,d]=currentWeek.split('-');
+  // Filter projects if a specific one is selected
+  const activeOrder=semanalFilterPid?projOrder.filter(p=>p===semanalFilterPid):projOrder;
   // Update week label in semanal header
   const lbl=document.getElementById('weekSelLblSemanal');
   if(lbl) lbl.textContent=weekRange(currentWeek);
   const sub=document.getElementById('semanalWeekSubtitle');
-  if(sub) sub.textContent=`Semana del ${weekRange(currentWeek)}`;
+  if(sub) sub.textContent=semanalFilterPid?`${(META[semanalFilterPid]||{}).name||semanalFilterPid} · Semana del ${weekRange(currentWeek)}`:`Todos los proyectos · Semana del ${weekRange(currentWeek)}`;
   const wd=allData[currentWeek]||{};
   let html='';
-  const hasData=projOrder.some(pid=>(wd[pid]||[]).length>0);
+  const hasData=activeOrder.some(pid=>(wd[pid]||[]).length>0);
   if(!hasData){
     html=`<div style="background:#fff;border:1.5px dashed var(--border-2);border-radius:10px;padding:48px;text-align:center;">
       <div style="font-size:32px;margin-bottom:10px;">📅</div>
@@ -1395,7 +1452,7 @@ function renderSemanal(){
       <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
     </div>`;
   } else {
-    projOrder.forEach(pid=>{
+    activeOrder.forEach(pid=>{
       const issues=(wd[pid]||[]);
       if(!issues.length) return;
       html+=`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
