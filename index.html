@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-1330 -->
+<!-- BUILD:20261009-1430 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-1330';
+  const BUILD='20261009-1430';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -170,7 +170,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .tab{padding:13px 18px;font-size:12.5px;font-weight:600;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:7px;}
 .tab:hover{color:var(--navy);}
 .tab.on{color:var(--green);border-bottom-color:var(--green);}
-.tab-content{flex:1;overflow-y:auto;}
+.tab-content{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;}
+.tab-content>div{flex:1;min-height:0;}
 
 /* UPDATES TAB */
 .issue-row{background:#fff;border-bottom:1px solid var(--border);}
@@ -594,8 +595,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div id="updatesContent"></div>
     </div>
     <!-- CRONOGRAMA TAB -->
-    <div id="tc-cronograma" style="display:none;padding:20px 28px;">
-      <div id="ganttContainer"></div>
+    <div id="tc-cronograma" style="display:none;padding:0;height:100%;overflow:hidden;">
+      <div id="ganttContainer" style="height:100%;display:flex;flex-direction:column;overflow:hidden;"></div>
     </div>
     <!-- DOCUMENTACION TAB -->
     <div id="tc-documentacion" style="display:none;padding:20px 28px;">
@@ -985,7 +986,7 @@ const DB = {
     ]
   }
 };
-const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Land", "start": "2022-12-16", "end": "2025-01-30", "pct": 75, "color": "#2E86AB"}, {"id": "T001", "level": 2, "num": "1.1", "name": "BESS Land Agreement Signing", "start": "2022-12-16", "end": "2022-12-16", "pct": 100, "color": "#2E86AB"}, {"id": "T002", "level": 2, "num": "1.2", "name": "Land Notarization", "start": "2025-01-10", "end": "2025-01-30", "pct": 0, "color": "#2E86AB"}, {"id": "T003", "level": 2, "num": "1.3", "name": "Land Registration", "start": "2025-01-30", "end": "2025-02-14", "pct": 0, "color": "#2E86AB"}, {"id": "S2", "level": 1, "num": "2", "name": "Grid Connection", "start": "2023-01-26", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "T004", "level": 2, "num": "2.1", "name": "Guarantee Issuance", "start": "2023-01-26", "end": "2023-01-26", "pct": 100, "color": "#399439"}, {"id": "T005", "level": 2, "num": "2.2", "name": "Guarantee Posting", "start": "2023-01-26", "end": "2023-02-02", "pct": 100, "color": "#399439"}, {"id": "T006", "level": 2, "num": "2.3", "name": "CACG confirmation", "start": "2023-02-02", "end": "2023-05-02", "pct": 100, "color": "#399439"}, {"id": "T007", "level": 2, "num": "2.4", "name": "Request Access & Connection permits", "start": "2023-05-02", "end": "2023-05-04", "pct": 100, "color": "#399439"}, {"id": "T008", "level": 2, "num": "2.5", "name": "Access and Connection Permits", "start": "2023-05-04", "end": "2023-08-31", "pct": 100, "color": "#399439"}, {"id": "T009", "level": 2, "num": "2.6", "name": "CTE Payment", "start": "2023-11-30", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "S3", "level": 1, "num": "3", "name": "Permits", "start": "2023-02-02", "end": "2026-03-06", "pct": 25, "color": "#E8A838"}, {"id": "S31", "level": 2, "num": "3.1", "name": "Environmental Permit", "start": "2024-02-28", "end": "2024-06-10", "pct": 25, "color": "#E8A838"}, {"id": "T010", "level": 3, "num": "3.1.1", "name": "Environmental Permit request", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T011", "level": 3, "num": "3.1.2", "name": "Request + Consultations", "start": "2024-02-28", "end": "2024-03-19", "pct": 0, "color": "#E8A838"}, {"id": "T012", "level": 3, "num": "3.1.3", "name": "Environmental Permit resolution", "start": "2024-02-28", "end": "2024-05-21", "pct": 0, "color": "#E8A838"}, {"id": "T013", "level": 3, "num": "3.1.4", "name": "Publication in Official Gazettes", "start": "2024-05-21", "end": "2024-06-10", "pct": 0, "color": "#E8A838"}, {"id": "S32", "level": 2, "num": "3.2", "name": "AAP and AAC", "start": "2024-02-28", "end": "2026-03-06", "pct": 50, "color": "#E8A838"}, {"id": "T016", "level": 3, "num": "3.2.1", "name": "AAP/AAC request", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T017", "level": 3, "num": "3.2.2", "name": "AAP/AAC Admission for Processing", "start": "2024-04-18", "end": "2024-04-18", "pct": 100, "color": "#E8A838"}, {"id": "T018", "level": 3, "num": "3.2.3", "name": "Publication in Diario Información", "start": "2025-01-09", "end": "2025-01-29", "pct": 100, "color": "#E8A838"}, {"id": "T019", "level": 3, "num": "3.2.4", "name": "Publication in DOGV", "start": "2025-01-10", "end": "2025-01-30", "pct": 100, "color": "#E8A838"}, {"id": "T020", "level": 3, "num": "3.2.5", "name": "Allegations + Responses", "start": "2025-01-30", "end": "2025-07-10", "pct": 100, "color": "#E8A838"}, {"id": "T021", "level": 3, "num": "3.2.6", "name": "Updated PTA submission", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T022", "level": 3, "num": "3.2.7", "name": "AAP/AAC resolution (M2 & M3)", "start": "2024-05-21", "end": "2024-09-09", "pct": 0, "color": "#E8A838"}, {"id": "S33", "level": 2, "num": "3.3", "name": "Urban Permit", "start": "2023-02-02", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "T023", "level": 3, "num": "3.3.1", "name": "ICU request", "start": "2023-02-02", "end": "2023-02-02", "pct": 100, "color": "#E8A838"}, {"id": "T024", "level": 3, "num": "3.3.2", "name": "ICU resolution", "start": "2023-02-02", "end": "2023-05-11", "pct": 100, "color": "#E8A838"}, {"id": "T025", "level": 3, "num": "3.3.3", "name": "Updated ICU request", "start": "2024-09-13", "end": "2024-09-13", "pct": 100, "color": "#E8A838"}, {"id": "T026", "level": 3, "num": "3.3.4", "name": "Updated ICU resolution", "start": "2024-09-13", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "S34", "level": 2, "num": "3.4", "name": "Building Permit", "start": "2024-09-09", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T027", "level": 3, "num": "3.4.1", "name": "Working License (LO) request", "start": "2024-09-09", "end": "2025-01-10", "pct": 0, "color": "#E8A838"}, {"id": "T028", "level": 3, "num": "3.4.2", "name": "LO registration in Land Registry", "start": "2025-01-10", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "S4", "level": 1, "num": "4", "name": "Sectorial Permits", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T029", "level": 3, "num": "4.1.1", "name": "CV-800 Road - Occupation Auth.", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T030", "level": 3, "num": "4.2.1", "name": "CHJ - Public Hydraulic Domain", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T031", "level": 3, "num": "4.3.1", "name": "Cattle Road Occupation Auth.", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "M1", "level": 0, "num": "", "name": "✅ FULLY PERMITTED", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#05233D", "milestone": true}];
+const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Terreno", "start": "2022-12-16", "end": "2025-01-30", "pct": 75, "color": "#2E86AB"}, {"id": "T001", "level": 2, "num": "1.1", "name": "Firma Acuerdo Terreno BESS", "start": "2022-12-16", "end": "2022-12-16", "pct": 100, "color": "#2E86AB"}, {"id": "T002", "level": 2, "num": "1.2", "name": "Notarización del Terreno", "start": "2025-01-10", "end": "2025-01-30", "pct": 0, "color": "#2E86AB"}, {"id": "T003", "level": 2, "num": "1.3", "name": "Inscripción Registral del Terreno", "start": "2025-01-30", "end": "2025-02-14", "pct": 0, "color": "#2E86AB"}, {"id": "S2", "level": 1, "num": "2", "name": "Conexión a Red", "start": "2023-01-26", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "T004", "level": 2, "num": "2.1", "name": "Emisión de Aval", "start": "2023-01-26", "end": "2023-01-26", "pct": 100, "color": "#399439"}, {"id": "T005", "level": 2, "num": "2.2", "name": "Presentación de Aval", "start": "2023-01-26", "end": "2023-02-02", "pct": 100, "color": "#399439"}, {"id": "T006", "level": 2, "num": "2.3", "name": "Confirmación CACG", "start": "2023-02-02", "end": "2023-05-02", "pct": 100, "color": "#399439"}, {"id": "T007", "level": 2, "num": "2.4", "name": "Solicitud Acceso y Conexión", "start": "2023-05-02", "end": "2023-05-04", "pct": 100, "color": "#399439"}, {"id": "T008", "level": 2, "num": "2.5", "name": "Permisos Acceso y Conexión", "start": "2023-05-04", "end": "2023-08-31", "pct": 100, "color": "#399439"}, {"id": "T009", "level": 2, "num": "2.6", "name": "Pago CTE", "start": "2023-11-30", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "S3", "level": 1, "num": "3", "name": "Permisos", "start": "2023-02-02", "end": "2026-03-06", "pct": 25, "color": "#E8A838"}, {"id": "S31", "level": 2, "num": "3.1", "name": "Permiso Ambiental", "start": "2024-02-28", "end": "2024-06-10", "pct": 25, "color": "#E8A838"}, {"id": "T010", "level": 3, "num": "3.1.1", "name": "Solicitud Permiso Ambiental", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T011", "level": 3, "num": "3.1.2", "name": "Solicitud + Consultas", "start": "2024-02-28", "end": "2024-03-19", "pct": 0, "color": "#E8A838"}, {"id": "T012", "level": 3, "num": "3.1.3", "name": "Resolución Permiso Ambiental", "start": "2024-02-28", "end": "2024-05-21", "pct": 0, "color": "#E8A838"}, {"id": "T013", "level": 3, "num": "3.1.4", "name": "Publicación en Boletines Oficiales", "start": "2024-05-21", "end": "2024-06-10", "pct": 0, "color": "#E8A838"}, {"id": "S32", "level": 2, "num": "3.2", "name": "AAP y AAC", "start": "2024-02-28", "end": "2026-03-06", "pct": 50, "color": "#E8A838"}, {"id": "T016", "level": 3, "num": "3.2.1", "name": "Solicitud AAP/AAC", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T017", "level": 3, "num": "3.2.2", "name": "Admisión a Trámite AAP/AAC", "start": "2024-04-18", "end": "2024-04-18", "pct": 100, "color": "#E8A838"}, {"id": "T018", "level": 3, "num": "3.2.3", "name": "Publicación Diario Información", "start": "2025-01-09", "end": "2025-01-29", "pct": 100, "color": "#E8A838"}, {"id": "T019", "level": 3, "num": "3.2.4", "name": "Publicación DOGV", "start": "2025-01-10", "end": "2025-01-30", "pct": 100, "color": "#E8A838"}, {"id": "T020", "level": 3, "num": "3.2.5", "name": "Alegaciones + Respuestas", "start": "2025-01-30", "end": "2025-07-10", "pct": 100, "color": "#E8A838"}, {"id": "T021", "level": 3, "num": "3.2.6", "name": "Envío PTA actualizado", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T022", "level": 3, "num": "3.2.7", "name": "Resolución AAP/AAC (M2 y M3)", "start": "2024-05-21", "end": "2024-09-09", "pct": 0, "color": "#E8A838"}, {"id": "S33", "level": 2, "num": "3.3", "name": "Permiso Urbanístico", "start": "2023-02-02", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "T023", "level": 3, "num": "3.3.1", "name": "Solicitud ICU", "start": "2023-02-02", "end": "2023-02-02", "pct": 100, "color": "#E8A838"}, {"id": "T024", "level": 3, "num": "3.3.2", "name": "Resolución ICU", "start": "2023-02-02", "end": "2023-05-11", "pct": 100, "color": "#E8A838"}, {"id": "T025", "level": 3, "num": "3.3.3", "name": "Solicitud ICU actualizado", "start": "2024-09-13", "end": "2024-09-13", "pct": 100, "color": "#E8A838"}, {"id": "T026", "level": 3, "num": "3.3.4", "name": "Resolución ICU actualizado", "start": "2024-09-13", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "S34", "level": 2, "num": "3.4", "name": "Licencia de Obras", "start": "2024-09-09", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T027", "level": 3, "num": "3.4.1", "name": "Solicitud Licencia de Obras (LO)", "start": "2024-09-09", "end": "2025-01-10", "pct": 0, "color": "#E8A838"}, {"id": "T028", "level": 3, "num": "3.4.2", "name": "Inscripción LO en Registro Propiedad", "start": "2025-01-10", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "S4", "level": 1, "num": "4", "name": "Permisos Sectoriales", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T029", "level": 3, "num": "4.1.1", "name": "Carretera CV-800 - Autorización Ocupación", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T030", "level": 3, "num": "4.2.1", "name": "CHJ - Dominio Público Hidráulico", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T031", "level": 3, "num": "4.3.1", "name": "Autorización Ocupación Vía Pecuaria", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "M1", "level": 0, "num": "", "name": "✅ TOTALMENTE AUTORIZADO", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#05233D", "milestone": true}];
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let allData = JSON.parse(JSON.stringify(DB));
@@ -1562,14 +1563,12 @@ function ganttBounds(tasks){
 // ── RENDER GANTT (MS Project style) ─────────────────────────────────────────
 function renderGantt(){
   const pid=currentProjId;
-  // Highlight switcher
   document.querySelectorAll('#projSwitcherFicha .proj-sw-item').forEach(el=>{
     el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
   });
   const tasks=getGanttTasks(pid);
   const container=document.getElementById('ganttContainer');
 
-  // Empty state — show add-phase button for editor
   if(!tasks.length){
     container.innerHTML=`<div style="text-align:center;padding:60px 32px;color:var(--text-3);">
       <div style="font-size:40px;margin-bottom:12px;">📅</div>
@@ -1580,24 +1579,48 @@ function renderGantt(){
     return;
   }
 
-  // Compute bounds
-  const bounds=ganttBounds(tasks);
-  const minDate=new Date(bounds.min), maxDate=new Date(bounds.max);
-  const totalMs=maxDate-minDate;
-  const months=[];
-  let cur=new Date(minDate.getFullYear(),minDate.getMonth(),1);
-  while(cur<=maxDate){months.push(new Date(cur));cur.setMonth(cur.getMonth()+1);}
-  const today=new Date();
-  const todayPct=Math.max(0,Math.min(100,(today-minDate)/totalMs*100));
-  const CW=36; // column width px per month
-  const CHART_W=months.length*CW;
-  const LEFT_W=420; // left panel width
+  // ── LAYOUT CONSTANTS ────────────────────────────────────────────
+  const CW=44;        // px per month column — fixed, identical for all months
+  const NAME_W=220;   // task name column
+  const DATE_W=80;    // start / end columns
+  const PCT_W=52;     // % column
+  const ACT_W=28;     // delete button column (editor only)
+  const LEFT_W=NAME_W+DATE_W+DATE_W+PCT_W+(isEditor?ACT_W:0);
   const ROW_H=34;
+  const HDR_H1=22;    // year header row height
+  const HDR_H2=22;    // month header row height
+
   const MSHORT_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   const MSHORT_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const MSHORT=lang==='en'?MSHORT_EN:MSHORT_ES;
 
-  // Year groups
+  // ── TIMELINE ───────────────────────────────────────────────────
+  const bounds=ganttBounds(tasks);
+  const tMin=new Date(bounds.min), tMax=new Date(bounds.max);
+  // Build month list starting from 1st of tMin's month
+  const months=[];
+  let cur=new Date(tMin.getFullYear(),tMin.getMonth(),1);
+  while(cur<=tMax){months.push(new Date(cur));cur.setMonth(cur.getMonth()+1);}
+  const CHART_W=months.length*CW;
+  const today=new Date();
+
+  // Helper: date → px offset from left of chart
+  // We snap to month boundaries: offset = (months before date's month)*CW + day-fraction*CW
+  function dateToPx(dateStr){
+    const d=new Date(dateStr);
+    // days from tMin's month start
+    const baseMs=new Date(tMin.getFullYear(),tMin.getMonth(),1).getTime();
+    const daysFromBase=(d-baseMs)/86400000;
+    // approximate: 1 month ≈ avg days. Use exact month indices instead.
+    // Find which month index this date falls in
+    const mIdx=(d.getFullYear()-months[0].getFullYear())*12+(d.getMonth()-months[0].getMonth());
+    const mStart=new Date(d.getFullYear(),d.getMonth(),1);
+    const mEnd=new Date(d.getFullYear(),d.getMonth()+1,1);
+    const dayFrac=(d-mStart)/(mEnd-mStart);
+    return Math.max(0,mIdx*CW+dayFrac*CW);
+  }
+
+  // Year groups for header
   const yearGroups=[];
   let yg=null;
   months.forEach((mn,i)=>{
@@ -1606,12 +1629,16 @@ function renderGantt(){
     yg.count++;
   });
 
-  // Assign phase index for coloring
+  // Phase index for coloring
   let phaseIdx=-1;
-  tasks.forEach(tk=>{if(tk.level===1) phaseIdx++;  tk._phaseIdx=phaseIdx;});
+  tasks.forEach(tk=>{if(tk.level===1) phaseIdx++; tk._phaseIdx=phaseIdx;});
 
-  // Build toolbar
-  const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;">
+  // ── TODAY LINE ─────────────────────────────────────────────────
+  const todayPx=dateToPx(today.toISOString().slice(0,10));
+  const todayInRange=today>=tMin&&today<=tMax;
+
+  // ── TOOLBAR ────────────────────────────────────────────────────
+  const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;">
     <button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">+ Fase</button>
     <button onclick="ganttAddTask()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">+ Tarea</button>
     <button onclick="ganttAddMilestone()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">◆ Hito</button>
@@ -1619,149 +1646,195 @@ function renderGantt(){
     <span style="font-size:10px;color:var(--text-3);">Doble clic en nombre o fecha para editar · Arrastra la barra para mover</span>
   </div>`:'';
 
-  // Build rows HTML
-  let rows='';
-  tasks.forEach((task,idx)=>{
+  // ── LEFT PANEL HEADER ──────────────────────────────────────────
+  const leftHdr=`<div style="flex-shrink:0;width:${LEFT_W}px;background:var(--navy);border-right:2px solid rgba(255,255,255,0.25);">
+    <div style="height:${HDR_H1}px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid rgba(255,255,255,0.1);">
+      <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px;text-transform:uppercase;">Tarea</span>
+    </div>
+    <div style="height:${HDR_H2}px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);">
+      <div style="width:${NAME_W}px;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Nombre</div>
+      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Inicio</div>
+      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Fin</div>
+      <div style="width:${PCT_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);${isEditor?'border-right:1px solid rgba(255,255,255,0.1);':''}">%</div>
+      ${isEditor?`<div style="width:${ACT_W}px;"></div>`:''}
+    </div>
+  </div>`;
+
+  // ── CHART HEADER ───────────────────────────────────────────────
+  let yearCells='';
+  yearGroups.forEach(yg=>{
+    yearCells+=`<div style="position:absolute;left:${yg.start*CW}px;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.3);':''}">${yg.year}</div>`;
+  });
+  let monthCells='';
+  months.forEach((mn,i)=>{
+    const isYS=mn.getMonth()===0;
+    monthCells+=`<div style="position:absolute;left:${i*CW}px;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.65);${isYS?'border-left:2px solid rgba(255,255,255,0.25);':'border-left:1px solid rgba(255,255,255,0.1);'}">${MSHORT[mn.getMonth()]}</div>`;
+  });
+  const chartHdr=`<div style="flex:1;min-width:0;background:var(--navy);overflow:hidden;" id="ganttChartHdr">
+    <div style="position:relative;width:${CHART_W}px;height:${HDR_H1}px;">${yearCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
+    <div style="position:relative;width:${CHART_W}px;height:${HDR_H2}px;background:#0a2540;">${monthCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
+  </div>`;
+
+  // ── ROWS ───────────────────────────────────────────────────────
+  let leftRows='', chartRows='';
+  tasks.forEach((task)=>{
     const isPhase=task.level===1;
-    const isSub=task.level===2;
-    const isSub2=task.level===3;
     const isMile=!!task.milestone;
     const color=task.color||PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2E86AB';
-    const indent=isPhase?0:isSub?14:28;
-    const bgRow=isPhase?'#F0F4F8':'#fff';
-    const fwRow=isPhase?700:400;
-    const fsRow=isPhase?12:11.5;
-
-    // Left panel cells
-    const nameCell=`<td style="padding:0 8px 0 ${8+indent}px;font-size:${fsRow}px;font-weight:${fwRow};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:${LEFT_W-220}px;border-right:1px solid var(--border);"
-      ${isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar"`:''}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</td>`;
-    const startCell=`<td style="padding:0 6px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);white-space:nowrap;"
-      ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic para editar"`:''}>${fmtDate(task.start)}</td>`;
-    const endCell=`<td style="padding:0 6px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);white-space:nowrap;"
-      ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic para editar"`:''}>${isMile?'—':fmtDate(task.end||task.start)}</td>`;
+    const indent=task.level===1?0:task.level===2?12:24;
+    const bgRow=isPhase?'#EEF2F7':'#fff';
+    const fw=isPhase?700:400;
+    const fs=isPhase?12:11.5;
     const pctVal=task.pct||0;
     const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
     const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
-    const pctCell=isMile?`<td style="border-right:1px solid var(--border);"></td>`
-      :`<td style="padding:0 4px;text-align:center;border-right:1px solid var(--border);">
-        <div style="display:flex;align-items:center;gap:3px;justify-content:center;">
-          ${isEditor?`<input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)"
-            style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;">`
-            :`<span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span>`}
-        </div>
-      </td>`;
-    const actCell=isEditor?`<td style="padding:0 4px;text-align:center;border-right:1px solid var(--border);">
-      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:13px;line-height:1;" title="Eliminar">×</button>
-    </td>`:'';
 
-    // Chart bar
+    // Left panel row
+    leftRows+=`<div style="display:flex;align-items:center;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);">
+      <div style="width:${NAME_W}px;padding:0 8px 0 ${8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;"
+        ${isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar" style="width:${NAME_W}px;padding:0 8px 0 ${8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;cursor:text;"`:''}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</div>
+      <div style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;"
+        ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;cursor:text;"`:''}>${fmtDate(task.start)}</div>
+      <div style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;"
+        ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;cursor:text;"`:''}>${isMile?'—':fmtDate(task.end||task.start)}</div>
+      <div style="width:${PCT_W}px;text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;">
+        ${isMile?'':(isEditor
+          ?`<input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;">`
+          :`<span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span>`)}
+      </div>
+      ${isEditor?`<div style="width:${ACT_W}px;text-align:center;height:100%;display:flex;align-items:center;justify-content:center;">
+        <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;line-height:1;" title="Eliminar">×</button>
+      </div>`:''}
+    </div>`;
+
+    // Chart row — bars positioned with px
     const s=new Date(task.start), e=new Date(task.end||task.start);
-    const leftPct=Math.max(0,(s-minDate)/totalMs*100);
-    const widPct=Math.max(0.5,(e-s)/totalMs*100);
-    const vis=s<=maxDate&&e>=minDate;
+    const sClamp=s<tMin?tMin:s;
+    const eClamp=e>tMax?tMax:e;
+    const leftPx=dateToPx(sClamp.toISOString().slice(0,10));
+    const rightPx=dateToPx(eClamp.toISOString().slice(0,10));
+    const widPx=Math.max(2,rightPx-leftPx);
+    const vis=s<=tMax&&e>=tMin;
 
     let barHtml='';
     if(vis){
       if(isMile){
-        barHtml=`<div style="position:absolute;top:50%;left:${leftPct}%;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;"></div>`;
+        barHtml=`<div style="position:absolute;top:50%;left:${leftPx}px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;"></div>`;
       } else if(isPhase){
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPct}%;width:${widPct}%;height:16px;border-radius:2px;background:${color};opacity:0.85;${isEditor?'cursor:grab;':''}" title="${task.name}">
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${color};opacity:0.85;${isEditor?'cursor:grab;':''}" title="${task.name}">
           <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.35);border-radius:2px;pointer-events:none;"></div>
         </div>`;
       } else {
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPct}%;width:${widPct}%;height:18px;border-radius:3px;background:${color}30;border:1.5px solid ${color}80;${isEditor?'cursor:grab;':''}" title="${task.name}">
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPx}px;width:${widPx}px;height:18px;border-radius:3px;background:${color}30;border:1.5px solid ${color}80;${isEditor?'cursor:grab;':''}" title="${task.name}">
           <div style="height:100%;width:${pctVal}%;background:${color};border-radius:2px;opacity:0.75;pointer-events:none;"></div>
         </div>`;
       }
     }
 
-    // Today line per row + year separators
-    const todayLine=`<div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,30,30,0.5);pointer-events:none;"></div>`;
-    const yrLines=yearGroups.filter(yg=>yg.start>0).map(yg=>{
-      const yp=((new Date(yg.year,0,1)-minDate)/totalMs*100);
-      return `<div style="position:absolute;top:0;bottom:0;left:${yp}%;width:1px;background:rgba(0,0,0,0.08);pointer-events:none;"></div>`;
-    }).join('');
+    // Month grid lines
+    let gridLines='';
+    months.forEach((mn,i)=>{
+      if(i===0) return;
+      const isYS=mn.getMonth()===0;
+      gridLines+=`<div style="position:absolute;top:0;bottom:0;left:${i*CW}px;width:${isYS?2:1}px;background:${isYS?'rgba(0,0,0,0.12)':'rgba(0,0,0,0.05)'};pointer-events:none;"></div>`;
+    });
+    // Today line
+    const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    rows+=`<tr data-id="${task.id}" style="background:${bgRow};border-bottom:1px solid var(--border);height:${ROW_H}px;">
-      ${nameCell}${startCell}${endCell}${pctCell}${actCell}
-      <td style="padding:0;position:relative;width:${CHART_W}px;">${barHtml}${todayLine}${yrLines}</td>
-    </tr>`;
+    chartRows+=`<div style="position:relative;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);width:${CHART_W}px;">${gridLines}${tLine}${barHtml}</div>`;
   });
 
-  // Header row
-  const hdrLeft=`<th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 8px;text-align:left;border-right:1px solid rgba(255,255,255,0.1);">Tarea</th>
-    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Inicio</th>
-    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Fin</th>
-    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);">%</th>
-    ${isEditor?`<th style="background:var(--navy);border-right:1px solid rgba(255,255,255,0.1);width:28px;"></th>`:''}`;
-
-  let yearHdrCells='';
-  yearGroups.forEach(yg=>{
-    yearHdrCells+=`<th colspan="${yg.count}" style="background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:4px;text-align:center;border-left:${yg.start>0?'2px solid rgba(255,255,255,0.25)':'none'};">${yg.year}</th>`;
-  });
-  let monthHdrCells='';
-  months.forEach((mn,i)=>{
-    const isYS=mn.getMonth()===0;
-    monthHdrCells+=`<th style="width:${CW}px;background:#0a2540;color:rgba(255,255,255,0.65);font-size:9px;padding:3px 1px;text-align:center;border-left:${isYS?'2px solid rgba(255,255,255,0.25)':'1px solid rgba(255,255,255,0.08)'};">${MSHORT[mn.getMonth()]}</th>`;
-  });
-
-  const html=`${toolbar}<div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 260px);">
-  <table style="border-collapse:collapse;table-layout:fixed;min-width:${LEFT_W+CHART_W}px;">
-    <colgroup>
-      <col style="width:${LEFT_W-220}px;min-width:160px;">
-      <col style="width:80px;">
-      <col style="width:80px;">
-      <col style="width:52px;">
-      ${isEditor?'<col style="width:28px;">':''}
-      ${months.map(()=>`<col style="width:${CW}px;">`).join('')}
-    </colgroup>
-    <thead>
-      <tr><th colspan="4" ${isEditor?'colspan="5"':''} style="background:var(--navy);padding:0;border-right:2px solid rgba(255,255,255,0.2);"></th>${yearHdrCells}</tr>
-      <tr>${hdrLeft}${monthHdrCells}</tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
+  // ── ASSEMBLE ───────────────────────────────────────────────────
+  const html=`${toolbar}
+  <div style="display:flex;flex-direction:column;height:calc(100% - ${isEditor?45:0}px);overflow:hidden;">
+    <!-- Fixed header row -->
+    <div style="display:flex;flex-shrink:0;border-bottom:2px solid rgba(255,255,255,0.25);">
+      ${leftHdr}
+      <div style="flex:1;min-width:0;overflow:hidden;" id="ganttHdrScroll">
+        ${chartHdr}
+      </div>
+    </div>
+    <!-- Scrollable body -->
+    <div style="display:flex;flex:1;min-height:0;overflow:hidden;">
+      <!-- Frozen left panel -->
+      <div style="flex-shrink:0;width:${LEFT_W}px;overflow-y:auto;overflow-x:hidden;border-right:2px solid var(--border);" id="ganttLeftScroll">
+        ${leftRows}
+      </div>
+      <!-- Chart area: scrolls both X and Y -->
+      <div style="flex:1;min-width:0;overflow:auto;" id="ganttChartScroll">
+        <div style="width:${CHART_W}px;">
+          ${chartRows}
+        </div>
+      </div>
+    </div>
+  </div>`;
 
   container.innerHTML=html;
 
-  // Attach drag handlers to bars (editor only)
-  if(isEditor) ganttAttachDrag(pid,minDate,totalMs,CW,months.length);
+  // ── SYNC SCROLLS ───────────────────────────────────────────────
+  const leftScroll=document.getElementById('ganttLeftScroll');
+  const chartScroll=document.getElementById('ganttChartScroll');
+  const hdrScroll=document.getElementById('ganttHdrScroll');
+  let syncing=false;
+  chartScroll.addEventListener('scroll',()=>{
+    if(syncing) return; syncing=true;
+    leftScroll.scrollTop=chartScroll.scrollTop;
+    hdrScroll.scrollLeft=chartScroll.scrollLeft;
+    syncing=false;
+  });
+  leftScroll.addEventListener('scroll',()=>{
+    if(syncing) return; syncing=true;
+    chartScroll.scrollTop=leftScroll.scrollTop;
+    syncing=false;
+  });
+
+  // Scroll to today
+  if(todayInRange){
+    const visibleW=chartScroll.clientWidth||600;
+    chartScroll.scrollLeft=Math.max(0,todayPx-visibleW/2);
+  }
+
+  if(isEditor) ganttAttachDrag(pid,months,CW,dateToPx);
 }
 
 // ── DRAG TO MOVE BARS ────────────────────────────────────────────────────────
-function ganttAttachDrag(pid,minDate,totalMs,CW,nMonths){
-  const chartW=nMonths*CW;
+function ganttAttachDrag(pid,months,CW,dateToPxFn){
+  // Inverse: px → date string
+  function pxToDate(px){
+    const mIdx=Math.floor(px/CW);
+    const frac=(px%CW)/CW;
+    const safeIdx=Math.max(0,Math.min(months.length-1,mIdx));
+    const mn=months[safeIdx];
+    const mStart=new Date(mn.getFullYear(),mn.getMonth(),1);
+    const mEnd=new Date(mn.getFullYear(),mn.getMonth()+1,1);
+    const ms=mStart.getTime()+frac*(mEnd-mStart);
+    return new Date(ms).toISOString().slice(0,10);
+  }
+
   document.querySelectorAll('[data-bar]').forEach(bar=>{
     const taskId=bar.getAttribute('data-bar');
-    let startX,origLeft,origWidth,dragging=false;
+    let startX,origLeftPx,dragging=false;
     bar.addEventListener('mousedown',e=>{
-      if(e.target!==bar) return; // don't interfere with inner pct div
+      if(e.target!==bar) return;
       e.preventDefault();
       dragging=true;
       startX=e.clientX;
-      origLeft=parseFloat(bar.style.left);
-      origWidth=parseFloat(bar.style.width);
+      origLeftPx=parseFloat(bar.style.left)||0;
       bar.style.cursor='grabbing';
       bar.style.opacity='0.7';
     });
     document.addEventListener('mousemove',e=>{
       if(!dragging) return;
       const dx=e.clientX-startX;
-      // Convert px delta to % of chart
-      const td=bar.closest('td');
-      const tdW=td?td.getBoundingClientRect().width:chartW;
-      const pctDelta=(dx/tdW)*100;
-      bar.style.left=Math.max(0,origLeft+pctDelta)+'%';
+      bar.style.left=Math.max(0,origLeftPx+dx)+'px';
     });
     document.addEventListener('mouseup',e=>{
       if(!dragging) return;
       dragging=false;
       bar.style.cursor='grab';
       bar.style.opacity='';
-      // Calculate new start from new left%
-      const newLeftPct=parseFloat(bar.style.left);
-      const newStartMs=minDate.getTime()+(newLeftPct/100)*totalMs;
-      const newStart=new Date(newStartMs).toISOString().slice(0,10);
+      const newLeftPx=parseFloat(bar.style.left)||0;
+      const newStart=pxToDate(newLeftPx);
       const tasks=getGanttTasks(pid);
       const task=tasks.find(t=>t.id===taskId);
       if(task){
