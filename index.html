@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-1230 -->
+<!-- BUILD:20261009-1330 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-1230';
+  const BUILD='20261009-1330';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1520,213 +1520,343 @@ function navWeekSemanal(dir){
   if(ni>=0&&ni<weeks.length){ currentWeek=weeks[ni]; renderSemanal(); }
 }
 
-// ── GANTT ──────────────────────────────────────────────────────────────────
-let ganttTasks=null; // mutable copy for editor
-function getGanttTasks(){ if(!ganttTasks) ganttTasks=JSON.parse(JSON.stringify(TASKS)); return ganttTasks; }
+// ── GANTT v2 — MS Project style ─────────────────────────────────────────────
+// Per-project mutable task stores
+const ganttData={};
+function getGanttTasks(pid){
+  pid=pid||currentProjId;
+  if(!ganttData[pid]){
+    // seed with TASKS for mutxamel, empty scaffold for others
+    if(pid==='mutxamel') ganttData[pid]=JSON.parse(JSON.stringify(TASKS));
+    else ganttData[pid]=[];
+  }
+  return ganttData[pid];
+}
 
+// Colour palette per phase index
+const PHASE_COLORS=['#2E86AB','#399439','#E8A838','#9B59B6','#E74C3C','#1ABC9C','#F39C12','#3498DB'];
+
+// Date helpers
+function addDays(dateStr,n){ const d=new Date(dateStr); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/(86400000)); }
+function fmtDate(s){ if(!s) return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
+
+// Generate unique id
+function newGanttId(pid){ return 'T'+(Date.now()%1000000)+'_'+pid.slice(0,3); }
+
+// Compute Gantt timeline bounds from tasks
+function ganttBounds(tasks){
+  let min=null,max=null;
+  tasks.forEach(t=>{
+    if(!min||t.start<min) min=t.start;
+    const e=t.end||t.start;
+    if(!max||e>max) max=e;
+  });
+  if(!min){ const y=new Date().getFullYear(); min=y+'-01-01'; max=(y+1)+'-12-31'; }
+  // pad 1 month each side
+  const mn=new Date(min); mn.setMonth(mn.getMonth()-1); min=mn.toISOString().slice(0,10);
+  const mx=new Date(max); mx.setMonth(mx.getMonth()+2); max=mx.toISOString().slice(0,10);
+  return {min,max};
+}
+
+// ── RENDER GANTT (MS Project style) ─────────────────────────────────────────
 function renderGantt(){
   const pid=currentProjId;
-  const m=META[pid]||{};
-  // Highlight active item in switcher
+  // Highlight switcher
   document.querySelectorAll('#projSwitcherFicha .proj-sw-item').forEach(el=>{
     el.classList.toggle('active', el.onclick&&el.onclick.toString().includes("'"+pid+"'"));
   });
-  if(pid!=='mutxamel'){
-    document.getElementById('ganttContainer').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);">
-      <div style="font-size:32px;margin-bottom:10px;">📅</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">${t('noSchedule')}</div>
-      <div style="font-size:12px;">${t('noScheduleDesc',m.name||pid)}</div>
+  const tasks=getGanttTasks(pid);
+  const container=document.getElementById('ganttContainer');
+
+  // Empty state — show add-phase button for editor
+  if(!tasks.length){
+    container.innerHTML=`<div style="text-align:center;padding:60px 32px;color:var(--text-3);">
+      <div style="font-size:40px;margin-bottom:12px;">📅</div>
+      <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Sin cronograma</div>
+      <div style="font-size:12px;margin-bottom:20px;">Crea la primera fase para empezar</div>
+      ${isEditor?`<button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">+ Nueva fase</button>`:''}
     </div>`;
     return;
   }
-  const tasks=getGanttTasks();
-  const minDate=new Date('2022-12-01'), maxDate=new Date('2026-06-01');
+
+  // Compute bounds
+  const bounds=ganttBounds(tasks);
+  const minDate=new Date(bounds.min), maxDate=new Date(bounds.max);
   const totalMs=maxDate-minDate;
   const months=[];
   let cur=new Date(minDate.getFullYear(),minDate.getMonth(),1);
   while(cur<=maxDate){months.push(new Date(cur));cur.setMonth(cur.getMonth()+1);}
   const today=new Date();
   const todayPct=Math.max(0,Math.min(100,(today-minDate)/totalMs*100));
-  const CW=34;
-  const MNAMES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const CW=36; // column width px per month
+  const CHART_W=months.length*CW;
+  const LEFT_W=420; // left panel width
+  const ROW_H=34;
   const MSHORT_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   const MSHORT_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const MSHORT=lang==='en'?MSHORT_EN:MSHORT_ES;
 
-  // Build year groups for two-row header
+  // Year groups
   const yearGroups=[];
   let yg=null;
   months.forEach((mn,i)=>{
     const y=mn.getFullYear();
-    if(!yg||yg.year!==y){ yg={year:y,start:i,count:0}; yearGroups.push(yg); }
+    if(!yg||yg.year!==y){yg={year:y,start:i,count:0};yearGroups.push(yg);}
     yg.count++;
   });
 
-  // Year row
-  let yearRow=`<tr>
-    <th rowspan="2" style="width:240px;min-width:240px;background:var(--navy);color:rgba(255,255,255,0.55);font-size:10px;padding:8px 12px;text-align:left;position:sticky;left:0;z-index:3;border-right:2px solid rgba(255,255,255,0.12);">${t('task')}</th>`;
-  yearGroups.forEach(yg=>{
-    const isFirst=yg.start===0;
-    yearRow+=`<th colspan="${yg.count}" style="background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:5px 4px;text-align:center;border-left:${isFirst?'none':'2px solid rgba(255,255,255,0.25)'};">${yg.year}</th>`;
-  });
-  yearRow+=`</tr>`;
+  // Assign phase index for coloring
+  let phaseIdx=-1;
+  tasks.forEach(tk=>{if(tk.level===1) phaseIdx++;  tk._phaseIdx=phaseIdx;});
 
-  // Month row
-  let monthRow=`<tr>`;
-  months.forEach((mn,i)=>{
-    const isYearStart=mn.getMonth()===0;
-    monthRow+=`<th style="width:${CW}px;background:#0a2540;color:rgba(255,255,255,0.65);font-size:9px;padding:4px 2px;text-align:center;border-left:${isYearStart?'2px solid rgba(255,255,255,0.25)':'1px solid rgba(255,255,255,0.08)'};">${MSHORT[mn.getMonth()]}</th>`;
-  });
-  monthRow+=`</tr>`;
+  // Build toolbar
+  const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;">
+    <button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">+ Fase</button>
+    <button onclick="ganttAddTask()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">+ Tarea</button>
+    <button onclick="ganttAddMilestone()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">◆ Hito</button>
+    <div style="flex:1;"></div>
+    <span style="font-size:10px;color:var(--text-3);">Doble clic en nombre o fecha para editar · Arrastra la barra para mover</span>
+  </div>`:'';
 
-  let html=`<div style="overflow-x:auto;position:relative;"><table style="width:${240+months.length*CW}px;border-collapse:collapse;table-layout:fixed;">
-  <thead>${yearRow}${monthRow}</thead><tbody>`;
+  // Build rows HTML
+  let rows='';
+  tasks.forEach((task,idx)=>{
+    const isPhase=task.level===1;
+    const isSub=task.level===2;
+    const isSub2=task.level===3;
+    const isMile=!!task.milestone;
+    const color=task.color||PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2E86AB';
+    const indent=isPhase?0:isSub?14:28;
+    const bgRow=isPhase?'#F0F4F8':'#fff';
+    const fwRow=isPhase?700:400;
+    const fsRow=isPhase?12:11.5;
 
-  tasks.forEach(task=>{
-    const isPhase=task.level<=1;
-    const isMile=task.milestone;
-    const start=new Date(task.start),end=new Date(task.end||task.start);
-    const left=Math.max(0,(start-minDate)/totalMs*100);
-    const width=Math.max(0.3,(end-start)/totalMs*100);
-    const visible=start<=maxDate&&end>=minDate;
-    const indent=task.level===1?0:task.level===2?12:24;
-    const pctColor=task.pct===100?'#16803C':task.pct>0?task.color:'var(--grey)';
-    const editorAttr=isEditor&&!isMile?`data-edit="${task.id}" style="cursor:pointer;" title="Click para editar"`:''
+    // Left panel cells
+    const nameCell=`<td style="padding:0 8px 0 ${8+indent}px;font-size:${fsRow}px;font-weight:${fwRow};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:${LEFT_W-220}px;border-right:1px solid var(--border);"
+      ${isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar"`:''}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</td>`;
+    const startCell=`<td style="padding:0 6px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);white-space:nowrap;"
+      ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic para editar"`:''}>${fmtDate(task.start)}</td>`;
+    const endCell=`<td style="padding:0 6px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);white-space:nowrap;"
+      ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic para editar"`:''}>${isMile?'—':fmtDate(task.end||task.start)}</td>`;
+    const pctVal=task.pct||0;
+    const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
+    const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
+    const pctCell=isMile?`<td style="border-right:1px solid var(--border);"></td>`
+      :`<td style="padding:0 4px;text-align:center;border-right:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:3px;justify-content:center;">
+          ${isEditor?`<input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)"
+            style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;">`
+            :`<span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span>`}
+        </div>
+      </td>`;
+    const actCell=isEditor?`<td style="padding:0 4px;text-align:center;border-right:1px solid var(--border);">
+      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:13px;line-height:1;" title="Eliminar">×</button>
+    </td>`:'';
 
-    // Predecessor line hint
-    let predHint='';
-    if(task.pred){
-      const predTask=tasks.find(t=>t.id===task.pred);
-      if(predTask){
-        const delayTxt=task.delay?` +${task.delay}d`:'';
-        predHint=`<span style="font-size:9px;color:var(--text-3);margin-left:4px;" title="Predecesor: ${predTask.name}${delayTxt}">← ${task.pred}</span>`;
+    // Chart bar
+    const s=new Date(task.start), e=new Date(task.end||task.start);
+    const leftPct=Math.max(0,(s-minDate)/totalMs*100);
+    const widPct=Math.max(0.5,(e-s)/totalMs*100);
+    const vis=s<=maxDate&&e>=minDate;
+
+    let barHtml='';
+    if(vis){
+      if(isMile){
+        barHtml=`<div style="position:absolute;top:50%;left:${leftPct}%;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;"></div>`;
+      } else if(isPhase){
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPct}%;width:${widPct}%;height:16px;border-radius:2px;background:${color};opacity:0.85;${isEditor?'cursor:grab;':''}" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.35);border-radius:2px;pointer-events:none;"></div>
+        </div>`;
+      } else {
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPct}%;width:${widPct}%;height:18px;border-radius:3px;background:${color}30;border:1.5px solid ${color}80;${isEditor?'cursor:grab;':''}" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${color};border-radius:2px;opacity:0.75;pointer-events:none;"></div>
+        </div>`;
       }
     }
 
-    html+=`<tr style="border-bottom:1px solid var(--border);${isPhase?'background:#F7F9FB;':''}" ${editorAttr}>
-      <td style="padding:6px 10px 6px ${10+indent}px;font-size:${isPhase?'12':'11.5'}px;font-weight:${isPhase?700:400};color:var(--navy);border-right:2px solid var(--border-2);position:sticky;left:0;background:${isPhase?'#F7F9FB':'#fff'};z-index:1;">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
-          <div style="display:flex;align-items:center;gap:2px;min-width:0;">
-            <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:155px;" title="${task.name}">${isMile?'◆ ':''}${task.name}</span>
-            ${predHint}
-          </div>
-          ${!isMile?`<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;background:${task.pct===100?'var(--green-s-l)':task.pct>0?'var(--blue-l)':'var(--grey-l)'};color:${pctColor};">${task.pct}%</span>`:''}
-        </div>
-      </td>
-      <td colspan="${months.length}" style="padding:0;position:relative;height:32px;">
-        ${visible&&!isMile?`<div style="position:absolute;top:7px;left:${left}%;width:${width}%;height:18px;border-radius:3px;background:${task.color}22;border:1px solid ${task.color}66;">
-          <div style="height:100%;width:${task.pct}%;background:${task.color};border-radius:2px;opacity:0.7;"></div>
-        </div>`:''}
-        ${isMile&&visible?`<div style="position:absolute;top:50%;left:${left}%;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:var(--navy);"></div>`:''}
-        <div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,0,0,0.5);pointer-events:none;"></div>
-        ${yearGroups.filter(yg=>yg.start>0).map(yg=>{
-          const yPct=((new Date(yg.year,0,1)-minDate)/totalMs*100);
-          return `<div style="position:absolute;top:0;bottom:0;left:${yPct}%;width:1px;background:rgba(0,0,0,0.12);pointer-events:none;"></div>`;
-        }).join('')}
-      </td>
+    // Today line per row + year separators
+    const todayLine=`<div style="position:absolute;top:0;bottom:0;left:${todayPct}%;width:2px;background:rgba(200,30,30,0.5);pointer-events:none;"></div>`;
+    const yrLines=yearGroups.filter(yg=>yg.start>0).map(yg=>{
+      const yp=((new Date(yg.year,0,1)-minDate)/totalMs*100);
+      return `<div style="position:absolute;top:0;bottom:0;left:${yp}%;width:1px;background:rgba(0,0,0,0.08);pointer-events:none;"></div>`;
+    }).join('');
+
+    rows+=`<tr data-id="${task.id}" style="background:${bgRow};border-bottom:1px solid var(--border);height:${ROW_H}px;">
+      ${nameCell}${startCell}${endCell}${pctCell}${actCell}
+      <td style="padding:0;position:relative;width:${CHART_W}px;">${barHtml}${todayLine}${yrLines}</td>
     </tr>`;
   });
-  html+=`</tbody></table></div>`;
 
-  // Add editor panel placeholder
-  html+=`<div id="ganttEditorPanel" style="display:none;background:#F7F9FB;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;"></div>`;
-  document.getElementById('ganttContainer').innerHTML=html;
+  // Header row
+  const hdrLeft=`<th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 8px;text-align:left;border-right:1px solid rgba(255,255,255,0.1);">Tarea</th>
+    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Inicio</th>
+    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Fin</th>
+    <th style="background:var(--navy);color:rgba(255,255,255,0.6);font-size:10px;font-weight:600;padding:0 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);">%</th>
+    ${isEditor?`<th style="background:var(--navy);border-right:1px solid rgba(255,255,255,0.1);width:28px;"></th>`:''}`;
 
-  // Delegated click listener for task editor rows
-  if(isEditor){
-    document.getElementById('ganttContainer').addEventListener('click',function(e){
-      const tr=e.target.closest('tr[data-edit]');
-      if(tr) openGanttEditor(tr.getAttribute('data-edit'));
+  let yearHdrCells='';
+  yearGroups.forEach(yg=>{
+    yearHdrCells+=`<th colspan="${yg.count}" style="background:var(--navy);color:#fff;font-size:11px;font-weight:800;padding:4px;text-align:center;border-left:${yg.start>0?'2px solid rgba(255,255,255,0.25)':'none'};">${yg.year}</th>`;
+  });
+  let monthHdrCells='';
+  months.forEach((mn,i)=>{
+    const isYS=mn.getMonth()===0;
+    monthHdrCells+=`<th style="width:${CW}px;background:#0a2540;color:rgba(255,255,255,0.65);font-size:9px;padding:3px 1px;text-align:center;border-left:${isYS?'2px solid rgba(255,255,255,0.25)':'1px solid rgba(255,255,255,0.08)'};">${MSHORT[mn.getMonth()]}</th>`;
+  });
+
+  const html=`${toolbar}<div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 260px);">
+  <table style="border-collapse:collapse;table-layout:fixed;min-width:${LEFT_W+CHART_W}px;">
+    <colgroup>
+      <col style="width:${LEFT_W-220}px;min-width:160px;">
+      <col style="width:80px;">
+      <col style="width:80px;">
+      <col style="width:52px;">
+      ${isEditor?'<col style="width:28px;">':''}
+      ${months.map(()=>`<col style="width:${CW}px;">`).join('')}
+    </colgroup>
+    <thead>
+      <tr><th colspan="4" ${isEditor?'colspan="5"':''} style="background:var(--navy);padding:0;border-right:2px solid rgba(255,255,255,0.2);"></th>${yearHdrCells}</tr>
+      <tr>${hdrLeft}${monthHdrCells}</tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+
+  container.innerHTML=html;
+
+  // Attach drag handlers to bars (editor only)
+  if(isEditor) ganttAttachDrag(pid,minDate,totalMs,CW,months.length);
+}
+
+// ── DRAG TO MOVE BARS ────────────────────────────────────────────────────────
+function ganttAttachDrag(pid,minDate,totalMs,CW,nMonths){
+  const chartW=nMonths*CW;
+  document.querySelectorAll('[data-bar]').forEach(bar=>{
+    const taskId=bar.getAttribute('data-bar');
+    let startX,origLeft,origWidth,dragging=false;
+    bar.addEventListener('mousedown',e=>{
+      if(e.target!==bar) return; // don't interfere with inner pct div
+      e.preventDefault();
+      dragging=true;
+      startX=e.clientX;
+      origLeft=parseFloat(bar.style.left);
+      origWidth=parseFloat(bar.style.width);
+      bar.style.cursor='grabbing';
+      bar.style.opacity='0.7';
     });
-  }
+    document.addEventListener('mousemove',e=>{
+      if(!dragging) return;
+      const dx=e.clientX-startX;
+      // Convert px delta to % of chart
+      const td=bar.closest('td');
+      const tdW=td?td.getBoundingClientRect().width:chartW;
+      const pctDelta=(dx/tdW)*100;
+      bar.style.left=Math.max(0,origLeft+pctDelta)+'%';
+    });
+    document.addEventListener('mouseup',e=>{
+      if(!dragging) return;
+      dragging=false;
+      bar.style.cursor='grab';
+      bar.style.opacity='';
+      // Calculate new start from new left%
+      const newLeftPct=parseFloat(bar.style.left);
+      const newStartMs=minDate.getTime()+(newLeftPct/100)*totalMs;
+      const newStart=new Date(newStartMs).toISOString().slice(0,10);
+      const tasks=getGanttTasks(pid);
+      const task=tasks.find(t=>t.id===taskId);
+      if(task){
+        const dur=daysBetween(task.start,task.end||task.start);
+        task.start=newStart;
+        task.end=addDays(newStart,Math.max(0,dur));
+        renderGantt();
+        toast('Tarea movida');
+      }
+    });
+  });
 }
 
-// ── GANTT EDITOR ───────────────────────────────────────────────────────────
-function openGanttEditor(taskId){
-  if(!isEditor) return;
-  const tasks=getGanttTasks();
-  const task=tasks.find(t=>t.id===taskId);
-  if(!task||task.milestone) return;
-  const panel=document.getElementById('ganttEditorPanel');
-  if(!panel) return;
-  const phases=tasks.filter(t=>t.level===1);
-  const phaseOpts=phases.map(p=>`<option value="${p.id}" ${task.pred===p.id?'selected':''}>${p.num} ${p.name}</option>`).join('');
-  const taskOpts=tasks.filter(t=>t.id!==taskId&&!t.milestone).map(t=>`<option value="${t.id}" ${task.pred===t.id?'selected':''}>${t.num||t.id} ${t.name}</option>`).join('');
-  panel.style.display='block';
-  panel.innerHTML=`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div style="font-size:14px;font-weight:700;color:var(--navy);">✏️ ${t('editTask')} · <span style="font-weight:400;color:var(--text-2);">${task.num||task.id}</span></div>
-      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-3);">✕</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
-      <div style="grid-column:1/-1;">
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskName')}</label>
-        <input id="ge-name" value="${task.name}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskStart')}</label>
-        <input id="ge-start" type="date" value="${task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskEnd')}</label>
-        <input id="ge-end" type="date" value="${task.end||task.start}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskPct')}</label>
-        <input id="ge-pct" type="number" min="0" max="100" value="${task.pct}" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskPred')}</label>
-        <select id="ge-pred" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:11.5px;font-family:inherit;">
-          <option value="">—</option>
-          ${taskOpts}
-        </select>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:600;color:var(--text-2);display:block;margin-bottom:4px;">${t('taskDelay')}</label>
-        <input id="ge-delay" type="number" min="0" value="${task.delay||0}" placeholder="0" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button onclick="saveGanttEdit('${taskId}')" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;">${t('save')}</button>
-      <button onclick="applyPredecessor('${taskId}')" title="Calcula la fecha de inicio en base al predecesor + delay" style="background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;">🔗 Aplicar vínculo</button>
-      <button onclick="document.getElementById('ganttEditorPanel').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;cursor:pointer;">${t('cancel')}</button>
-    </div>`;
-}
-
-function saveGanttEdit(taskId){
+// ── GANTT EDIT HELPERS ───────────────────────────────────────────────────────
+function ganttEditName(taskId,cell){
   const tasks=getGanttTasks();
   const task=tasks.find(t=>t.id===taskId);
   if(!task) return;
-  task.name=document.getElementById('ge-name').value||task.name;
-  task.start=document.getElementById('ge-start').value||task.start;
-  task.end=document.getElementById('ge-end').value||task.end;
-  task.pct=Math.max(0,Math.min(100,parseInt(document.getElementById('ge-pct').value)||0));
-  task.pred=document.getElementById('ge-pred').value||null;
-  task.delay=parseInt(document.getElementById('ge-delay').value)||0;
-  renderGantt();
-  toast('Tarea actualizada');
+  const orig=task.name;
+  const inp=document.createElement('input');
+  inp.value=orig;
+  inp.style.cssText='width:100%;box-sizing:border-box;font-size:inherit;font-weight:inherit;font-family:inherit;border:none;outline:2px solid var(--blue);border-radius:3px;padding:1px 4px;';
+  cell.textContent='';
+  cell.appendChild(inp);
+  inp.focus(); inp.select();
+  const commit=()=>{task.name=inp.value||orig; renderGantt();};
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter') inp.blur(); if(e.key==='Escape'){task.name=orig;renderGantt();}});
 }
 
-function applyPredecessor(taskId){
+function ganttEditDate(taskId,field,cell){
   const tasks=getGanttTasks();
   const task=tasks.find(t=>t.id===taskId);
-  if(!task||!task.pred) return;
-  const pred=tasks.find(t=>t.id===task.pred);
-  if(!pred) return;
-  const predEnd=new Date(pred.end||pred.start);
-  const delay=task.delay||0;
-  predEnd.setDate(predEnd.getDate()+delay);
-  const newStart=predEnd.toISOString().slice(0,10);
-  // Keep same duration
-  const origStart=new Date(task.start), origEnd=new Date(task.end||task.start);
-  const dur=origEnd-origStart;
-  const newEnd=new Date(predEnd); newEnd.setTime(newEnd.getTime()+dur);
-  task.start=newStart;
-  task.end=newEnd.toISOString().slice(0,10);
-  document.getElementById('ge-start').value=task.start;
-  document.getElementById('ge-end').value=task.end;
-  toast(`Inicio calculado: ${newStart} (${pred.name} fin + ${delay}d)`);
+  if(!task) return;
+  const orig=field==='start'?task.start:(task.end||task.start);
+  const inp=document.createElement('input');
+  inp.type='date'; inp.value=orig;
+  inp.style.cssText='width:110px;box-sizing:border-box;font-size:10.5px;border:none;outline:2px solid var(--blue);border-radius:3px;padding:1px 3px;';
+  cell.textContent='';
+  cell.appendChild(inp);
+  inp.focus();
+  const commit=()=>{
+    if(inp.value){ task[field]=inp.value; }
+    renderGantt();
+  };
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter') inp.blur();});
+}
+
+function ganttSetPct(taskId,val){
+  const tasks=getGanttTasks();
+  const task=tasks.find(t=>t.id===taskId);
+  if(task) task.pct=Math.max(0,Math.min(100,parseInt(val)||0));
+  // don't re-render on every keystroke; will refresh on next action
+}
+
+function ganttDeleteRow(taskId){
+  const tasks=getGanttTasks();
+  const idx=tasks.findIndex(t=>t.id===taskId);
+  if(idx<0) return;
+  if(!confirm('¿Eliminar esta fila?')) return;
+  tasks.splice(idx,1);
+  renderGantt();
+  toast('Eliminado');
+}
+
+function ganttAddPhase(){
+  const pid=currentProjId;
+  const tasks=getGanttTasks(pid);
+  const today=new Date().toISOString().slice(0,10);
+  const end=addDays(today,180);
+  const phaseNum=tasks.filter(t=>t.level===1).length+1;
+  const color=PHASE_COLORS[(phaseNum-1)%PHASE_COLORS.length];
+  tasks.push({id:newGanttId(pid),level:1,num:String(phaseNum),name:'Nueva fase',start:today,end,pct:0,color});
+  renderGantt();
+}
+
+function ganttAddTask(){
+  const pid=currentProjId;
+  const tasks=getGanttTasks(pid);
+  const today=new Date().toISOString().slice(0,10);
+  const end=addDays(today,30);
+  // Find last phase for color
+  const lastPhase=tasks.slice().reverse().find(t=>t.level===1);
+  const color=lastPhase?lastPhase.color:PHASE_COLORS[0];
+  tasks.push({id:newGanttId(pid),level:2,num:'',name:'Nueva tarea',start:today,end,pct:0,color});
+  renderGantt();
+}
+
+function ganttAddMilestone(){
+  const pid=currentProjId;
+  const tasks=getGanttTasks(pid);
+  const today=new Date().toISOString().slice(0,10);
+  tasks.push({id:newGanttId(pid),level:2,num:'',name:'Hito',start:today,end:today,pct:0,color:'#05233D',milestone:true});
+  renderGantt();
 }
 
 // ── DOCS ───────────────────────────────────────────────────────────────────
