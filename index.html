@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-0935 -->
+<!-- BUILD:20261009-0948 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-0935';
+  const BUILD='20261009-0948';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -253,7 +253,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .pwd-card{background:#fff;border-radius:12px;width:100%;max-width:360px;padding:28px;}
 
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;}
+/* Dashboard */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:16px;}
+.dash-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.dash-card-hdr{padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);display:flex;align-items:center;gap:6px;}
+.dash-card-body{padding:16px;}
+#dashMap{height:260px;width:100%;z-index:0;}
+.timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
+.timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
+.tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
+.tl-dot.done{background:var(--green-l);border:2px solid var(--green);}
+.tl-dot.active{background:var(--yellow-l);border:2px solid var(--yellow);}
+.tl-dot.pending{background:var(--bg);border:2px solid var(--border-2);}
+.tl-label{font-size:12px;font-weight:600;color:var(--navy);}
+.tl-date{font-size:10.5px;color:var(--text-3);margin-top:1px;}
+.dash-last-update{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.dash-last-update:last-child{border-bottom:none;}
+.dash-upd-topic{font-size:11.5px;font-weight:700;color:var(--navy);}
+.dash-upd-text{font-size:11px;color:var(--text-2);margin-top:1px;}
+.dash-upd-meta{display:flex;gap:6px;align-items:center;margin-top:4px;}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTLSeB68ARYJipY1SQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
 
@@ -544,13 +564,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="ficha-specs" id="projFichaSpecs"></div>
   </div>
   <div class="tabs-bar">
-    <div class="tab on" id="tab-updates" onclick="showTab('updates')">📋 Updates</div>
+    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')">🗺 Dashboard</div>
+    <div class="tab" id="tab-updates" onclick="showTab('updates')">📋 Updates</div>
     <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">📅 Cronograma</div>
     <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">📁 Documentación</div>
   </div>
   <div class="tab-content">
+    <!-- DASHBOARD TAB -->
+    <div id="tc-dashboard" style="padding:24px 28px;">
+      <div id="dashboardContent"></div>
+    </div>
     <!-- UPDATES TAB -->
-    <div id="tc-updates" style="padding:20px 28px;">
+    <div id="tc-updates" style="display:none;padding:20px 28px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;">REPORTING SEMANAL</div>
@@ -1115,19 +1140,21 @@ function openProject(pid){
   const smap = {yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
   document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
   document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
-  showTab('updates');
+  showTab(pid==='custom_nuevas_oportunidades'?'updates':'dashboard');
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────
 function showTab(tab){
-  ['updates','cronograma','documentacion'].forEach(t=>{
-    document.getElementById('tc-'+t).style.display = t===tab ? '' : 'none';
-    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  ['dashboard','updates','cronograma','documentacion'].forEach(t=>{
+    const tc=document.getElementById('tc-'+t);
+    const tb=document.getElementById('tab-'+t);
+    if(tc) tc.style.display = t===tab ? '' : 'none';
+    if(tb) tb.classList.toggle('on', t===tab);
   });
-  // Show/hide tabs bar: only show on updates (and not for Nuevas Oportunidades)
+  // Show/hide tabs bar: hide when on cronograma/documentacion or Nuevas Oportunidades
   const tabsBar = document.querySelector('.tabs-bar');
   if(tabsBar){
-    const hideBar = (tab!=='updates') || (currentProjId==='custom_nuevas_oportunidades');
+    const hideBar = (tab==='cronograma'||tab==='documentacion') || (currentProjId==='custom_nuevas_oportunidades');
     tabsBar.style.display = hideBar ? 'none' : '';
   }
   // Show/hide chevron for project switching (only in cronograma/documentacion tabs)
@@ -1138,6 +1165,7 @@ function showTab(tab){
   if(tab==='cronograma') document.getElementById('nav-cronograma').classList.add('active');
   else if(tab==='documentacion') document.getElementById('nav-documentacion').classList.add('active');
   else if(currentProjId==='custom_nuevas_oportunidades') document.getElementById('nav-custom_nuevas_oportunidades').classList.add('active');
+  if(tab==='dashboard') renderDashboard();
   if(tab==='updates') renderUpdates();
   if(tab==='cronograma') renderGantt();
   if(tab==='documentacion') renderDocs();
@@ -1960,6 +1988,131 @@ document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e
 // ── START ───────────────────────────────────────────────────────────────────
 init();
 
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+// ── DASHBOARD ───────────────────────────────────────────────────────────────
+const PROJ_COORDS = {
+  begues:       [41.5105, 1.8736],
+  fregacedos:   [40.2445, -3.8821],
+  mutxamel:     [38.4330, -0.4052],
+  entrenucleos: [37.3050, -5.9234]
+};
+const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
+const PROJ_MILESTONES = {
+  begues:[
+    {label:'Solicitud de acceso a red',date:'Nov 2023',st:'done'},
+    {label:'Obtención punto de acceso (ATR)',date:'Mar 2024',st:'done'},
+    {label:'Estudio de impacto ambiental',date:'En curso',st:'active'},
+    {label:'Autorización administrativa previa',date:'T3 2025',st:'pending'},
+    {label:'Autorización de construcción',date:'T1 2026',st:'pending'},
+    {label:'Inicio de obras',date:'T3 2026',st:'pending'},
+    {label:'COD',date:'T1 2028',st:'pending'}
+  ],
+  fregacedos:[
+    {label:'Solicitud de acceso a red',date:'Sep 2023',st:'done'},
+    {label:'Obtención punto de acceso (ATR)',date:'Feb 2024',st:'done'},
+    {label:'Permisos municipales',date:'En curso',st:'active'},
+    {label:'Autorización administrativa previa',date:'T4 2025',st:'pending'},
+    {label:'Autorización de construcción',date:'T2 2026',st:'pending'},
+    {label:'Inicio de obras',date:'T4 2026',st:'pending'},
+    {label:'COD',date:'T2 2027',st:'pending'}
+  ],
+  mutxamel:[
+    {label:'Solicitud de acceso a red',date:'Jun 2023',st:'done'},
+    {label:'Obtención punto de acceso (ATR)',date:'Ene 2024',st:'done'},
+    {label:'Resolución disputa DSA Univergy',date:'En curso',st:'active'},
+    {label:'Autorización administrativa previa',date:'T2 2026',st:'pending'},
+    {label:'Autorización de construcción',date:'T4 2026',st:'pending'},
+    {label:'COD',date:'T4 2027',st:'pending'}
+  ],
+  entrenucleos:[
+    {label:'Solicitud de acceso a red',date:'Abr 2023',st:'done'},
+    {label:'Consultas REE (hibridación)',date:'En curso',st:'active'},
+    {label:'Resolución acceso definitivo',date:'T1 2026',st:'pending'},
+    {label:'Estudio de impacto ambiental',date:'T2 2026',st:'pending'},
+    {label:'Autorización administrativa previa',date:'T3 2026',st:'pending'},
+    {label:'COD',date:'T2 2028',st:'pending'}
+  ]
+};
+let _dashMap=null;
+let _dashMapPid=null;
+function renderDashboard(){
+  const pid=currentProjId;
+  if(!PROJ_COORDS[pid]){
+    document.getElementById('dashboardContent').innerHTML='<div style="padding:40px;text-align:center;color:var(--text-3);">Dashboard no disponible para este proyecto.</div>';
+    return;
+  }
+  const milestones=PROJ_MILESTONES[pid]||[];
+  // Latest updates (last 3)
+  const allWeeks=Object.keys(allData).sort().reverse();
+  let recentUpdates=[];
+  for(const wk of allWeeks){
+    const items=(allData[wk]||{})[pid]||[];
+    items.forEach(u=>recentUpdates.push({week:wk,...u}));
+    if(recentUpdates.length>=3) break;
+  }
+  const updHtml=recentUpdates.length
+    ?recentUpdates.slice(0,3).map(u=>{
+        const st=STATUS_MAP[u.status]||STATUS_MAP.yellow;
+        return `<div class="dash-last-update">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="i-sbar ${st.sbar}" style="width:3px;height:32px;border-radius:2px;flex-shrink:0;"></div>
+            <div>
+              <div class="dash-upd-topic">${u.topic||''}</div>
+              <div class="dash-upd-text">${u.text||''}</div>
+              <div class="dash-upd-meta"><span class="status-tag ${st.cls}">${st.lbl}</span><span style="font-size:10px;color:var(--text-3);">${weekRange(u.week)}</span></div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')
+    :`<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px;">Sin novedades recientes</div>`;
+  document.getElementById('dashboardContent').innerHTML=`
+    <div class="dash-grid">
+      <div class="dash-card" style="grid-column:1;grid-row:1;">
+        <div class="dash-card-hdr">📍 Ubicación</div>
+        <div id="dashMap"></div>
+      </div>
+      <div class="dash-card" style="grid-column:2;grid-row:1 / span 2;">
+        <div class="dash-card-hdr">📅 Hitos principales</div>
+        <div class="dash-card-body">
+          ${milestones.map(m=>`<div class="timeline-item">
+            <div class="tl-dot ${m.st}"></div>
+            <div>
+              <div class="tl-label">${m.label}</div>
+              <div class="tl-date">${m.date}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="dash-card" style="grid-column:1;grid-row:2;">
+        <div class="dash-card-hdr">📋 Últimas novedades</div>
+        ${updHtml}
+      </div>
+    </div>`;
+  // Init or update map
+  setTimeout(()=>{
+    const coords=PROJ_COORDS[pid];
+    const zoom=PROJ_ZOOM[pid]||13;
+    if(_dashMap&&_dashMapPid!==pid){
+      _dashMap.remove();
+      _dashMap=null;
+    }
+    if(!_dashMap){
+      _dashMap=L.map('dashMap',{zoomControl:true,scrollWheelZoom:false}).setView(coords,zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom:18
+      }).addTo(_dashMap);
+      const icon=L.divIcon({className:'',html:`<div style="width:14px;height:14px;background:var(--navy);border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(5,35,61,0.4);"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+      L.marker(coords,{icon}).addTo(_dashMap).bindPopup(`<b>${(META[pid]||{}).name||pid}</b><br>${(META[pid]||{}).loc||''}`);
+    } else {
+      _dashMap.setView(coords,zoom);
+    }
+    _dashMapPid=pid;
+    _dashMap.invalidateSize();
+  },50);
+}
 </script>
 </body>
 </html>
