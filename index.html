@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-1200 -->
+<!-- BUILD:20261009-1230 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-1200';
+  const BUILD='20261009-1230';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -273,7 +273,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .dash-upd-text{font-size:11px;color:var(--text-2);margin-top:1px;}
 .dash-upd-meta{display:flex;gap:6px;align-items:center;margin-top:4px;}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTLSeB68ARYJipY1SQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
 
@@ -564,10 +564,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="ficha-specs" id="projFichaSpecs"></div>
   </div>
   <div class="tabs-bar">
-    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')">🗺 Dashboard</div>
-    <div class="tab" id="tab-updates" onclick="showTab('updates')">📋 Updates</div>
-    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">📅 Cronograma</div>
-    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">📁 Documentación</div>
+    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')">Dashboard</div>
+    <div class="tab" id="tab-updates" onclick="showTab('updates')">Updates</div>
+    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">Cronograma</div>
+    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">Documentación</div>
   </div>
   <div class="tab-content">
     <!-- DASHBOARD TAB -->
@@ -1989,7 +1989,7 @@ document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e
 init();
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 // ── DASHBOARD ───────────────────────────────────────────────────────────────
 const PROJ_COORDS = {
