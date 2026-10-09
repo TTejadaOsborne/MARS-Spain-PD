@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-0948 -->
+<!-- BUILD:20261009-1200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-0955';
+  const BUILD='20261009-1200';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1063,15 +1063,12 @@ function buildProjSwitcherFicha(){
     const isActive=pid===currentProjId;
     const loc=m.loc||'';
     const city=loc.split(',')[0]||loc;
-    const icon=PSW_ICONS[pid]||'⚡';
-    const iconBg=PSW_ICON_BG[pid]||'#F0F4FF';
     return `<div class="proj-sw-item${isActive?' active':''}" onclick="fichaTabSwitchProj('${pid}')">
-      <div class="psw-icon" style="background:${iconBg};">${icon}</div>
       <div class="psw-info" style="flex:1;min-width:0;">
         <div class="psw-name">${m.name||pid}</div>
         <div class="psw-loc">📍 ${city}</div>
       </div>
-      <span class="psw-badge" style="${smap[m.sc]||''}font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;">● ${m.status||''}</span>
+      <span class="psw-badge" style="${smap[m.sc]||''}">● ${m.status||''}</span>
     </div>`;
   }).join('');
 }
