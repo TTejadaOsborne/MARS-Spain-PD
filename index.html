@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-1430 -->
+<!-- BUILD:20261009-1500 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-1430';
+  const BUILD='20261009-1500';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1670,7 +1670,7 @@ function renderGantt(){
     const isYS=mn.getMonth()===0;
     monthCells+=`<div style="position:absolute;left:${i*CW}px;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.65);${isYS?'border-left:2px solid rgba(255,255,255,0.25);':'border-left:1px solid rgba(255,255,255,0.1);'}">${MSHORT[mn.getMonth()]}</div>`;
   });
-  const chartHdr=`<div style="flex:1;min-width:0;background:var(--navy);overflow:hidden;" id="ganttChartHdr">
+  const chartHdr=`<div style="flex:1;min-width:0;background:var(--navy);overflow:hidden;">
     <div style="position:relative;width:${CHART_W}px;height:${HDR_H1}px;">${yearCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
     <div style="position:relative;width:${CHART_W}px;height:${HDR_H2}px;background:#0a2540;">${monthCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
   </div>`;
@@ -1682,29 +1682,38 @@ function renderGantt(){
     const isMile=!!task.milestone;
     const color=task.color||PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2E86AB';
     const indent=task.level===1?0:task.level===2?12:24;
-    const bgRow=isPhase?'#EEF2F7':'#fff';
+    const bgRow=isPhase?'#E8EDF4':'#fff';
     const fw=isPhase?700:400;
     const fs=isPhase?12:11.5;
     const pctVal=task.pct||0;
     const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
     const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
 
-    // Left panel row
-    leftRows+=`<div style="display:flex;align-items:center;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);">
-      <div style="width:${NAME_W}px;padding:0 8px 0 ${8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;"
-        ${isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar" style="width:${NAME_W}px;padding:0 8px 0 ${8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;cursor:text;"`:''}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</div>
-      <div style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;"
-        ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;cursor:text;"`:''}>${fmtDate(task.start)}</div>
-      <div style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;"
-        ${isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;cursor:text;"`:''}>${isMile?'—':fmtDate(task.end||task.start)}</div>
-      <div style="width:${PCT_W}px;text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;">
-        ${isMile?'':(isEditor
-          ?`<input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;">`
-          :`<span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span>`)}
-      </div>
-      ${isEditor?`<div style="width:${ACT_W}px;text-align:center;height:100%;display:flex;align-items:center;justify-content:center;">
-        <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;line-height:1;" title="Eliminar">×</button>
-      </div>`:''}
+    // cell builders — clean attribute separation
+    const phaseAccent=isPhase?`border-left:3px solid ${color};`:'';
+    const nameStyle=`width:${NAME_W}px;padding:0 8px 0 ${isPhase?5+indent:8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}`;
+    const dateStyle=`width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor?'cursor:text;':''}`;
+    const pctStyle=`width:${PCT_W}px;text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;`;
+
+    const nameClick=isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar"`:'';
+    const startClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic para editar"`:'';
+    const endClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic para editar"`:'';
+
+    const pctCell=isMile?`<div style="${pctStyle}"></div>`
+      :(isEditor
+        ?`<div style="${pctStyle}"><input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;"></div>`
+        :`<div style="${pctStyle}"><span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span></div>`);
+
+    const actCell=isEditor?`<div style="width:${ACT_W}px;height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;" title="Eliminar">×</button>
+    </div>`:'';
+
+    const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.12);':'';
+    leftRows+=`<div style="display:flex;align-items:stretch;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}flex-shrink:0;">
+      <div style="${nameStyle}" ${nameClick}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</div>
+      <div style="${dateStyle}" ${startClick}>${fmtDate(task.start)}</div>
+      <div style="${dateStyle}" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
+      ${pctCell}${actCell}
     </div>`;
 
     // Chart row — bars positioned with px
@@ -1741,14 +1750,14 @@ function renderGantt(){
     // Today line
     const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    chartRows+=`<div style="position:relative;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);width:${CHART_W}px;">${gridLines}${tLine}${barHtml}</div>`;
+    chartRows+=`<div style="position:relative;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}width:${CHART_W}px;">${gridLines}${tLine}${barHtml}</div>`;
   });
 
   // ── ASSEMBLE ───────────────────────────────────────────────────
   const html=`${toolbar}
   <div style="display:flex;flex-direction:column;height:calc(100% - ${isEditor?45:0}px);overflow:hidden;">
     <!-- Fixed header row -->
-    <div style="display:flex;flex-shrink:0;border-bottom:2px solid rgba(255,255,255,0.25);">
+    <div style="display:flex;flex-shrink:0;border-bottom:2px solid rgba(255,255,255,0.25);box-shadow:0 3px 8px rgba(5,35,61,0.18);z-index:10;position:relative;">
       ${leftHdr}
       <div style="flex:1;min-width:0;overflow:hidden;" id="ganttHdrScroll">
         ${chartHdr}
