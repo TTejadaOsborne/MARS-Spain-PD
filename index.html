@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1900 -->
+<!-- BUILD:20261013-1945 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1900';
+  const BUILD='20261013-1945';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1024,8 +1024,27 @@ const DB = {
 };
 const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Terreno", "start": "2022-12-16", "end": "2025-01-30", "pct": 75, "color": "#2E86AB"}, {"id": "T001", "level": 2, "num": "1.1", "name": "Firma Acuerdo Terreno BESS", "start": "2022-12-16", "end": "2022-12-16", "pct": 100, "color": "#2E86AB"}, {"id": "T002", "level": 2, "num": "1.2", "name": "Notarización del Terreno", "start": "2025-01-10", "end": "2025-01-30", "pct": 0, "color": "#2E86AB"}, {"id": "T003", "level": 2, "num": "1.3", "name": "Inscripción Registral del Terreno", "start": "2025-01-30", "end": "2025-02-14", "pct": 0, "color": "#2E86AB"}, {"id": "S2", "level": 1, "num": "2", "name": "Conexión a Red", "start": "2023-01-26", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "T004", "level": 2, "num": "2.1", "name": "Emisión de Aval", "start": "2023-01-26", "end": "2023-01-26", "pct": 100, "color": "#399439"}, {"id": "T005", "level": 2, "num": "2.2", "name": "Presentación de Aval", "start": "2023-01-26", "end": "2023-02-02", "pct": 100, "color": "#399439"}, {"id": "T006", "level": 2, "num": "2.3", "name": "Confirmación CACG", "start": "2023-02-02", "end": "2023-05-02", "pct": 100, "color": "#399439"}, {"id": "T007", "level": 2, "num": "2.4", "name": "Solicitud Acceso y Conexión", "start": "2023-05-02", "end": "2023-05-04", "pct": 100, "color": "#399439"}, {"id": "T008", "level": 2, "num": "2.5", "name": "Permisos Acceso y Conexión", "start": "2023-05-04", "end": "2023-08-31", "pct": 100, "color": "#399439"}, {"id": "T009", "level": 2, "num": "2.6", "name": "Pago CTE", "start": "2023-11-30", "end": "2023-11-30", "pct": 100, "color": "#399439"}, {"id": "S3", "level": 1, "num": "3", "name": "Permisos", "start": "2023-02-02", "end": "2026-03-06", "pct": 25, "color": "#E8A838"}, {"id": "S31", "level": 2, "num": "3.1", "name": "Permiso Ambiental", "start": "2024-02-28", "end": "2024-06-10", "pct": 25, "color": "#E8A838"}, {"id": "T010", "level": 3, "num": "3.1.1", "name": "Solicitud Permiso Ambiental", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T011", "level": 3, "num": "3.1.2", "name": "Solicitud + Consultas", "start": "2024-02-28", "end": "2024-03-19", "pct": 0, "color": "#E8A838"}, {"id": "T012", "level": 3, "num": "3.1.3", "name": "Resolución Permiso Ambiental", "start": "2024-02-28", "end": "2024-05-21", "pct": 0, "color": "#E8A838"}, {"id": "T013", "level": 3, "num": "3.1.4", "name": "Publicación en Boletines Oficiales", "start": "2024-05-21", "end": "2024-06-10", "pct": 0, "color": "#E8A838"}, {"id": "S32", "level": 2, "num": "3.2", "name": "AAP y AAC", "start": "2024-02-28", "end": "2026-03-06", "pct": 50, "color": "#E8A838"}, {"id": "T016", "level": 3, "num": "3.2.1", "name": "Solicitud AAP/AAC", "start": "2024-02-28", "end": "2024-02-28", "pct": 100, "color": "#E8A838"}, {"id": "T017", "level": 3, "num": "3.2.2", "name": "Admisión a Trámite AAP/AAC", "start": "2024-04-18", "end": "2024-04-18", "pct": 100, "color": "#E8A838"}, {"id": "T018", "level": 3, "num": "3.2.3", "name": "Publicación Diario Información", "start": "2025-01-09", "end": "2025-01-29", "pct": 100, "color": "#E8A838"}, {"id": "T019", "level": 3, "num": "3.2.4", "name": "Publicación DOGV", "start": "2025-01-10", "end": "2025-01-30", "pct": 100, "color": "#E8A838"}, {"id": "T020", "level": 3, "num": "3.2.5", "name": "Alegaciones + Respuestas", "start": "2025-01-30", "end": "2025-07-10", "pct": 100, "color": "#E8A838"}, {"id": "T021", "level": 3, "num": "3.2.6", "name": "Envío PTA actualizado", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T022", "level": 3, "num": "3.2.7", "name": "Resolución AAP/AAC (M2 y M3)", "start": "2024-05-21", "end": "2024-09-09", "pct": 0, "color": "#E8A838"}, {"id": "S33", "level": 2, "num": "3.3", "name": "Permiso Urbanístico", "start": "2023-02-02", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "T023", "level": 3, "num": "3.3.1", "name": "Solicitud ICU", "start": "2023-02-02", "end": "2023-02-02", "pct": 100, "color": "#E8A838"}, {"id": "T024", "level": 3, "num": "3.3.2", "name": "Resolución ICU", "start": "2023-02-02", "end": "2023-05-11", "pct": 100, "color": "#E8A838"}, {"id": "T025", "level": 3, "num": "3.3.3", "name": "Solicitud ICU actualizado", "start": "2024-09-13", "end": "2024-09-13", "pct": 100, "color": "#E8A838"}, {"id": "T026", "level": 3, "num": "3.3.4", "name": "Resolución ICU actualizado", "start": "2024-09-13", "end": "2025-05-09", "pct": 100, "color": "#E8A838"}, {"id": "S34", "level": 2, "num": "3.4", "name": "Licencia de Obras", "start": "2024-09-09", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "T027", "level": 3, "num": "3.4.1", "name": "Solicitud Licencia de Obras (LO)", "start": "2024-09-09", "end": "2025-01-10", "pct": 0, "color": "#E8A838"}, {"id": "T028", "level": 3, "num": "3.4.2", "name": "Inscripción LO en Registro Propiedad", "start": "2025-01-10", "end": "2025-03-06", "pct": 0, "color": "#E8A838"}, {"id": "S4", "level": 1, "num": "4", "name": "Permisos Sectoriales", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T029", "level": 3, "num": "4.1.1", "name": "Carretera CV-800 - Autorización Ocupación", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T030", "level": 3, "num": "4.2.1", "name": "CHJ - Dominio Público Hidráulico", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "T031", "level": 3, "num": "4.3.1", "name": "Autorización Ocupación Vía Pecuaria", "start": "2024-09-09", "end": "2025-02-21", "pct": 0, "color": "#9B59B6"}, {"id": "M1", "level": 0, "num": "", "name": "✅ TOTALMENTE AUTORIZADO", "start": "2026-03-06", "end": "2026-03-06", "pct": 0, "color": "#05233D", "milestone": true}];
 
+// ── PERSISTENCE ────────────────────────────────────────────────────────────
+const STORAGE_KEY='mars_pd_data_v1';
+function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(allData)); }catch(e){}
+}
+function loadData(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed=JSON.parse(raw);
+      // Merge: DB weeks that don't exist in storage are added (new hardcoded history)
+      const merged=Object.assign({},parsed);
+      Object.keys(DB).forEach(w=>{ if(!merged[w]) merged[w]=JSON.parse(JSON.stringify(DB[w])); });
+      return merged;
+    }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DB));
+}
+
 // ── STATE ──────────────────────────────────────────────────────────────────
-let allData = JSON.parse(JSON.stringify(DB));
+let allData = loadData();
 let currentWeek = '2026-10-02';
 let currentProjId = null;
 let isEditor = false;
@@ -1481,11 +1500,13 @@ function jumpToCurrentWeek(ctx){
 function confirmDraft(pid,idx){
   const issues=(allData[currentWeek]||{})[pid]||[];
   if(issues[idx]) delete issues[idx].draft;
+  saveData();
   renderSemanal();
 }
 function confirmAllDrafts(){
   const wd=allData[currentWeek]||{};
   Object.values(wd).forEach(arr=>arr.forEach(iss=>{ if(iss.draft) delete iss.draft; }));
+  saveData();
   renderSemanal();
   toast('✓ Todas las novedades confirmadas');
 }
@@ -1552,6 +1573,7 @@ function saveEditIssue(){
   iss.attention=document.getElementById('editAttention').value==='1';
   // draft flag: editing the issue counts as confirming it
   delete iss.draft;
+  saveData();
   closeModal('editIssueModal');
   renderSemanal();
   toast('✓ Novedad actualizada');
@@ -1561,6 +1583,7 @@ function deleteIssue(){
   if(!confirm('¿Eliminar esta novedad?')) return;
   const issues=(allData[currentWeek]||{})[_editPid];
   if(issues) issues.splice(_editIdx,1);
+  saveData();
   closeModal('editIssueModal');
   renderSemanal();
   toast('Novedad eliminada');
@@ -1583,6 +1606,7 @@ function copyPrevWeek(srcWeek){
     });
   });
   if(copied>0){
+    saveData();
     renderSemanal();
     toast(`📋 ${copied} novedad${copied>1?'es':''} copiada${copied>1?'s':''} como borrador`);
   } else {
@@ -2111,6 +2135,7 @@ function saveUpdate(){
     attention:document.getElementById('newAttention').value==='1',
     activities:[]
   });
+  saveData();
   closeModal('addUpdateModal');
   renderSemanal();
   toast('Novedad guardada');
