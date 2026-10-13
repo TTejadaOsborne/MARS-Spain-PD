@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2015 -->
+<!-- BUILD:20261013-2030 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2015';
+  const BUILD='20261013-2030';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1094,14 +1094,25 @@ const NAV_KEY='mars_pd_nav_v1';
 function saveData(){
   try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(allData)); }catch(e){}
 }
+function _weekIsEmpty(wd){
+  // A week entry is "empty" if it has no projects, or all project arrays are empty
+  if(!wd) return true;
+  const keys=Object.keys(wd);
+  if(!keys.length) return true;
+  return keys.every(pid=>!(wd[pid]||[]).length);
+}
 function loadData(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       const parsed=JSON.parse(raw);
-      // Merge: DB weeks that don't exist in storage are added (new hardcoded history)
       const merged=Object.assign({},parsed);
-      Object.keys(DB).forEach(w=>{ if(!merged[w]) merged[w]=JSON.parse(JSON.stringify(DB[w])); });
+      // For each DB week: add if missing OR restore from DB if stored week is empty
+      Object.keys(DB).forEach(w=>{
+        if(!merged[w]||_weekIsEmpty(merged[w])){
+          merged[w]=JSON.parse(JSON.stringify(DB[w]));
+        }
+      });
       return merged;
     }
   }catch(e){}
