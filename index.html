@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1215 -->
+<!-- BUILD:20261013-1530 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1215';
+  const BUILD='20261013-1530';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -527,6 +527,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <p><span id="semanalWeekSubtitle"></span></p>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <!-- Editor: add update button (shown only in editor mode) -->
+      <button id="semanalAddBtn" onclick="openAddUpdateSemanal()" style="display:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ Nueva novedad</button>
       <!-- Project filter -->
       <div style="position:relative;">
         <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
@@ -635,6 +637,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="modal">
     <div class="modal-hdr"><h2>+ Nueva novedad</h2><button class="modal-close" onclick="closeModal('addUpdateModal')">×</button></div>
     <div class="modal-body">
+      <div class="form-row" id="newProjRow"><label class="form-lbl">Proyecto</label>
+        <select class="form-input form-select" id="newProjSel">
+          <option value="begues">BEGUES I &amp; II</option>
+          <option value="fregacedos">FREGACEDOS I, II &amp; V</option>
+          <option value="mutxamel">MUTXAMEL</option>
+          <option value="entrenucleos">ENTRENÚCLEOS</option>
+          <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
+        </select>
+      </div>
       <div class="form-row"><label class="form-lbl">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting"></div>
       <div class="form-row"><label class="form-lbl">Estado</label>
         <select class="form-input form-select" id="newStatus">
@@ -1493,6 +1504,9 @@ function renderSemanal(){
   const sub=document.getElementById('semanalWeekSubtitle');
   if(sub) sub.textContent=semanalFilterPid?`${(META[semanalFilterPid]||{}).name||semanalFilterPid} · Semana del ${weekRange(currentWeek)}`:`Todos los proyectos · Semana del ${weekRange(currentWeek)}`;
   const wd=allData[currentWeek]||{};
+  // Show/hide editor add button in header
+  const semAddBtn=document.getElementById('semanalAddBtn');
+  if(semAddBtn) semAddBtn.style.display=isEditor?'':'none';
   let html='';
   const hasData=activeOrder.some(pid=>(wd[pid]||[]).length>0);
   if(!hasData){
@@ -1500,6 +1514,7 @@ function renderSemanal(){
       <div style="font-size:32px;margin-bottom:10px;">📅</div>
       <div style="font-size:14px;font-weight:600;color:var(--text-2);">${t('noUpdates')}</div>
       <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
+      ${isEditor?`<button onclick="openAddUpdateSemanal()" style="margin-top:18px;background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir novedad</button>`:''}
     </div>`;
   } else {
     activeOrder.forEach(pid=>{
@@ -2033,9 +2048,34 @@ function exitEditor(){
 }
 
 // ── ADD UPDATE ──────────────────────────────────────────────────────────────
-function openAddUpdate(){openModal('addUpdateModal');}
+function openAddUpdate(){
+  // Called from project Updates tab — project already fixed
+  const row=document.getElementById('newProjRow');
+  if(row) row.style.display='none';
+  document.getElementById('newTopic').value='';
+  document.getElementById('newText').value='';
+  document.getElementById('newStatus').value='yellow';
+  document.getElementById('newImpact').value='none';
+  document.getElementById('newAttention').value='0';
+  openModal('addUpdateModal');
+}
+function openAddUpdateSemanal(){
+  // Called from semanal page — let user pick project
+  const row=document.getElementById('newProjRow');
+  if(row) row.style.display='';
+  document.getElementById('newTopic').value='';
+  document.getElementById('newText').value='';
+  document.getElementById('newStatus').value='yellow';
+  document.getElementById('newImpact').value='none';
+  document.getElementById('newAttention').value='0';
+  openModal('addUpdateModal');
+}
 function saveUpdate(){
-  const pid=currentProjId; if(!pid) return;
+  // Determine project: fixed (project tab) or chosen (semanal)
+  const projRow=document.getElementById('newProjRow');
+  const fromSemanal=projRow&&projRow.style.display!=='none';
+  const pid=fromSemanal?document.getElementById('newProjSel').value:currentProjId;
+  if(!pid) return;
   if(!allData[currentWeek]) allData[currentWeek]={};
   if(!allData[currentWeek][pid]) allData[currentWeek][pid]=[];
   allData[currentWeek][pid].push({
@@ -2047,7 +2087,15 @@ function saveUpdate(){
     activities:[]
   });
   closeModal('addUpdateModal');
-  renderUpdates();
+  // Re-render the correct view
+  if(fromSemanal){
+    renderSemanal();
+  } else {
+    renderUpdates();
+  }
+  // Also refresh semanal if visible (in case it's shown behind)
+  const semPage=document.getElementById('page-semanal');
+  if(!fromSemanal && semPage && semPage.style.display!=='none') renderSemanal();
   toast('Novedad guardada');
 }
 
