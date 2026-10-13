@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1700 -->
+<!-- BUILD:20261013-1815 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1700';
+  const BUILD='20261013-1815';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -197,6 +197,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .prev-week-hdr{padding:16px 18px 6px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;border-top:2px solid var(--border);}
 .prev-week-date{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;color:var(--text-2);}
 .week-sel-btn{background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.draft-banner{background:rgba(245,158,11,0.08);border-top:1px dashed rgba(245,158,11,0.4);padding:6px 14px 6px 180px;font-size:10.5px;color:rgba(180,120,0,0.85);display:flex;align-items:center;gap:6px;}
+.issue-row.is-draft{opacity:0.82;}
 
 /* WEEK CAL */
 .pos-rel{position:relative;}
@@ -1375,11 +1377,16 @@ function renderSemanal(){
   let html='';
   const hasData=activeOrder.some(pid=>(wd[pid]||[]).length>0);
   if(!hasData){
+    // Find most recent week before currentWeek that has data for active projects
+    const prevWkWithData=Object.keys(allData).filter(w=>w<currentWeek&&activeOrder.some(pid=>(allData[w][pid]||[]).length>0)).sort().pop();
     html=`<div style="background:#fff;border:1.5px dashed var(--border-2);border-radius:10px;padding:48px;text-align:center;">
       <div style="font-size:32px;margin-bottom:10px;">📅</div>
       <div style="font-size:14px;font-weight:600;color:var(--text-2);">${t('noUpdates')}</div>
       <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
-      ${isEditor?`<button onclick="openAddUpdateSemanal()" style="margin-top:18px;background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir novedad</button>`:''}
+      ${isEditor?`<div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
+        <button onclick="openAddUpdateSemanal()" style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir novedad</button>
+        ${prevWkWithData?`<button onclick="copyPrevWeek('${prevWkWithData}')" style="background:#fff;color:var(--navy);font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar semana anterior</button>`:''}
+      </div>`:''}
     </div>`;
   } else {
     activeOrder.forEach(pid=>{
@@ -1397,7 +1404,7 @@ function renderSemanal(){
         const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
         const acts=iss.activities||[];
         const imp=IMPACT_LABELS[iss.impact]||'';
-        html+=`<div class="issue-row">
+        html+=`<div class="issue-row${iss.draft?' is-draft':''}">
           <div class="issue-top-row">
             <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
             <div class="i-topic">${iss.topic||''}</div>
@@ -1408,6 +1415,8 @@ function renderSemanal(){
               ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
             </div>
           </div>
+          ${iss.draft?`<div class="draft-banner">✏️ Copiado de semana anterior — revisa y actualiza${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issues.indexOf(iss)})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ Confirmado</button>`:''}
+          </div>`:''}
           ${acts.length?`<div class="act-section"><div class="act-title">${t('activities')}</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
         </div>`;
       });
@@ -1423,6 +1432,41 @@ function jumpToCurrentWeek(ctx){
   const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
   currentWeek=toIso(today);
   renderSemanal();
+}
+function confirmDraft(pid,idx){
+  const issues=(allData[currentWeek]||{})[pid]||[];
+  if(issues[idx]) delete issues[idx].draft;
+  renderSemanal();
+}
+function confirmAllDrafts(){
+  const wd=allData[currentWeek]||{};
+  Object.values(wd).forEach(arr=>arr.forEach(iss=>{ if(iss.draft) delete iss.draft; }));
+  renderSemanal();
+  toast('✓ Todas las novedades confirmadas');
+}
+function copyPrevWeek(srcWeek){
+  const src=allData[srcWeek]||{};
+  if(!allData[currentWeek]) allData[currentWeek]={};
+  const projOrder=['begues','fregacedos','mutxamel','entrenucleos','custom_nuevas_oportunidades'];
+  const activeOrder=semanalFilterPid?[semanalFilterPid]:projOrder;
+  let copied=0;
+  activeOrder.forEach(pid=>{
+    const issues=src[pid]||[];
+    if(!issues.length) return;
+    if(!allData[currentWeek][pid]) allData[currentWeek][pid]=[];
+    // Only copy if current week is still empty for this project
+    if(allData[currentWeek][pid].length>0) return;
+    issues.forEach(iss=>{
+      allData[currentWeek][pid].push(Object.assign({},iss,{draft:true,activities:[]}));
+      copied++;
+    });
+  });
+  if(copied>0){
+    renderSemanal();
+    toast(`📋 ${copied} novedad${copied>1?'es':''} copiada${copied>1?'s':''} como borrador`);
+  } else {
+    toast('Esta semana ya tiene novedades en todos los proyectos');
+  }
 }
 function navWeekSemanal(dir){
   const d=new Date(currentWeek);
