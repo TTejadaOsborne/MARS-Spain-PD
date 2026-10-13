@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2045 -->
+<!-- BUILD:20261013-2100 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2045';
+  const BUILD='20261013-2100';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1155,6 +1155,11 @@ const META = {
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 const BUILD_TS = (function(){const n=new Date();return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');})();
+function _latestDataWeek(){
+  // Returns the most recent Monday key in allData that has actual data
+  const weeks=Object.keys(allData).filter(w=>!_weekIsEmpty(allData[w])).sort();
+  return weeks.length?weeks[weeks.length-1]:null;
+}
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
@@ -1162,7 +1167,14 @@ function init(){
   try{
     const nav=JSON.parse(localStorage.getItem(NAV_KEY)||'null');
     if(nav){
-      if(nav.week) currentWeek=nav.week;
+      // If saved week has no data, fall back to most recent week with data
+      const savedWeek=nav.week;
+      if(savedWeek && !_weekIsEmpty(allData[savedWeek])){
+        currentWeek=savedWeek;
+      } else {
+        const latest=_latestDataWeek();
+        if(latest) currentWeek=latest;
+      }
       if(nav.semFilt) semanalFilterPid=nav.semFilt;
       if(nav.page==='semanal'){
         showPage('semanal');
@@ -1600,7 +1612,14 @@ function jumpToCurrentWeek(ctx){
   const dow=(today.getDay()+6)%7; // Mon=0
   today.setDate(today.getDate()-dow);
   const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
-  currentWeek=toIso(today);
+  const thisWeek=toIso(today);
+  // If current week has no data, go to most recent week with data
+  if(_weekIsEmpty(allData[thisWeek])){
+    const latest=_latestDataWeek();
+    currentWeek=latest||thisWeek;
+  } else {
+    currentWeek=thisWeek;
+  }
   renderSemanal();
 }
 function confirmDraft(pid,idx){
