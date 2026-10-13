@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2345 -->
+<!-- BUILD:20261013-2350 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2345';
+  const BUILD='20261013-2350';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1118,6 +1118,30 @@ let calOpen = false;
 let calYear = 2026;
 let calMonth = 9;
 
+// ── TOPIC TRANSLATION ──────────────────────────────────────────────────────
+const TOPIC_MAP_EN={
+  'estado permitting':'Permitting status',
+  'diseño técnico':'Technical design',
+  'diseño tecnico':'Technical design',
+  'análisis':'Analysis',
+  'analisis':'Analysis',
+  'análisis técnico':'Technical analysis',
+  'grid connection':'Grid connection',
+  'conexión red':'Grid connection',
+  'medioambiente':'Environment',
+  'medio ambiente':'Environment',
+  'legal':'Legal',
+  'financiero':'Financial',
+  'comercial':'Commercial',
+  'construcción':'Construction',
+  'construccion':'Construction',
+  'operación':'Operations',
+  'operacion':'Operations',
+};
+function translateTopic(topic){
+  if(!topic||lang==='es') return topic;
+  return TOPIC_MAP_EN[topic.toLowerCase()]||topic;
+}
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
 function STATUS_MAP_FN(){return{
   red:{lbl:t('statusBlocked'),cls:'s-red',sbar:'sbar-red'},
@@ -1510,7 +1534,7 @@ function renderFeed(){
     return `<div class="update-item" onclick="openProject('${pid}')">
       <span class="update-badge ${st.cls}">${st.lbl}</span>
       <div style="flex:1;min-width:0;">
-        <div class="update-proj" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${names[pid]||pid} · <span style="font-weight:500;">${iss.topic}</span>${newBadge}</div>
+        <div class="update-proj" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${names[pid]||pid} · <span style="font-weight:500;">${translateTopic(iss.topic)}</span>${newBadge}</div>
         <div class="update-text" style="white-space:normal;overflow:visible;display:block;-webkit-line-clamp:unset;">${iss.text||''}</div>
         <div class="update-date">${wRange}</div>
       </div>
@@ -1608,7 +1632,7 @@ function renderSemanal(){
         html+=`<div class="issue-row${iss.draft?' is-draft':''}">
           <div class="issue-top-row">
             <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
-            <div class="i-topic">${iss.topic||''}</div>
+            <div class="i-topic">${translateTopic(iss.topic)||''}</div>
             <div class="i-text">${iss.text||''}</div>
             <div class="i-meta">
               <span class="status-tag ${st.cls}">${st.lbl}</span>
@@ -2668,7 +2692,7 @@ function renderDashboard(){
           <div style="display:flex;align-items:center;gap:6px;">
             <div class="i-sbar ${st.sbar}" style="width:3px;height:32px;border-radius:2px;flex-shrink:0;"></div>
             <div>
-              <div class="dash-upd-topic">${u.topic||''}</div>
+              <div class="dash-upd-topic">${translateTopic(u.topic)||''}</div>
               <div class="dash-upd-text">${u.text||''}</div>
               <div class="dash-upd-meta"><span class="status-tag ${st.cls}">${st.lbl}</span><span style="font-size:10px;color:var(--text-3);">${weekRange(u.week)}</span></div>
             </div>
