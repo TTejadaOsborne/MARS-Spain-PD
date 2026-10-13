@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1530 -->
+<!-- BUILD:20261013-1700 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1530';
+  const BUILD='20261013-1700';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -572,7 +572,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   </div>
   <div class="tabs-bar">
     <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')">Dashboard</div>
-    <div class="tab" id="tab-updates" onclick="showTab('updates')">Updates</div>
     <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">Cronograma</div>
     <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">Documentación</div>
   </div>
@@ -580,26 +579,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <!-- DASHBOARD TAB -->
     <div id="tc-dashboard" style="padding:24px 28px;">
       <div id="dashboardContent"></div>
-    </div>
-    <!-- UPDATES TAB -->
-    <div id="tc-updates" style="display:none;padding:20px 28px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;">REPORTING SEMANAL</div>
-          <div style="font-size:18px;font-weight:800;color:var(--navy);margin-top:2px;" id="updatesWeekTitle">Semana del 28/09 al 04/10</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn btn-sec" onclick="navWeek(-1)">‹</button>
-          <div class="pos-rel">
-            <button class="week-sel-btn" onclick="toggleCal('updates')">📅 <span id="weekSelLbl">02/10/2026</span> ▾</button>
-            <div class="cal-popup" id="calPopup" style="display:none;"></div>
-          </div>
-          <button class="btn btn-sec" onclick="navWeek(1)">›</button>
-          <button class="btn btn-sec" onclick="jumpToCurrentWeek('updates')" style="font-size:11px;padding:5px 10px;">Hoy</button>
-          <button class="btn btn-primary" id="addUpdateBtn" style="display:none;" onclick="openAddUpdate()">+ Añadir novedad</button>
-        </div>
-      </div>
-      <div id="updatesContent"></div>
     </div>
     <!-- CRONOGRAMA TAB -->
     <div id="tc-cronograma" style="display:none;padding:0;height:100%;overflow:hidden;">
@@ -1157,12 +1136,12 @@ function openProject(pid){
   const smap = {yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
   document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
   document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
-  showTab(pid==='custom_nuevas_oportunidades'?'updates':'dashboard');
+  showTab('dashboard');
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────
 function showTab(tab){
-  ['dashboard','updates','cronograma','documentacion'].forEach(t=>{
+  ['dashboard','cronograma','documentacion'].forEach(t=>{
     const tc=document.getElementById('tc-'+t);
     const tb=document.getElementById('tab-'+t);
     if(tc) tc.style.display = t===tab ? '' : 'none';
@@ -1183,110 +1162,8 @@ function showTab(tab){
   else if(tab==='documentacion') document.getElementById('nav-documentacion').classList.add('active');
   else if(currentProjId==='custom_nuevas_oportunidades') document.getElementById('nav-custom_nuevas_oportunidades').classList.add('active');
   if(tab==='dashboard') renderDashboard();
-  if(tab==='updates') renderUpdates();
   if(tab==='cronograma') renderGantt();
   if(tab==='documentacion') renderDocs();
-}
-
-// ── UPDATES ────────────────────────────────────────────────────────────────
-function renderUpdates(){
-  const pid = currentProjId;
-  if(!pid) return;
-  // Nuevas Oportunidades: show empty placeholder, no weekly reporting
-  if(pid==='custom_nuevas_oportunidades'){
-    document.getElementById('weekSelLbl').textContent='—';
-    document.getElementById('updatesWeekTitle').textContent='';
-    document.getElementById('addUpdateBtn').style.display='none';
-    document.getElementById('updatesContent').innerHTML=`<div style="text-align:center;padding:64px 32px;color:var(--text-3);">
-      <div style="font-size:40px;margin-bottom:14px;">💡</div>
-      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px;">Análisis de oportunidades</div>
-      <div style="font-size:12px;line-height:1.6;">Próximamente: visualización del análisis realizado<br>de nuevas oportunidades de desarrollo.</div>
-    </div>`;
-    return;
-  }
-  const weeks = Object.keys(allData).sort();
-  const idx = weeks.indexOf(currentWeek);
-
-  const [y,m,d] = currentWeek.split('-');
-  document.getElementById('weekSelLbl').textContent = `${d}/${m}/${y}`;
-  document.getElementById('updatesWeekTitle').textContent = `${t('weekTitle')} ${weekRange(currentWeek)}`;
-  document.getElementById('addUpdateBtn').style.display = isEditor ? '' : 'none';
-
-  const wd = allData[currentWeek]||{};
-  const issues = wd[pid]||[];
-  let html = '';
-
-  // Nav context
-  const prevWk = idx>0 ? weeks[idx-1] : null;
-  const nextWk = idx<weeks.length-1 ? weeks[idx+1] : null;
-
-  if(nextWk){
-    const ni = (allData[nextWk]||{})[pid]||[];
-    if(ni.length){
-      const [ny,nm,nd]=nextWk.split('-');
-      html+=`<div onclick="currentWeek='${nextWk}';renderUpdates()" style="background:var(--green-s-l);border:1px solid var(--green-s-b);border-radius:8px;padding:11px 16px;margin-bottom:16px;cursor:pointer;display:flex;gap:10px;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:var(--green-s);">${t('nextWeekAvail')} · ${nd}/${nm}/${ny} — ${ni.map(i=>i.topic).join(' · ')}</span></div>`;
-    }
-  }
-
-  if(issues.length){
-    html+=`<div style="border:1.5px solid var(--navy);border-radius:8px;overflow:hidden;margin-bottom:20px;">
-      <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px;">
-        <span style="color:#fff;font-size:12px;font-weight:700;">📅 ${t('currentWeekLbl')} · ${d}/${m}/${y}</span>
-        <span style="margin-left:auto;background:rgba(57,148,57,0.25);color:#7dcc7d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
-      </div>`;
-    issues.forEach(iss=>{
-      const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
-      const acts=iss.activities||[];
-      const imp=IMPACT_LABELS[iss.impact]||'';
-      html+=`<div class="issue-row">
-        <div class="issue-top-row">
-          <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
-          <div class="i-topic">${iss.topic||''}</div>
-          <div class="i-text">${iss.text||''}</div>
-          <div class="i-meta">
-            <span class="status-tag ${st.cls}">${st.lbl}</span>
-            ${imp?`<span class="impact-tag">${imp}</span>`:''}
-            ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
-          </div>
-        </div>
-        ${acts.length?`<div class="act-section"><div class="act-title">${t('activities')}</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
-      </div>`;
-    });
-    html+=`</div>`;
-  } else {
-    html+=`<div style="background:var(--bg);border:1.5px dashed var(--border-2);border-radius:8px;padding:32px;text-align:center;margin-bottom:20px;">
-      <div style="font-size:13px;color:var(--text-3);">${t('noUpdates')}</div>
-      ${isEditor?`<button class="btn btn-primary" style="margin-top:12px;" onclick="openAddUpdate()">${t('addUpdate')}</button>`:''}
-    </div>`;
-  }
-
-  const prevWeeks = weeks.filter(w=>w<currentWeek).slice(-3).reverse();
-  if(prevWeeks.length){
-    html+=`<div class="prev-week-hdr">${t('prevWeeks')}</div>`;
-    prevWeeks.forEach(wk=>{
-      const issP=(allData[wk]||{})[pid]||[];
-      if(!issP.length) return;
-      const [wy,wm,wd2]=wk.split('-');
-      html+=`<div style="opacity:0.78;margin-bottom:10px;">
-        <div style="padding:8px 0 6px;"><span class="prev-week-date">${wd2}/${wm}/${wy}</span></div>`;
-      issP.forEach(iss=>{
-        const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
-        const acts=iss.activities||[];
-        html+=`<div class="issue-row" style="border-radius:6px;border:1px solid var(--border);overflow:hidden;margin-bottom:6px;">
-          <div class="issue-top-row">
-            <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
-            <div class="i-topic">${iss.topic||''}</div>
-            <div class="i-text" style="font-size:12.5px;color:var(--text-2);">${iss.text||''}</div>
-            <div class="i-meta"><span class="status-tag ${st.cls}">${st.lbl}</span></div>
-          </div>
-          ${acts.length?`<div class="act-section"><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text}</span><span class="act-date">${a.date}</span></div>`).join('')}</div></div>`:''}
-        </div>`;
-      });
-      html+=`</div>`;
-    });
-  }
-  document.getElementById('updatesContent').innerHTML = html;
 }
 
 function weekRange(iso){
@@ -1297,33 +1174,21 @@ function weekRange(iso){
   return `${f(mon)} al ${f(sun)}/${sun.getFullYear()}`;
 }
 
-function navWeek(dir){
-  // Navigate by 7 days — works even if the target week has no data yet
-  const d=new Date(currentWeek);
-  d.setDate(d.getDate()+dir*7);
-  // Snap to Monday of that week
-  const dow=(d.getDay()+6)%7; // Mon=0
-  d.setDate(d.getDate()-dow);
-  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
-  currentWeek=toIso(d);
-  renderUpdates();
-}
-
 // ── CALENDAR ───────────────────────────────────────────────────────────────
-let calContext='updates'; // 'updates' or 'semanal'
+let calContext='semanal';
 function toggleCal(ctx){
   if(ctx) calContext=ctx;
   calOpen=!calOpen;
-  const pid=calContext==='semanal'?'calPopupSemanal':'calPopup';
+  const pid='calPopupSemanal';
   const p=document.getElementById(pid);
   if(!p) return;
-  // Hide both popups first
-  ['calPopup','calPopupSemanal'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const el=document.getElementById('calPopupSemanal');
+  if(el) el.style.display='none';
   if(calOpen){ const d=new Date(currentWeek); calYear=d.getFullYear(); calMonth=d.getMonth(); renderCal(pid); p.style.display='block'; }
   else calOpen=false;
 }
 function renderCal(popupId){
-  const pid=popupId||'calPopup';
+  const pid=popupId||'calPopupSemanal';
   const weeks=Object.keys(allData);
   // Build set of Monday ISO dates that have data (allData keys can be any weekday)
   const monWithData=new Set(weeks.map(iso=>{
@@ -1334,7 +1199,7 @@ function renderCal(popupId){
   const y=calYear,m=calMonth;
   const first=new Date(y,m,1),last=new Date(y,m+1,0);
   const startDow=(first.getDay()+6)%7; // Mon=0
-  const onSelect=calContext==='semanal'?`currentWeek='ISODATE';toggleCal('semanal');renderSemanal();`:`currentWeek='ISODATE';toggleCal('updates');renderUpdates();`;
+  const onSelect=`currentWeek='ISODATE';toggleCal('semanal');renderSemanal();`;
   // Determine selected week's monday
   const selDate=new Date(currentWeek);
   const selMon=new Date(selDate); selMon.setDate(selDate.getDate()-((selDate.getDay()+6)%7));
@@ -1521,11 +1386,12 @@ function renderSemanal(){
       const issues=(wd[pid]||[]);
       if(!issues.length) return;
       html+=`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
-        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openProject('${pid}')">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;">
           <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
           <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span>
           <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
-          <span style="font-size:10px;color:var(--text-3);">${t('viewProject')}</span>
+          ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ Añadir</button>`:''}
+          <span style="font-size:10px;color:var(--blue);cursor:pointer;" onclick="openProject('${pid}')">${t('viewProject')}</span>
         </div>`;
       issues.forEach(iss=>{
         const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
@@ -1556,7 +1422,7 @@ function jumpToCurrentWeek(ctx){
   today.setDate(today.getDate()-dow);
   const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
   currentWeek=toIso(today);
-  if(ctx==='semanal') renderSemanal(); else renderUpdates();
+  renderSemanal();
 }
 function navWeekSemanal(dir){
   const d=new Date(currentWeek);
@@ -2033,7 +1899,9 @@ function checkPwd(){
     document.getElementById('pwdInput').value='';
     closeModal('pwdModal');
     toast('✏️ Modo editor activado');
-    if(currentProjId) document.getElementById('addUpdateBtn').style.display='';
+    // Refresh semanal to show add buttons
+    const semPage=document.getElementById('page-semanal');
+    if(semPage&&semPage.style.display!=='none') renderSemanal();
   } else {
     document.getElementById('pwdErr').style.display='block';
     setTimeout(()=>document.getElementById('pwdErr').style.display='none',2000);
@@ -2043,15 +1911,19 @@ function exitEditor(){
   isEditor=false;
   document.getElementById('editorBtn').style.display='';
   document.getElementById('editorBadge').style.display='none';
-  document.getElementById('addUpdateBtn').style.display='none';
   toast('Modo editor desactivado');
+  // Refresh semanal to hide add buttons
+  const semPage=document.getElementById('page-semanal');
+  if(semPage&&semPage.style.display!=='none') renderSemanal();
 }
 
 // ── ADD UPDATE ──────────────────────────────────────────────────────────────
-function openAddUpdate(){
-  // Called from project Updates tab — project already fixed
+function openAddUpdate(pid){
+  // pid optional — pre-selects project if provided (from semanal filter or project header)
   const row=document.getElementById('newProjRow');
-  if(row) row.style.display='none';
+  const sel=document.getElementById('newProjSel');
+  if(row) row.style.display=''; // always show project selector
+  if(sel && (pid||currentProjId||semanalFilterPid)) sel.value=pid||semanalFilterPid||currentProjId;
   document.getElementById('newTopic').value='';
   document.getElementById('newText').value='';
   document.getElementById('newStatus').value='yellow';
@@ -2059,22 +1931,10 @@ function openAddUpdate(){
   document.getElementById('newAttention').value='0';
   openModal('addUpdateModal');
 }
-function openAddUpdateSemanal(){
-  // Called from semanal page — let user pick project
-  const row=document.getElementById('newProjRow');
-  if(row) row.style.display='';
-  document.getElementById('newTopic').value='';
-  document.getElementById('newText').value='';
-  document.getElementById('newStatus').value='yellow';
-  document.getElementById('newImpact').value='none';
-  document.getElementById('newAttention').value='0';
-  openModal('addUpdateModal');
-}
+// Alias for backwards compatibility
+function openAddUpdateSemanal(){ openAddUpdate(); }
 function saveUpdate(){
-  // Determine project: fixed (project tab) or chosen (semanal)
-  const projRow=document.getElementById('newProjRow');
-  const fromSemanal=projRow&&projRow.style.display!=='none';
-  const pid=fromSemanal?document.getElementById('newProjSel').value:currentProjId;
+  const pid=document.getElementById('newProjSel').value;
   if(!pid) return;
   if(!allData[currentWeek]) allData[currentWeek]={};
   if(!allData[currentWeek][pid]) allData[currentWeek][pid]=[];
@@ -2087,15 +1947,7 @@ function saveUpdate(){
     activities:[]
   });
   closeModal('addUpdateModal');
-  // Re-render the correct view
-  if(fromSemanal){
-    renderSemanal();
-  } else {
-    renderUpdates();
-  }
-  // Also refresh semanal if visible (in case it's shown behind)
-  const semPage=document.getElementById('page-semanal');
-  if(!fromSemanal && semPage && semPage.style.display!=='none') renderSemanal();
+  renderSemanal();
   toast('Novedad guardada');
 }
 
@@ -2238,9 +2090,8 @@ function t(key,...args){
   return s;
 }
 function applyLang(){
-  // Week title label
-  const wt=document.getElementById('updatesWeekTitle');
-  if(wt&&currentWeek) wt.textContent=`${t('weekTitle')} ${weekRange(currentWeek)}`;
+  // Re-render semanal to pick up language changes
+  if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
   // Static labels with data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const k=el.getAttribute('data-i18n');
@@ -2264,7 +2115,7 @@ function setLang(l){
   if(semVisible) renderSemanal();
   if(currentProjId){
     const projVisible=document.getElementById('page-project')&&document.getElementById('page-project').classList.contains('on');
-    if(projVisible){ renderUpdates(); renderGantt(); renderDocs(); }
+    if(projVisible){ renderGantt(); renderDocs(); }
   }
   setTimeout(()=>{ if(badge) badge.style.display='none'; },600);
 }
