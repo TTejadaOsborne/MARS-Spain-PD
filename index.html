@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1945 -->
+<!-- BUILD:20261013-2015 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1945';
+  const BUILD='20261013-2015';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -930,6 +930,70 @@ const DB = {
       }
     ]
   },
+  "2026-10-06": {
+    "begues": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades. Pendiente presentar la documentación actualizada.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [
+          {
+            "date": "06/10",
+            "text": "EFENER envía el layout de planta y alternativas de LSMT",
+            "type": "doc"
+          },
+          {
+            "date": "08/10",
+            "text": "Propuesta económica de SOCOTEC para el estudio hidrológico",
+            "type": "doc"
+          },
+          {
+            "date": "09/10",
+            "text": "Reunión con EFENER/ECAFIR para confirmar la alternativa de la LSMT",
+            "type": "call"
+          }
+        ],
+        "attention": false,
+        "impact": "schedule",
+        "status": "yellow",
+        "text": "Se ha recibido cotización por parte de SOCOTEC (empresa recomendada por ECAFIR) para la realización del informe hidrológico completo, por un importe de 5.450,00€ + IVA, a repartir 50/50 entre FFV y MARS. // Se ha definido el layout de la planta, y se ha confirmado la alternativa de trazado de la LSMT junto con EFENER/ECAFIR. Pendiente de enviar a ALTANO para su VºBº.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "fregacedos": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "permitting",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Estado permitting"
+      },
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "schedule",
+        "status": "yellow",
+        "text": "No hay novedades.",
+        "topic": "Diseño técnico"
+      }
+    ],
+    "mutxamel": [
+      {
+        "activities": [],
+        "attention": false,
+        "impact": "legal",
+        "status": "red",
+        "text": "Reunión con Univergy el 30/09 para proponer la disolución de los contratos y salida limpia del SPA y DSA. Univergy aceptó el planteamiento. Se solicita a Univergy que presente la propuesta inicial para comenzar las negociaciones formales.",
+        "topic": "Diseño técnico"
+      }
+    ]
+  },
   "2026-10-02": {
     "begues": [
       {
@@ -1026,6 +1090,7 @@ const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Terreno", "start": 
 
 // ── PERSISTENCE ────────────────────────────────────────────────────────────
 const STORAGE_KEY='mars_pd_data_v1';
+const NAV_KEY='mars_pd_nav_v1';
 function saveData(){
   try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(allData)); }catch(e){}
 }
@@ -1082,7 +1147,23 @@ const BUILD_TS = (function(){const n=new Date();return String(n.getDate()).padSt
 function init(){
   const el=document.getElementById('lastUpdatedBadge');
   if(el) el.textContent=`Actualizado ${BUILD_TS}`;
-  renderFeed();
+  // Restore navigation state
+  try{
+    const nav=JSON.parse(localStorage.getItem(NAV_KEY)||'null');
+    if(nav){
+      if(nav.week) currentWeek=nav.week;
+      if(nav.semFilt) semanalFilterPid=nav.semFilt;
+      if(nav.page==='semanal'){
+        showPage('semanal');
+      } else if(nav.page==='project' && nav.pid){
+        openProject(nav.pid);
+      } else {
+        renderFeed();
+      }
+    } else {
+      renderFeed();
+    }
+  }catch(e){ renderFeed(); }
   applyLang();
 }
 
@@ -1168,6 +1249,17 @@ document.addEventListener('mousedown',e=>{
     sfDrop.style.display='none';
   }
 });
+function saveNav(){
+  try{
+    localStorage.setItem(NAV_KEY,JSON.stringify({
+      page: document.getElementById('page-semanal').style.display!=='none'?'semanal':
+            document.getElementById('page-project').classList.contains('on')?'project':'portfolio',
+      pid: currentProjId,
+      week: currentWeek,
+      semFilt: semanalFilterPid
+    }));
+  }catch(e){}
+}
 function showPage(page){
   document.getElementById('nav-cronograma').classList.remove('active');
   document.getElementById('nav-documentacion').classList.remove('active');
@@ -1177,11 +1269,13 @@ function showPage(page){
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   if(page==='portfolio') document.getElementById('nav-portfolio').classList.add('active');
   if(page==='semanal'){ document.getElementById('nav-semanal').classList.add('active'); renderSemanal(); }
+  saveNav();
 }
 
 function openProject(pid){
   currentProjId = pid;
   showPage('project');
+  saveNav();
   // Sidebar
   document.querySelectorAll('.sb-proj-item').forEach(e=>e.classList.remove('active'));
   const el = document.getElementById('nav-'+pid);
@@ -1488,6 +1582,7 @@ function renderSemanal(){
     });
   }
   document.getElementById('semanalFeed').innerHTML=html;
+  saveNav();
 }
 function jumpToCurrentWeek(ctx){
   const today=new Date();
