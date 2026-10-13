@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2100 -->
+<!-- BUILD:20261013-2130 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2100';
+  const BUILD='20261013-2130';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1130,12 +1130,13 @@ let calYear = 2026;
 let calMonth = 9;
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
-const STATUS_MAP = {
-  red:{lbl:'Bloqueado',cls:'s-red',sbar:'sbar-red'},
-  yellow:{lbl:'En curso',cls:'s-yellow',sbar:'sbar-yellow'},
-  green:{lbl:'Cerrado',cls:'s-green',sbar:'sbar-green'},
-  grey:{lbl:'Stand-by',cls:'s-grey',sbar:'sbar-grey'}
-};
+function STATUS_MAP_FN(){return{
+  red:{lbl:t('statusBlocked'),cls:'s-red',sbar:'sbar-red'},
+  yellow:{lbl:t('statusOngoing'),cls:'s-yellow',sbar:'sbar-yellow'},
+  green:{lbl:t('statusClosed'),cls:'s-green',sbar:'sbar-green'},
+  grey:{lbl:t('statusStandby'),cls:'s-grey',sbar:'sbar-grey'}
+};}
+function STATUS_MAP_GET(s){return STATUS_MAP_FN()[s]||STATUS_MAP_FN().yellow;}
 const IMPACT_LABELS = {permitting:'Permitting',schedule:'Schedule',legal:'Legal',capex:'CAPEX',none:''};
 const ICONS = {
   call:'<svg width="14" height="14" viewBox="0 0 16 16" fill="#05233D"><path d="M5.5 2.5C5.5 2.5 4 2 3 3s-.5 3 1 4.5S7 10 8.5 11.5s3.5 2 4.5 1 .5-2.5.5-2.5L11 8.5s-.5-.5-1 0l-.5.5s-.5.5-1 0C7.5 8.5 7 8 6.5 7.5l-1-1c-.5-.5 0-1 0-1L6 5s.5-.5 0-1L5.5 2.5z"/></svg>',
@@ -1479,7 +1480,7 @@ function renderFeed(){
   items.sort((a,b)=>({red:0,yellow:1,green:2}[a.iss.status]||1)-({red:0,yellow:1,green:2}[b.iss.status]||1));
   document.getElementById('feedCount').textContent=items.length+' '+(lang==='en'?'results':'resultados');
   document.getElementById('updatesFeed').innerHTML=items.map(({pid,iss})=>{
-    const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+    const st=STATUS_MAP_GET(iss.status);
     return `<div class="update-item" onclick="openProject('${pid}')">
       <span class="update-badge ${st.cls}">${st.lbl}</span>
       <div>
@@ -1544,7 +1545,7 @@ function renderSemanal(){
   const lbl=document.getElementById('weekSelLblSemanal');
   if(lbl) lbl.textContent=weekRange(currentWeek);
   const sub=document.getElementById('semanalWeekSubtitle');
-  if(sub) sub.textContent=semanalFilterPid?`${(META[semanalFilterPid]||{}).name||semanalFilterPid} · Semana del ${weekRange(currentWeek)}`:`Todos los proyectos · Semana del ${weekRange(currentWeek)}`;
+  if(sub) sub.textContent=semanalFilterPid?`${(META[semanalFilterPid]||{}).name||semanalFilterPid} · ${t('weekTitle')} ${weekRange(currentWeek)}`:`${t('allProjects')} · ${t('weekTitle')} ${weekRange(currentWeek)}`;
   const wd=allData[currentWeek]||{};
   // Show/hide editor add button in header
   const semAddBtn=document.getElementById('semanalAddBtn');
@@ -1559,8 +1560,8 @@ function renderSemanal(){
       <div style="font-size:14px;font-weight:600;color:var(--text-2);">${t('noUpdates')}</div>
       <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
       ${isEditor?`<div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
-        <button onclick="openAddUpdateSemanal()" style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir novedad</button>
-        ${prevWkWithData?`<button onclick="copyPrevWeek('${prevWkWithData}')" style="background:#fff;color:var(--navy);font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar semana anterior</button>`:''}
+        <button onclick="openAddUpdateSemanal()" style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">${t('addUpdate')}</button>
+        ${prevWkWithData?`<button onclick="copyPrevWeek('${prevWkWithData}')" style="background:#fff;color:var(--navy);font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;font-family:'Inter',sans-serif;">📋 ${t('copyPrevWeek')}</button>`:''}
       </div>`:''}
     </div>`;
   } else {
@@ -1572,11 +1573,11 @@ function renderSemanal(){
           <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
           <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span>
           <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
-          ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ Añadir</button>`:''}
+          ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ ${t('addBtn')}</button>`:''}
           <span style="font-size:10px;color:var(--blue);cursor:pointer;" onclick="openProject('${pid}')">${t('viewProject')}</span>
         </div>`;
       issues.forEach(iss=>{
-        const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
+        const st=STATUS_MAP_GET(iss.status);
         const acts=iss.activities||[];
         const imp=IMPACT_LABELS[iss.impact]||'';
         const issIdx=issues.indexOf(iss);
@@ -1592,10 +1593,10 @@ function renderSemanal(){
               ${isEditor?`<button onclick="openEditIssue('${pid}',${issIdx})" style="margin-top:4px;background:none;border:1px solid var(--border-2);color:var(--text-2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">✏️ Editar</button>`:''}
             </div>
           </div>
-          ${iss.draft?`<div class="draft-banner">📋 Copiado de semana anterior — revisa y actualiza${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issIdx})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ Confirmado</button>`:''}
+          ${iss.draft?`<div class="draft-banner">📋 ${t('draftBanner')}${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issIdx})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ ${t('confirmBtn')}</button>`:''}
           </div>`:''}
           ${acts.length||isEditor?`<div class="act-section">
-            <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0 0 0 6px;">+ gestionar</button>`:''}
+            <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0 0 0 6px;">+ ${t('manageBtn')}</button>`:''}
             </div>
             <div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div>
           </div>`:''}
@@ -2332,6 +2333,17 @@ const T={
     viewProject:'Ver proyecto →',
     update:'novedad',
     updates2:'novedades',
+    allProjects:'Todos los proyectos',
+    copyPrevWeek:'Copiar semana anterior',
+    addBtn:'Añadir',
+    draftBanner:'Copiado de semana anterior — revisa y actualiza',
+    confirmBtn:'Confirmado',
+    manageBtn:'gestionar',
+    statusBlocked:'Bloqueado',
+    statusOngoing:'En curso',
+    statusClosed:'Cerrado',
+    statusStandby:'Stand-by',
+    confirmAllDrafts:'Confirmar todos',
   },
   en:{
     weekTitle:'Week of',
@@ -2397,6 +2409,17 @@ const T={
     viewProject:'View project →',
     update:'update',
     updates2:'updates',
+    allProjects:'All projects',
+    copyPrevWeek:'Copy previous week',
+    addBtn:'Add',
+    draftBanner:'Copied from previous week — review and update',
+    confirmBtn:'Confirmed',
+    manageBtn:'manage',
+    statusBlocked:'Blocked',
+    statusOngoing:'In progress',
+    statusClosed:'Closed',
+    statusStandby:'On hold',
+    confirmAllDrafts:'Confirm all',
   }
 };
 function t(key,...args){
@@ -2512,7 +2535,7 @@ function renderDashboard(){
   }
   const updHtml=recentUpdates.length
     ?recentUpdates.slice(0,3).map(u=>{
-        const st=STATUS_MAP[u.status]||STATUS_MAP.yellow;
+        const st=STATUS_MAP_GET(u.status);
         return `<div class="dash-last-update">
           <div style="display:flex;align-items:center;gap:6px;">
             <div class="i-sbar ${st.sbar}" style="width:3px;height:32px;border-radius:2px;flex-shrink:0;"></div>
