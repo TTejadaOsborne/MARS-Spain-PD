@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261009-1500 -->
+<!-- BUILD:20261013-1200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261009-1500';
+  const BUILD='20261013-1200';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -540,6 +540,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:280px;"></div>
       </div>
       <button onclick="navWeekSemanal(1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">›</button>
+      <button onclick="jumpToCurrentWeek('semanal')" style="background:none;border:1px solid var(--border);border-radius:5px;padding:0 10px;height:26px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text-2);font-family:'Inter',sans-serif;white-space:nowrap;">Hoy</button>
     </div>
   </div>
   <div class="content">
@@ -589,6 +590,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
             <div class="cal-popup" id="calPopup" style="display:none;"></div>
           </div>
           <button class="btn btn-sec" onclick="navWeek(1)">›</button>
+          <button class="btn btn-sec" onclick="jumpToCurrentWeek('updates')" style="font-size:11px;padding:5px 10px;">Hoy</button>
           <button class="btn btn-primary" id="addUpdateBtn" style="display:none;" onclick="openAddUpdate()">+ Añadir novedad</button>
         </div>
       </div>
@@ -1282,10 +1284,15 @@ function weekRange(iso){
 }
 
 function navWeek(dir){
-  const weeks=Object.keys(allData).sort();
-  const idx=weeks.indexOf(currentWeek);
-  const ni=idx+dir;
-  if(ni>=0&&ni<weeks.length){ currentWeek=weeks[ni]; renderUpdates(); }
+  // Navigate by 7 days — works even if the target week has no data yet
+  const d=new Date(currentWeek);
+  d.setDate(d.getDate()+dir*7);
+  // Snap to Monday of that week
+  const dow=(d.getDay()+6)%7; // Mon=0
+  d.setDate(d.getDate()-dow);
+  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  currentWeek=toIso(d);
+  renderUpdates();
 }
 
 // ── CALENDAR ───────────────────────────────────────────────────────────────
@@ -1357,10 +1364,9 @@ function renderCal(popupId){
       }
       const hasData=weeks.includes(iso);
       const isToday=iso===todayIso;
-      const clickFn=onSelect.replace(/ISODATE/g,iso);
+      const clickFn=onSelect.replace(/ISODATE/g,rowMonIso); // always snap to Monday
       let cls='cal-day';
       if(isSelWeek){cls+=' week-sel';if(ci===0)cls+=' week-sel-start';if(ci===6)cls+=' week-sel-end';}
-      else if(hasData) cls+=' has-data';
       if(isToday) cls+=' today';
       const dot=(weekHasData&&!isSelWeek&&ci===0)?`<span style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--navy);opacity:0.5;display:block;"></span>`:'';
       h+=`<div class="${cls}" style="position:relative;" data-week="${rowMonIso}" onclick="${clickFn}" onmouseover="calHoverWeek('${pid}','${rowMonIso}')" onmouseout="calUnhover('${pid}')">${day}${dot}</div>`;
@@ -1514,11 +1520,22 @@ function renderSemanal(){
   }
   document.getElementById('semanalFeed').innerHTML=html;
 }
+function jumpToCurrentWeek(ctx){
+  const today=new Date();
+  const dow=(today.getDay()+6)%7; // Mon=0
+  today.setDate(today.getDate()-dow);
+  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  currentWeek=toIso(today);
+  if(ctx==='semanal') renderSemanal(); else renderUpdates();
+}
 function navWeekSemanal(dir){
-  const weeks=Object.keys(allData).sort();
-  const idx=weeks.indexOf(currentWeek);
-  const ni=idx+dir;
-  if(ni>=0&&ni<weeks.length){ currentWeek=weeks[ni]; renderSemanal(); }
+  const d=new Date(currentWeek);
+  d.setDate(d.getDate()+dir*7);
+  const dow=(d.getDay()+6)%7;
+  d.setDate(d.getDate()-dow);
+  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  currentWeek=toIso(d);
+  renderSemanal();
 }
 
 // ── GANTT v2 — MS Project style ─────────────────────────────────────────────
