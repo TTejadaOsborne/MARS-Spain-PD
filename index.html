@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-1815 -->
+<!-- BUILD:20261013-1900 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-1815';
+  const BUILD='20261013-1900';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -646,6 +646,45 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="modal-foot">
       <button class="btn btn-sec" onclick="closeModal('addUpdateModal')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveUpdate()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ISSUE MODAL -->
+<div class="modal-bg" id="editIssueModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-hdr"><h2>✏️ Editar novedad</h2><button class="modal-close" onclick="closeModal('editIssueModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row"><label class="form-lbl">Apartado / Tema</label><input class="form-input" id="editTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl">Estado</label>
+        <select class="form-input form-select" id="editStatus">
+          <option value="yellow">🟡 En curso</option><option value="red">🔴 Bloqueado</option><option value="green">🟢 Cerrado</option><option value="grey">⚪ Stand-by</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-lbl">Impacto</label>
+        <select class="form-input form-select" id="editImpact">
+          <option value="none">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-lbl">Descripción</label><textarea class="form-input form-textarea" id="editText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl">¿Requiere atención?</label>
+        <select class="form-input form-select" id="editAttention"><option value="0">No</option><option value="1">Sí ⚠️</option></select>
+      </div>
+      <!-- ACTIVITIES -->
+      <div style="margin-top:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <label class="form-lbl" style="margin:0;">Actividades</label>
+          <button onclick="addEditActivity()" style="background:var(--blue);border:none;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir</button>
+        </div>
+        <div id="editActList" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+    </div>
+    <div class="modal-foot" style="justify-content:space-between;">
+      <button class="btn btn-sec" onclick="deleteIssue()" style="color:#d32f2f;border-color:#d32f2f;">🗑 Eliminar</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sec" onclick="closeModal('editIssueModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveEditIssue()">Guardar cambios</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1404,6 +1443,7 @@ function renderSemanal(){
         const st=STATUS_MAP[iss.status]||STATUS_MAP.yellow;
         const acts=iss.activities||[];
         const imp=IMPACT_LABELS[iss.impact]||'';
+        const issIdx=issues.indexOf(iss);
         html+=`<div class="issue-row${iss.draft?' is-draft':''}">
           <div class="issue-top-row">
             <div class="i-sbar ${st.sbar}" style="width:4px;"></div>
@@ -1413,11 +1453,16 @@ function renderSemanal(){
               <span class="status-tag ${st.cls}">${st.lbl}</span>
               ${imp?`<span class="impact-tag">${imp}</span>`:''}
               ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
+              ${isEditor?`<button onclick="openEditIssue('${pid}',${issIdx})" style="margin-top:4px;background:none;border:1px solid var(--border-2);color:var(--text-2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">✏️ Editar</button>`:''}
             </div>
           </div>
-          ${iss.draft?`<div class="draft-banner">✏️ Copiado de semana anterior — revisa y actualiza${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issues.indexOf(iss)})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ Confirmado</button>`:''}
+          ${iss.draft?`<div class="draft-banner">📋 Copiado de semana anterior — revisa y actualiza${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issIdx})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ Confirmado</button>`:''}
           </div>`:''}
-          ${acts.length?`<div class="act-section"><div class="act-title">${t('activities')}</div><div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div></div>`:''}
+          ${acts.length||isEditor?`<div class="act-section">
+            <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0 0 0 6px;">+ gestionar</button>`:''}
+            </div>
+            <div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div>
+          </div>`:''}
         </div>`;
       });
       html+=`</div>`;
@@ -1443,6 +1488,82 @@ function confirmAllDrafts(){
   Object.values(wd).forEach(arr=>arr.forEach(iss=>{ if(iss.draft) delete iss.draft; }));
   renderSemanal();
   toast('✓ Todas las novedades confirmadas');
+}
+
+// ── EDIT ISSUE ─────────────────────────────────────────────────────────────
+let _editPid=null, _editIdx=null;
+const ACT_TYPES=['call','email','admin','doc','internal','site'];
+const ACT_TYPE_LABELS={call:'Llamada',email:'Email',admin:'Gestión admin.',doc:'Documento',internal:'Reunión interna',site:'Visita obra'};
+
+function openEditIssue(pid,idx){
+  _editPid=pid; _editIdx=idx;
+  const iss=(allData[currentWeek]||{})[pid][idx];
+  if(!iss) return;
+  document.getElementById('editTopic').value=iss.topic||'';
+  document.getElementById('editStatus').value=iss.status||'yellow';
+  document.getElementById('editImpact').value=iss.impact||'none';
+  document.getElementById('editText').value=iss.text||'';
+  document.getElementById('editAttention').value=iss.attention?'1':'0';
+  renderEditActList(iss.activities||[]);
+  openModal('editIssueModal');
+}
+
+function renderEditActList(acts){
+  const container=document.getElementById('editActList');
+  if(!container) return;
+  if(!acts.length){
+    container.innerHTML=`<div style="font-size:11px;color:var(--text-3);font-style:italic;padding:4px 0;">Sin actividades registradas</div>`;
+    return;
+  }
+  container.innerHTML=acts.map((a,i)=>`
+    <div style="display:grid;grid-template-columns:110px 1fr 80px auto;gap:6px;align-items:center;background:#F7F9FB;border:1px solid var(--border);border-radius:6px;padding:6px 8px;">
+      <select onchange="updateEditAct(${i},'type',this.value)" style="font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'Inter',sans-serif;color:var(--text);">
+        ${ACT_TYPES.map(tp=>`<option value="${tp}"${a.type===tp?' selected':''}>${ACT_TYPE_LABELS[tp]}</option>`).join('')}
+      </select>
+      <input type="text" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="updateEditAct(${i},'text',this.value)" placeholder="Descripción..." style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;">
+      <input type="text" value="${a.date||''}" onchange="updateEditAct(${i},'date',this.value)" placeholder="dd/mm" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;text-align:center;">
+      <button onclick="removeEditAct(${i})" style="background:none;border:none;color:#d32f2f;font-size:15px;cursor:pointer;line-height:1;padding:0 4px;">×</button>
+    </div>`).join('');
+}
+
+function _getEditActs(){
+  const iss=(allData[currentWeek]||{})[_editPid]&&allData[currentWeek][_editPid][_editIdx];
+  return iss?(iss.activities||(iss.activities=[])):[];
+}
+function updateEditAct(i,field,val){ _getEditActs()[i][field]=val; }
+function removeEditAct(i){
+  const acts=_getEditActs(); acts.splice(i,1);
+  renderEditActList(acts);
+}
+function addEditActivity(){
+  const acts=_getEditActs();
+  acts.push({type:'admin',text:'',date:''});
+  renderEditActList(acts);
+}
+
+function saveEditIssue(){
+  const issues=(allData[currentWeek]||{})[_editPid];
+  if(!issues||!issues[_editIdx]) return;
+  const iss=issues[_editIdx];
+  iss.topic=document.getElementById('editTopic').value||'Sin título';
+  iss.status=document.getElementById('editStatus').value;
+  iss.impact=document.getElementById('editImpact').value;
+  iss.text=document.getElementById('editText').value;
+  iss.attention=document.getElementById('editAttention').value==='1';
+  // draft flag: editing the issue counts as confirming it
+  delete iss.draft;
+  closeModal('editIssueModal');
+  renderSemanal();
+  toast('✓ Novedad actualizada');
+}
+
+function deleteIssue(){
+  if(!confirm('¿Eliminar esta novedad?')) return;
+  const issues=(allData[currentWeek]||{})[_editPid];
+  if(issues) issues.splice(_editIdx,1);
+  closeModal('editIssueModal');
+  renderSemanal();
+  toast('Novedad eliminada');
 }
 function copyPrevWeek(srcWeek){
   const src=allData[srcWeek]||{};
