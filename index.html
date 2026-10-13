@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2330 -->
+<!-- BUILD:20261013-2345 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2330';
+  const BUILD='20261013-2345';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -471,7 +471,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         </div>
       </div>
       <div class="card">
-        <div class="card-hdr"><h3>Proyectos</h3></div>
+        <div class="card-hdr"><h3 data-i18n="navProjects">Proyectos</h3></div>
         <div class="proj-list-item" onclick="openProject('begues')">
           <div class="proj-dot" style="background:var(--green);"></div>
           <div><div class="proj-list-name">BEGUES I &amp; II</div><div class="proj-list-loc">Olesa de Bonesvalls, Barcelona</div></div>
@@ -494,7 +494,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         </div>
         <div class="proj-list-item" onclick="openProject('custom_nuevas_oportunidades')" style="background:var(--blue-l);">
           <div class="proj-dot" style="background:var(--blue);"></div>
-          <div><div class="proj-list-name" style="color:var(--blue);">NUEVAS OPORTUNIDADES</div><div class="proj-list-loc">Pipeline · En análisis</div></div>
+          <div><div class="proj-list-name" style="color:var(--blue);" data-i18n="navOpp">Nuevas Oportunidades</div><div class="proj-list-loc" data-i18n="navOppSub">Pipeline · En análisis</div></div>
           <div class="proj-list-mw" style="color:var(--blue);">—</div><span>›</span>
         </div>
       </div>
@@ -593,7 +593,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="pwd-card">
     <div style="font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px;">🔒 <span data-i18n="pwdTitle">Acceso editor</span></div>
     <div style="font-size:12.5px;color:var(--text-3);margin-bottom:20px;" data-i18n="pwdDesc">Introduce la contraseña para editar.</div>
-    <div class="form-row"><input class="form-input" type="password" id="pwdInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPwd()"></div>
+    <div class="form-row"><input class="form-input" type="password" id="pwdInput" placeholder="Contraseña" data-i18n-ph="phPassword" onkeydown="if(event.key==='Enter')checkPwd()"></div>
     <div style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;" id="pwdErr" data-i18n="pwdErr">Contraseña incorrecta</div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-primary" onclick="checkPwd()" data-i18n="pwdUnlock">Desbloquear</button>
@@ -616,7 +616,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting" data-i18n-ph="phTopic"></div>
       <div class="form-row"><label class="form-lbl" data-i18n="formStatus">Estado</label>
         <select class="form-input form-select" id="newStatus">
           <option value="yellow" data-i18n-opt="optOngoing">🟡 En curso</option><option value="red" data-i18n-opt="optBlocked">🔴 Bloqueado</option><option value="green" data-i18n-opt="optClosed">🟢 Cerrado</option>
@@ -627,7 +627,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <option value="none" data-i18n-opt="optNoImpact">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="newText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="newText" placeholder="Describe la novedad..." data-i18n-ph="phDesc"></textarea></div>
       <div class="form-row"><label class="form-lbl" data-i18n="formAttention">¿Requiere atención?</label>
         <select class="form-input form-select" id="newAttention"><option value="0">No</option><option value="1" data-i18n-opt="optYes">Sí ⚠️</option></select>
       </div>
@@ -644,7 +644,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="modal" style="max-width:520px;">
     <div class="modal-hdr"><h2 data-i18n="modalEditTitle">✏️ Editar novedad</h2><button class="modal-close" onclick="closeModal('editIssueModal')">×</button></div>
     <div class="modal-body">
-      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="editTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="editTopic" placeholder="ej. Estado permitting" data-i18n-ph="phTopic"></div>
       <div class="form-row"><label class="form-lbl" data-i18n="formStatus">Estado</label>
         <select class="form-input form-select" id="editStatus">
           <option value="yellow" data-i18n-opt="optOngoing">🟡 En curso</option><option value="red" data-i18n-opt="optBlocked">🔴 Bloqueado</option><option value="green" data-i18n-opt="optClosed">🟢 Cerrado</option><option value="grey" data-i18n-opt="optStandby">⚪ Stand-by</option>
@@ -655,7 +655,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <option value="none" data-i18n-opt="optNoImpact">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="editText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="editText" placeholder="Describe la novedad..." data-i18n-ph="phDesc"></textarea></div>
       <div class="form-row"><label class="form-lbl" data-i18n="formAttention">¿Requiere atención?</label>
         <select class="form-input form-select" id="editAttention"><option value="0">No</option><option value="1" data-i18n-opt="optYes">Sí ⚠️</option></select>
       </div>
@@ -1692,8 +1692,8 @@ function renderEditActList(acts){
       <select onchange="updateEditAct(${i},'type',this.value)" style="font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'Inter',sans-serif;color:var(--text);">
         ${ACT_TYPES.map(tp=>`<option value="${tp}"${a.type===tp?' selected':''}>${ACT_TYPE_LABELS_FN()[tp]}</option>`).join('')}
       </select>
-      <input type="text" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="updateEditAct(${i},'text',this.value)" placeholder="Descripción..." style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;">
-      <input type="text" value="${a.date||''}" onchange="updateEditAct(${i},'date',this.value)" placeholder="dd/mm" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;text-align:center;">
+      <input type="text" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="updateEditAct(${i},'text',this.value)" placeholder="${t('phActDesc')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;">
+      <input type="text" value="${a.date||''}" onchange="updateEditAct(${i},'date',this.value)" placeholder="${t('phActDate')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;text-align:center;">
       <button onclick="removeEditAct(${i})" style="background:none;border:none;color:#d32f2f;font-size:15px;cursor:pointer;line-height:1;padding:0 4px;">×</button>
     </div>`).join('');
 }
@@ -1892,11 +1892,11 @@ function renderGantt(){
 
   // ── TOOLBAR ────────────────────────────────────────────────────
   const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;">
-    <button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">+ Fase</button>
-    <button onclick="ganttAddTask()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">+ Tarea</button>
-    <button onclick="ganttAddMilestone()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">◆ Hito</button>
+    <button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">+ ${t('ganttPhase')}</button>
+    <button onclick="ganttAddTask()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">+ ${t('ganttTask')}</button>
+    <button onclick="ganttAddMilestone()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">◆ ${t('ganttMilestone')}</button>
     <div style="flex:1;"></div>
-    <span style="font-size:10px;color:var(--text-3);">Doble clic en nombre o fecha para editar · Arrastra la barra para mover</span>
+    <span style="font-size:10px;color:var(--text-3);">${t('ganttHint')}</span>
   </div>`:'';
 
   // ── LEFT PANEL HEADER ──────────────────────────────────────────
@@ -1905,9 +1905,9 @@ function renderGantt(){
       <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px;text-transform:uppercase;">Tarea</span>
     </div>
     <div style="height:${HDR_H2}px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);">
-      <div style="width:${NAME_W}px;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Nombre</div>
-      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Inicio</div>
-      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">Fin</div>
+      <div style="width:${NAME_W}px;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskName')}</div>
+      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskStart')}</div>
+      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskEnd')}</div>
       <div style="width:${PCT_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);${isEditor?'border-right:1px solid rgba(255,255,255,0.1);':''}">%</div>
       ${isEditor?`<div style="width:${ACT_W}px;"></div>`:''}
     </div>
@@ -1963,7 +1963,7 @@ function renderGantt(){
 
     const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.12);':'';
     leftRows+=`<div style="display:flex;align-items:stretch;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}flex-shrink:0;">
-      <div style="${nameStyle}" ${nameClick}>${isMile?'◆ ':''}${task.name||'Sin nombre'}</div>
+      <div style="${nameStyle}" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
       <div style="${dateStyle}" ${startClick}>${fmtDate(task.start)}</div>
       <div style="${dateStyle}" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
       ${pctCell}${actCell}
@@ -2157,10 +2157,10 @@ function ganttDeleteRow(taskId){
   const tasks=getGanttTasks();
   const idx=tasks.findIndex(t=>t.id===taskId);
   if(idx<0) return;
-  if(!confirm('¿Eliminar esta fila?')) return;
+  if(!confirm(t('confirmDeleteRow'))) return;
   tasks.splice(idx,1);
   renderGantt();
-  toast('Eliminado');
+  toast('✓ '+t('deleted'));
 }
 
 function ganttAddPhase(){
@@ -2170,7 +2170,7 @@ function ganttAddPhase(){
   const end=addDays(today,180);
   const phaseNum=tasks.filter(t=>t.level===1).length+1;
   const color=PHASE_COLORS[(phaseNum-1)%PHASE_COLORS.length];
-  tasks.push({id:newGanttId(pid),level:1,num:String(phaseNum),name:'Nueva fase',start:today,end,pct:0,color});
+  tasks.push({id:newGanttId(pid),level:1,num:String(phaseNum),name:t('ganttNewPhase'),start:today,end,pct:0,color});
   renderGantt();
 }
 
@@ -2182,7 +2182,7 @@ function ganttAddTask(){
   // Find last phase for color
   const lastPhase=tasks.slice().reverse().find(t=>t.level===1);
   const color=lastPhase?lastPhase.color:PHASE_COLORS[0];
-  tasks.push({id:newGanttId(pid),level:2,num:'',name:'Nueva tarea',start:today,end,pct:0,color});
+  tasks.push({id:newGanttId(pid),level:2,num:'',name:t('ganttTask'),start:today,end,pct:0,color});
   renderGantt();
 }
 
@@ -2190,7 +2190,7 @@ function ganttAddMilestone(){
   const pid=currentProjId;
   const tasks=getGanttTasks(pid);
   const today=new Date().toISOString().slice(0,10);
-  tasks.push({id:newGanttId(pid),level:2,num:'',name:'Hito',start:today,end:today,pct:0,color:'#05233D',milestone:true});
+  tasks.push({id:newGanttId(pid),level:2,num:'',name:t('ganttMilestone'),start:today,end:today,pct:0,color:'#05233D',milestone:true});
   renderGantt();
 }
 
@@ -2211,7 +2211,7 @@ function renderDocs(){
   document.getElementById('addDocBtn')&&(document.getElementById('addDocBtn').style.display=isEditor?'':'none');
   const docs=[...((DEFAULT_DOCS[pid]||[])),...(extraDocs[pid]||[])];
   if(!docs.length){
-    document.getElementById('docsContent').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);"><div style="font-size:32px;">📂</div><div style="font-size:14px;font-weight:600;margin-top:10px;">Sin documentos</div></div>`;
+    document.getElementById('docsContent').innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-3);"><div style="font-size:32px;">📂</div><div style="font-size:14px;font-weight:600;margin-top:10px;">${t('noDocs')}</div></div>`;
     return;
   }
   const sColor={'Vigente':'background:var(--green-s-l);color:var(--green-s);','En revisión':'background:var(--yellow-l);color:var(--yellow);','Borrador':'background:var(--blue-l);color:var(--blue);','Obsoleto':'background:var(--grey-l);color:var(--grey);'};
@@ -2224,7 +2224,7 @@ function renderDocs(){
       <td style="padding:10px 14px;font-size:12px;">${doc.ver}</td>
       <td style="padding:10px 14px;"><span style="${sColor[doc.status]||''}font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;">${doc.status}</span></td>
       <td style="padding:10px 14px;font-size:11.5px;color:var(--text-3);">${doc.date}</td>
-      <td style="padding:10px 14px;">${doc.url?`<a href="${doc.url}" target="_blank" style="color:var(--blue);font-size:11px;">Abrir →</a>`:'—'}</td>
+      <td style="padding:10px 14px;">${doc.url?`<a href="${doc.url}" target="_blank" style="color:var(--blue);font-size:11px;">${t('openDoc')}</a>`:'—'}</td>
     </tr>`).join('')}</tbody>
   </table>`;
 }
@@ -2238,7 +2238,7 @@ function checkPwd(){
     document.getElementById('editorBadge').style.display='flex';
     document.getElementById('pwdInput').value='';
     closeModal('pwdModal');
-    toast('✏️ Modo editor activado');
+    toast('✏️ '+t('editorOn'));
     // Refresh semanal to show add buttons
     const semPage=document.getElementById('page-semanal');
     if(semPage&&semPage.style.display!=='none') renderSemanal();
@@ -2251,7 +2251,7 @@ function exitEditor(){
   isEditor=false;
   document.getElementById('editorBtn').style.display='';
   document.getElementById('editorBadge').style.display='none';
-  toast('Modo editor desactivado');
+  toast(t('editorOff'));
   // Refresh semanal to hide add buttons
   const semPage=document.getElementById('page-semanal');
   if(semPage&&semPage.style.display!=='none') renderSemanal();
@@ -2401,6 +2401,20 @@ const T={
     weekAlreadyHasUpdates:'Esta semana ya tiene novedades en todos los proyectos',
     updateSaved:'Novedad actualizada',
     untitled:'Sin título',
+    taskNoName:'Sin nombre',
+    ganttPhase:'Fase',ganttTask:'Tarea',ganttMilestone:'Hito',
+    ganttHint:'Doble clic en nombre o fecha para editar · Arrastra la barra para mover',
+    confirmDeleteRow:'¿Eliminar esta fila?',
+    deleted:'Eliminado',
+    noDocs:'Sin documentos',
+    openDoc:'Abrir →',
+    editorOn:'Modo editor activado',
+    editorOff:'Modo editor desactivado',
+    phPassword:'Contraseña',
+    phTopic:'ej. Estado permitting',
+    phDesc:'Describe la novedad...',
+    phActDesc:'Descripción...',
+    phActDate:'dd/mm',
   },
   en:{
     weekTitle:'Week of',
@@ -2509,6 +2523,20 @@ const T={
     weekAlreadyHasUpdates:'This week already has updates for all projects',
     updateSaved:'Update saved',
     untitled:'Untitled',
+    taskNoName:'Unnamed',
+    ganttPhase:'Phase',ganttTask:'Task',ganttMilestone:'Milestone',
+    ganttHint:'Double-click name or date to edit · Drag bar to move',
+    confirmDeleteRow:'Delete this row?',
+    deleted:'Deleted',
+    noDocs:'No documents',
+    openDoc:'Open →',
+    editorOn:'Editor mode on',
+    editorOff:'Editor mode off',
+    phPassword:'Password',
+    phTopic:'e.g. Permitting status',
+    phDesc:'Describe the update...',
+    phActDesc:'Description...',
+    phActDate:'dd/mm',
   }
 };
 function t(key,...args){
@@ -2526,6 +2554,11 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-opt]').forEach(el=>{
     const k=el.getAttribute('data-i18n-opt');
     el.textContent=t(k);
+  });
+  // Input/textarea placeholders with data-i18n-ph
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const k=el.getAttribute('data-i18n-ph');
+    el.placeholder=t(k);
   });
   // Re-render semanal to pick up language changes
   if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
