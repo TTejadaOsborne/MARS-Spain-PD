@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0005 -->
+<!-- BUILD:20261014-0010 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0005';
+  const BUILD='20261014-0010';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1143,12 +1143,9 @@ function translateTopic(topic){
   return TOPIC_MAP_EN[topic.toLowerCase()]||topic;
 }
 
-// ── DEEPL TRANSLATION ENGINE ───────────────────────────────────────────────
 // ── TRANSLATION ENGINE (MyMemory API + localStorage cache) ─────────────────
-// DeepL Free blocks browser CORS; MyMemory is free, CORS-open, no key needed.
-// Registered email for higher daily limit:
-const TX_EMAIL = 'tomitejada@gmail.com';
-const TX_CACHE_KEY = 'mars_tx_cache_v2';
+// MyMemory is free, CORS-open. We pass context via the "mt" subject hint.
+const TX_CACHE_KEY = 'mars_tx_cache_v3';
 let _txCache = null;
 function _getCache(){
   if(_txCache) return _txCache;
@@ -1160,17 +1157,34 @@ function _saveCache(){
   try { localStorage.setItem(TX_CACHE_KEY,JSON.stringify(_txCache||{})); }
   catch(e){}
 }
+// Post-process MyMemory output: fix common literal artifacts
+function _polish(text){
+  if(!text) return text;
+  // MyMemory sometimes uppercases everything — restore sentence case
+  if(text===text.toUpperCase()&&text.length>4) text=text.charAt(0)+text.slice(1).toLowerCase();
+  // Strip spurious leading/trailing quotes MyMemory sometimes adds
+  text=text.replace(/^["']|["']$/g,'').trim();
+  return text;
+}
 async function _translateOne(text){
   if(!text||!text.trim()) return text;
   const cache=_getCache();
   if(cache[text]!==undefined) return cache[text];
   try {
-    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|en&de=${encodeURIComponent(TX_EMAIL)}`;
+    // subject=Energy+industry hints MyMemory toward technical domain vocabulary
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|en-GB&de=tomitejada%40gmail.com&mt=1`;
     const res=await fetch(url);
     if(!res.ok) throw new Error('TX '+res.status);
     const json=await res.json();
-    const translated=(json.responseData&&json.responseData.translatedText)||text;
-    _txCache[text]=translated;
+    // Prefer human memory matches (quality>=75) over machine translation
+    let translated=text;
+    const matches=json.matches||[];
+    const human=matches.find(m=>m.memory_level==='user'&&Number(m.quality)>=75);
+    if(human){ translated=human.translation; }
+    else { translated=(json.responseData&&json.responseData.translatedText)||text; }
+    translated=_polish(translated);
+    cache[text]=translated;
+    _txCache=cache;
     _saveCache();
     return translated;
   } catch(e){ console.warn('TX error:',e); return text; }
