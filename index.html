@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2130 -->
+<!-- BUILD:20261013-2200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2130';
+  const BUILD='20261013-2200';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -484,7 +484,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         </div>
         <div class="proj-list-item" onclick="openProject('mutxamel')">
           <div class="proj-dot" style="background:var(--red);"></div>
-          <div><div class="proj-list-name">MUTXAMEL <span style="font-size:10px;color:var(--red);">⚠️ Atención</span></div><div class="proj-list-loc">Mutxamel, Alicante</div></div>
+          <div><div class="proj-list-name">MUTXAMEL <span style="font-size:10px;color:var(--red);" data-i18n="attentionBadge">⚠️ Atención</span></div><div class="proj-list-loc">Mutxamel, Alicante</div></div>
           <div class="proj-list-mw">5 MW</div><span>›</span>
         </div>
         <div class="proj-list-item" onclick="openProject('entrenucleos')" style="opacity:0.65;">
@@ -499,24 +499,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         </div>
       </div>
     </div>
-    <!-- Feed + Opp -->
-    <div style="display:grid;grid-template-columns:1fr 280px;gap:12px;">
-      <div class="card">
-        <div class="card-hdr">
-          <h3 data-i18n="feedTitle">Últimas actualizaciones</h3>
-          <span class="tag tag-navy" id="feedCount">5 resultados</span>
-        </div>
-        <div id="updatesFeed"></div>
+    <!-- Feed -->
+    <div class="card">
+      <div class="card-hdr">
+        <h3 data-i18n="feedTitle">Últimas actualizaciones</h3>
+        <span class="tag tag-navy" id="feedCount">5 resultados</span>
       </div>
-      <div class="opp-card" onclick="openProject('custom_nuevas_oportunidades')">
-        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-          <div style="width:36px;height:36px;background:rgba(57,148,57,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">💡</div>
-          <span class="tag" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-size:9.5px;">PIPELINE</span>
-        </div>
-        <div style="font-size:15px;font-weight:800;margin-bottom:4px;">Nuevas Oportunidades</div>
-        <div style="font-size:11px;opacity:0.6;margin-bottom:14px;" id="oppText">Finalizando contacto con propietarios...</div>
-        <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;" data-i18n="openAnalysis">Abrir análisis →</span>
-      </div>
+      <div id="updatesFeed"></div>
     </div>
   </div>
 </div>
@@ -559,7 +548,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <div id="page-project" class="proj-page">
   <div class="proj-ficha" id="projFicha">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
-      <button class="btn btn-sec" style="font-size:11px;padding:5px 11px;" onclick="showPage('portfolio')">← Volver al portfolio</button>
+      <button class="btn btn-sec" style="font-size:11px;padding:5px 11px;" onclick="showPage('portfolio')" data-i18n="backToPortfolio">← Volver al portfolio</button>
     </div>
     <div style="position:relative;display:inline-block;">
       <div id="projFichaNameWrap" style="display:flex;align-items:center;gap:8px;">
@@ -573,9 +562,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="ficha-specs" id="projFichaSpecs"></div>
   </div>
   <div class="tabs-bar">
-    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')">Dashboard</div>
-    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')">Cronograma</div>
-    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')">Documentación</div>
+    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')" data-i18n="tabDashboard">Dashboard</div>
+    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')" data-i18n="tabSchedule">Cronograma</div>
+    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')" data-i18n="tabDocs">Documentación</div>
   </div>
   <div class="tab-content">
     <!-- DASHBOARD TAB -->
@@ -589,7 +578,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <!-- DOCUMENTACION TAB -->
     <div id="tc-documentacion" style="display:none;padding:20px 28px;">
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-        <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()">+ Añadir documento</button>
+        <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()" data-i18n="addDocBtn">+ Añadir documento</button>
       </div>
       <div id="docsContent"></div>
     </div>
@@ -602,13 +591,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- PASSWORD MODAL -->
 <div class="modal-bg" id="pwdModal">
   <div class="pwd-card">
-    <div style="font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px;">🔒 Acceso editor</div>
-    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:20px;">Introduce la contraseña para editar.</div>
+    <div style="font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px;">🔒 <span data-i18n="pwdTitle">Acceso editor</span></div>
+    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:20px;" data-i18n="pwdDesc">Introduce la contraseña para editar.</div>
     <div class="form-row"><input class="form-input" type="password" id="pwdInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPwd()"></div>
-    <div style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;" id="pwdErr">Contraseña incorrecta</div>
+    <div style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;" id="pwdErr" data-i18n="pwdErr">Contraseña incorrecta</div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" onclick="checkPwd()">Desbloquear</button>
-      <button class="btn btn-sec" onclick="closeModal('pwdModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="checkPwd()" data-i18n="pwdUnlock">Desbloquear</button>
+      <button class="btn btn-sec" onclick="closeModal('pwdModal')" data-i18n="cancel">Cancelar</button>
     </div>
   </div>
 </div>
@@ -616,9 +605,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- ADD UPDATE MODAL -->
 <div class="modal-bg" id="addUpdateModal">
   <div class="modal">
-    <div class="modal-hdr"><h2>+ Nueva novedad</h2><button class="modal-close" onclick="closeModal('addUpdateModal')">×</button></div>
+    <div class="modal-hdr"><h2 data-i18n="modalAddTitle">+ Nueva novedad</h2><button class="modal-close" onclick="closeModal('addUpdateModal')">×</button></div>
     <div class="modal-body">
-      <div class="form-row" id="newProjRow"><label class="form-lbl">Proyecto</label>
+      <div class="form-row" id="newProjRow"><label class="form-lbl" data-i18n="formProject">Proyecto</label>
         <select class="form-input form-select" id="newProjSel">
           <option value="begues">BEGUES I &amp; II</option>
           <option value="fregacedos">FREGACEDOS I, II &amp; V</option>
@@ -627,25 +616,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <option value="custom_nuevas_oportunidades">NUEVAS OPORTUNIDADES</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting"></div>
-      <div class="form-row"><label class="form-lbl">Estado</label>
+      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="newTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formStatus">Estado</label>
         <select class="form-input form-select" id="newStatus">
-          <option value="yellow">🟡 En curso</option><option value="red">🔴 Bloqueado</option><option value="green">🟢 Cerrado</option>
+          <option value="yellow" data-i18n-opt="optOngoing">🟡 En curso</option><option value="red" data-i18n-opt="optBlocked">🔴 Bloqueado</option><option value="green" data-i18n-opt="optClosed">🟢 Cerrado</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl">Impacto</label>
+      <div class="form-row"><label class="form-lbl" data-i18n="formImpact">Impacto</label>
         <select class="form-input form-select" id="newImpact">
-          <option value="none">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
+          <option value="none" data-i18n-opt="optNoImpact">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl">Descripción</label><textarea class="form-input form-textarea" id="newText" placeholder="Describe la novedad..."></textarea></div>
-      <div class="form-row"><label class="form-lbl">¿Requiere atención?</label>
-        <select class="form-input form-select" id="newAttention"><option value="0">No</option><option value="1">Sí ⚠️</option></select>
+      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="newText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formAttention">¿Requiere atención?</label>
+        <select class="form-input form-select" id="newAttention"><option value="0">No</option><option value="1" data-i18n-opt="optYes">Sí ⚠️</option></select>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-sec" onclick="closeModal('addUpdateModal')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveUpdate()">Guardar</button>
+      <button class="btn btn-sec" onclick="closeModal('addUpdateModal')" data-i18n="cancel">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveUpdate()" data-i18n="save">Guardar</button>
     </div>
   </div>
 </div>
@@ -653,37 +642,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- EDIT ISSUE MODAL -->
 <div class="modal-bg" id="editIssueModal">
   <div class="modal" style="max-width:520px;">
-    <div class="modal-hdr"><h2>✏️ Editar novedad</h2><button class="modal-close" onclick="closeModal('editIssueModal')">×</button></div>
+    <div class="modal-hdr"><h2 data-i18n="modalEditTitle">✏️ Editar novedad</h2><button class="modal-close" onclick="closeModal('editIssueModal')">×</button></div>
     <div class="modal-body">
-      <div class="form-row"><label class="form-lbl">Apartado / Tema</label><input class="form-input" id="editTopic" placeholder="ej. Estado permitting"></div>
-      <div class="form-row"><label class="form-lbl">Estado</label>
+      <div class="form-row"><label class="form-lbl" data-i18n="formTopic">Apartado / Tema</label><input class="form-input" id="editTopic" placeholder="ej. Estado permitting"></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formStatus">Estado</label>
         <select class="form-input form-select" id="editStatus">
-          <option value="yellow">🟡 En curso</option><option value="red">🔴 Bloqueado</option><option value="green">🟢 Cerrado</option><option value="grey">⚪ Stand-by</option>
+          <option value="yellow" data-i18n-opt="optOngoing">🟡 En curso</option><option value="red" data-i18n-opt="optBlocked">🔴 Bloqueado</option><option value="green" data-i18n-opt="optClosed">🟢 Cerrado</option><option value="grey" data-i18n-opt="optStandby">⚪ Stand-by</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl">Impacto</label>
+      <div class="form-row"><label class="form-lbl" data-i18n="formImpact">Impacto</label>
         <select class="form-input form-select" id="editImpact">
-          <option value="none">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
+          <option value="none" data-i18n-opt="optNoImpact">Sin impacto</option><option value="permitting">Permitting</option><option value="schedule">Schedule</option><option value="legal">Legal</option><option value="capex">CAPEX</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-lbl">Descripción</label><textarea class="form-input form-textarea" id="editText" placeholder="Describe la novedad..."></textarea></div>
-      <div class="form-row"><label class="form-lbl">¿Requiere atención?</label>
-        <select class="form-input form-select" id="editAttention"><option value="0">No</option><option value="1">Sí ⚠️</option></select>
+      <div class="form-row"><label class="form-lbl" data-i18n="formDesc">Descripción</label><textarea class="form-input form-textarea" id="editText" placeholder="Describe la novedad..."></textarea></div>
+      <div class="form-row"><label class="form-lbl" data-i18n="formAttention">¿Requiere atención?</label>
+        <select class="form-input form-select" id="editAttention"><option value="0">No</option><option value="1" data-i18n-opt="optYes">Sí ⚠️</option></select>
       </div>
       <!-- ACTIVITIES -->
       <div style="margin-top:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <label class="form-lbl" style="margin:0;">Actividades</label>
-          <button onclick="addEditActivity()" style="background:var(--blue);border:none;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">+ Añadir</button>
+          <label class="form-lbl" style="margin:0;" data-i18n="formActivities">Actividades</label>
+          <button onclick="addEditActivity()" style="background:var(--blue);border:none;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">+ <span data-i18n="addBtn">Añadir</span></button>
         </div>
         <div id="editActList" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
     </div>
     <div class="modal-foot" style="justify-content:space-between;">
-      <button class="btn btn-sec" onclick="deleteIssue()" style="color:#d32f2f;border-color:#d32f2f;">🗑 Eliminar</button>
+      <button class="btn btn-sec" onclick="deleteIssue()" style="color:#d32f2f;border-color:#d32f2f;" data-i18n="deleteBtn">🗑 Eliminar</button>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-sec" onclick="closeModal('editIssueModal')">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveEditIssue()">Guardar cambios</button>
+        <button class="btn btn-sec" onclick="closeModal('editIssueModal')" data-i18n="cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveEditIssue()" data-i18n="saveChanges">Guardar cambios</button>
       </div>
     </div>
   </div>
@@ -1147,11 +1136,11 @@ const ICONS = {
   site:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6c0-2.5-2-4.5-4.5-4.5z" stroke="#05233D" stroke-width="1.2"/><circle cx="8" cy="6" r="1.5" fill="#05233D"/></svg>'
 };
 const META = {
-  begues:{name:'BEGUES I & II',loc:'Olesa de Bonesvalls, Barcelona',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'100 MW (2×50)'},{l:'Tensión',v:'400 kV'},{l:'SET',v:'SET Begues'},{l:'Línea',v:'7.58 km'},{l:'Operador',v:'REE'}]},
-  fregacedos:{name:'FREGACEDOS I, II & V',loc:'Humanes de Madrid, Madrid',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'15 MW (3×5)'},{l:'Tensión',v:'15 kV'},{l:'SET',v:'SET C. Fregacedos'},{l:'Operador',v:'i-DE'}]},
-  mutxamel:{name:'MUTXAMEL',loc:'Mutxamel, Alicante',status:'En tramitación',sc:'yellow',specs:[{l:'Potencia',v:'5 MW'},{l:'Tensión',v:'20 kV'},{l:'SET',v:'SET El Cantalar'},{l:'Línea',v:'2.5 km'},{l:'Operador',v:'i-DE'}]},
-  entrenucleos:{name:'ENTRENÚCLEOS',loc:'Dos Hermanas, Sevilla',status:'Stand-by',sc:'grey',specs:[{l:'Potencia',v:'49 MW'},{l:'Tensión',v:'220 kV'},{l:'SET',v:'SET Entrenúcleos'},{l:'Operador',v:'REE'}]},
-  custom_nuevas_oportunidades:{name:'NUEVAS OPORTUNIDADES',loc:'Pipeline · En análisis',status:'En análisis',sc:'blue',specs:[{l:'Herramienta',v:'Temos AI'},{l:'Fase',v:'Identificación'}]}
+  begues:{name:'BEGUES I & II',loc:'Olesa de Bonesvalls, Barcelona',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'100 MW (2×50)'},{l:'Tensión',v:'400 kV'},{l:'SET',v:'SET Begues'},{l:'Línea',v:'7.58 km'},{l:'Operador',v:'REE'}]},
+  fregacedos:{name:'FREGACEDOS I, II & V',loc:'Humanes de Madrid, Madrid',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'15 MW (3×5)'},{l:'Tensión',v:'15 kV'},{l:'SET',v:'SET C. Fregacedos'},{l:'Operador',v:'i-DE'}]},
+  mutxamel:{name:'MUTXAMEL',loc:'Mutxamel, Alicante',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'5 MW'},{l:'Tensión',v:'20 kV'},{l:'SET',v:'SET El Cantalar'},{l:'Línea',v:'2.5 km'},{l:'Operador',v:'i-DE'}]},
+  entrenucleos:{name:'ENTRENÚCLEOS',loc:'Dos Hermanas, Sevilla',statusKey:'standby',sc:'grey',specs:[{l:'Potencia',v:'49 MW'},{l:'Tensión',v:'220 kV'},{l:'SET',v:'SET Entrenúcleos'},{l:'Operador',v:'REE'}]},
+  custom_nuevas_oportunidades:{name:'NUEVAS OPORTUNIDADES',loc:'Pipeline · En análisis',statusKey:'analysis',sc:'blue',specs:[{l:'Herramienta',v:'Temos AI'},{l:'Fase',v:'Identificación'}]}
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
@@ -1253,7 +1242,8 @@ function fichaTabSwitchProj(pid){
   document.getElementById('projFichaName').textContent=m.name||pid;
   document.getElementById('projFichaLoc').innerHTML='📍 '+(m.loc||'');
   const smap={yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
-  document.getElementById('projFichaBadge').innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
+  const statusLbl2=m.statusKey?t('projStatus'+m.statusKey.charAt(0).toUpperCase()+m.statusKey.slice(1)):(m.status||'');
+  document.getElementById('projFichaBadge').innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${statusLbl2}</span>`;
   document.getElementById('projFichaSpecs').innerHTML=(m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
   // Re-render just the current tab content
   if(tab==='cronograma') renderGantt();
@@ -1312,7 +1302,8 @@ function openProject(pid){
   document.getElementById('projFichaName').textContent = m.name||pid;
   document.getElementById('projFichaLoc').innerHTML = '📍 '+(m.loc||'');
   const smap = {yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
-  document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${m.status||''}</span>`;
+  const statusLbl=m.statusKey?t('projStatus'+m.statusKey.charAt(0).toUpperCase()+m.statusKey.slice(1)):(m.status||'');
+  document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${statusLbl}</span>`;
   document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
   showTab('dashboard');
 }
@@ -1349,7 +1340,8 @@ function weekRange(iso){
   const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
   const sun=new Date(mon); sun.setDate(mon.getDate()+6);
   const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
-  return `${f(mon)} al ${f(sun)}/${sun.getFullYear()}`;
+  const sep=lang==='en'?' to ':' al ';
+  return `${f(mon)}${sep}${f(sun)}/${sun.getFullYear()}`;
 }
 
 // ── CALENDAR ───────────────────────────────────────────────────────────────
@@ -1472,26 +1464,58 @@ document.addEventListener('mousedown',e=>{
 });
 
 // ── FEED ───────────────────────────────────────────────────────────────────
+function _prevWeekKey(weekKey){
+  // Returns the ISO Monday key of the week immediately before weekKey that has data
+  const keys=Object.keys(allData).filter(w=>w<weekKey&&!_weekIsEmpty(allData[w])).sort();
+  return keys.length?keys[keys.length-1]:null;
+}
+function _issueChanged(iss,prevIssues){
+  // Returns true if this issue is new or has different text/status from all prev issues with same topic
+  if(!prevIssues||!prevIssues.length) return true;
+  const match=prevIssues.find(p=>p.topic===iss.topic);
+  if(!match) return true; // new topic
+  return match.text!==iss.text||match.status!==iss.status;
+}
 function renderFeed(){
-  const wd=allData[currentWeek]||{};
+  // Portfolio always shows the most recent week with data
+  const feedWeek=_latestDataWeek()||currentWeek;
+  const wd=allData[feedWeek]||{};
   const names={begues:'BEGUES I & II',fregacedos:'FREGACEDOS I, II & V',mutxamel:'MUTXAMEL',entrenucleos:'ENTRENÚCLEOS',custom_nuevas_oportunidades:'NUEVAS OPORTUNIDADES'};
+  const prevKey=_prevWeekKey(currentWeek);
+  const prevWd=prevKey?allData[prevKey]||{}:{};
+  // Build items — only those changed vs previous week (or all if no prev week)
   const items=[];
-  Object.entries(wd).forEach(([pid,issues])=>issues.forEach(iss=>items.push({pid,iss})));
+  Object.entries(wd).forEach(([pid,issues])=>{
+    if(pid==='custom_nuevas_oportunidades') return; // skip pipeline in feed
+    issues.forEach(iss=>{
+      const prevIssues=prevWd[pid]||[];
+      if(!prevKey||_issueChanged(iss,prevIssues)) items.push({pid,iss});
+    });
+  });
   items.sort((a,b)=>({red:0,yellow:1,green:2}[a.iss.status]||1)-({red:0,yellow:1,green:2}[b.iss.status]||1));
-  document.getElementById('feedCount').textContent=items.length+' '+(lang==='en'?'results':'resultados');
+  const countLbl=items.length+' '+t(items.length===1?'update':'updates2');
+  document.getElementById('feedCount').textContent=countLbl;
+  if(!items.length){
+    document.getElementById('updatesFeed').innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-3);font-size:12px;">${t('noChanges')}</div>`;
+    return;
+  }
+  // Format week range for date label
+  const wRange=weekRange(feedWeek);
   document.getElementById('updatesFeed').innerHTML=items.map(({pid,iss})=>{
     const st=STATUS_MAP_GET(iss.status);
+    const prevIssues=prevWd[pid]||[];
+    const match=prevKey?prevIssues.find(p=>p.topic===iss.topic):null;
+    const isNew=!match;
+    const newBadge=isNew?`<span style="background:var(--green-s-l);color:var(--green-s);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">${t('newBadge')}</span>`:'';
     return `<div class="update-item" onclick="openProject('${pid}')">
       <span class="update-badge ${st.cls}">${st.lbl}</span>
-      <div>
-        <div class="update-proj">${names[pid]||pid} · <span style="font-weight:500;">${iss.topic}</span></div>
-        <div class="update-text">${(iss.text||'').slice(0,90)}${(iss.text||'').length>90?'…':''}</div>
-        <div class="update-date">02/10/2026</div>
+      <div style="flex:1;min-width:0;">
+        <div class="update-proj" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${names[pid]||pid} · <span style="font-weight:500;">${iss.topic}</span>${newBadge}</div>
+        <div class="update-text" style="white-space:normal;overflow:visible;display:block;-webkit-line-clamp:unset;">${iss.text||''}</div>
+        <div class="update-date">${wRange}</div>
       </div>
     </div>`;
   }).join('');
-  const opp=(wd.custom_nuevas_oportunidades||[])[0];
-  if(opp) document.getElementById('oppText').textContent=(opp.text||'').slice(0,120);
 }
 
 // ── SEMANAL PAGE ──────────────────────────────────────────────────────────
@@ -1800,9 +1824,9 @@ function renderGantt(){
   if(!tasks.length){
     container.innerHTML=`<div style="text-align:center;padding:60px 32px;color:var(--text-3);">
       <div style="font-size:40px;margin-bottom:12px;">📅</div>
-      <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Sin cronograma</div>
-      <div style="font-size:12px;margin-bottom:20px;">Crea la primera fase para empezar</div>
-      ${isEditor?`<button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">+ Nueva fase</button>`:''}
+      <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">${t('ganttEmpty')}</div>
+      <div style="font-size:12px;margin-bottom:20px;">${t('ganttEmptySub')}</div>
+      ${isEditor?`<button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">+ ${t('ganttNewPhase')}</button>`:''}
     </div>`;
     return;
   }
@@ -2344,6 +2368,28 @@ const T={
     statusClosed:'Cerrado',
     statusStandby:'Stand-by',
     confirmAllDrafts:'Confirmar todos',
+    tabDashboard:'Dashboard',tabSchedule:'Cronograma',tabDocs:'Documentación',
+    backToPortfolio:'← Volver al portfolio',
+    attentionBadge:'⚠️ Atención',
+    addDocBtn:'+ Añadir documento',
+    modalAddTitle:'+ Nueva novedad',modalEditTitle:'✏️ Editar novedad',
+    formProject:'Proyecto',formTopic:'Apartado / Tema',formStatus:'Estado',
+    formImpact:'Impacto',formDesc:'Descripción',formAttention:'¿Requiere atención?',
+    formActivities:'Actividades',
+    optOngoing:'🟡 En curso',optBlocked:'🔴 Bloqueado',optClosed:'🟢 Cerrado',
+    optStandby:'⚪ Stand-by',optNoImpact:'Sin impacto',optYes:'Sí ⚠️',
+    deleteBtn:'🗑 Eliminar',saveChanges:'Guardar cambios',
+    pwdTitle:'Acceso editor',pwdDesc:'Introduce la contraseña para editar.',
+    pwdErr:'Contraseña incorrecta',pwdUnlock:'Desbloquear',
+    noChanges:'Sin cambios respecto a la semana anterior',
+    newBadge:'NUEVO',
+    projStatusPermitting:'En tramitación',
+    projStatusStandby:'Stand-by',
+    projStatusAnalysis:'En análisis',
+    noRecentUpdates:'Sin novedades recientes',
+    dashLocation:'Ubicación',dashMilestones:'Hitos principales',dashLatestUpdates:'Últimas novedades',
+    dashNA:'Dashboard no disponible para este proyecto.',
+    ganttEmpty:'Sin cronograma',ganttEmptySub:'Crea la primera fase para empezar',ganttNewPhase:'Nueva fase',
   },
   en:{
     weekTitle:'Week of',
@@ -2420,6 +2466,28 @@ const T={
     statusClosed:'Closed',
     statusStandby:'On hold',
     confirmAllDrafts:'Confirm all',
+    tabDashboard:'Dashboard',tabSchedule:'Schedule',tabDocs:'Documentation',
+    backToPortfolio:'← Back to portfolio',
+    attentionBadge:'⚠️ Attention',
+    addDocBtn:'+ Add document',
+    modalAddTitle:'+ New update',modalEditTitle:'✏️ Edit update',
+    formProject:'Project',formTopic:'Topic / Item',formStatus:'Status',
+    formImpact:'Impact',formDesc:'Description',formAttention:'Requires attention?',
+    formActivities:'Activities',
+    optOngoing:'🟡 In progress',optBlocked:'🔴 Blocked',optClosed:'🟢 Closed',
+    optStandby:'⚪ On hold',optNoImpact:'No impact',optYes:'Yes ⚠️',
+    deleteBtn:'🗑 Delete',saveChanges:'Save changes',
+    pwdTitle:'Editor access',pwdDesc:'Enter the password to edit.',
+    pwdErr:'Incorrect password',pwdUnlock:'Unlock',
+    noChanges:'No changes vs previous week',
+    newBadge:'NEW',
+    projStatusPermitting:'In permitting',
+    projStatusStandby:'On hold',
+    projStatusAnalysis:'In analysis',
+    noRecentUpdates:'No recent updates',
+    dashLocation:'Location',dashMilestones:'Key milestones',dashLatestUpdates:'Latest updates',
+    dashNA:'Dashboard not available for this project.',
+    ganttEmpty:'No schedule',ganttEmptySub:'Create the first phase to get started',ganttNewPhase:'New phase',
   }
 };
 function t(key,...args){
@@ -2428,13 +2496,20 @@ function t(key,...args){
   return s;
 }
 function applyLang(){
-  // Re-render semanal to pick up language changes
-  if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
   // Static labels with data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const k=el.getAttribute('data-i18n');
     el.textContent=t(k);
   });
+  // Select option labels with data-i18n-opt
+  document.querySelectorAll('[data-i18n-opt]').forEach(el=>{
+    const k=el.getAttribute('data-i18n-opt');
+    el.textContent=t(k);
+  });
+  // Re-render semanal to pick up language changes
+  if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
+  // Re-render feed (portfolio) to pick up language changes
+  if(document.getElementById('updatesFeed')) renderFeed();
 }
 
 // ── UTILS ───────────────────────────────────────────────────────────────────
@@ -2447,13 +2522,12 @@ function setLang(l){
   const badge=document.getElementById('translatingBadge');
   if(badge) badge.style.display='';
   applyLang();
-  renderFeed();
   // Re-render current visible page content
   const semVisible=document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none';
   if(semVisible) renderSemanal();
   if(currentProjId){
     const projVisible=document.getElementById('page-project')&&document.getElementById('page-project').classList.contains('on');
-    if(projVisible){ renderGantt(); renderDocs(); }
+    if(projVisible){ openProject(currentProjId); }
   }
   setTimeout(()=>{ if(badge) badge.style.display='none'; },600);
 }
@@ -2521,7 +2595,7 @@ let _dashMapPid=null;
 function renderDashboard(){
   const pid=currentProjId;
   if(!PROJ_COORDS[pid]){
-    document.getElementById('dashboardContent').innerHTML='<div style="padding:40px;text-align:center;color:var(--text-3);">Dashboard no disponible para este proyecto.</div>';
+    document.getElementById('dashboardContent').innerHTML=`<div style="padding:40px;text-align:center;color:var(--text-3);">${t('dashNA')}</div>`;
     return;
   }
   const milestones=PROJ_MILESTONES[pid]||[];
@@ -2547,15 +2621,15 @@ function renderDashboard(){
           </div>
         </div>`;
       }).join('')
-    :`<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px;">Sin novedades recientes</div>`;
+    :`<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px;">${t('noRecentUpdates')}</div>`;
   document.getElementById('dashboardContent').innerHTML=`
     <div class="dash-grid">
       <div class="dash-card" style="grid-column:1;grid-row:1;">
-        <div class="dash-card-hdr">📍 Ubicación</div>
+        <div class="dash-card-hdr">📍 ${t('dashLocation')}</div>
         <div id="dashMap"></div>
       </div>
       <div class="dash-card" style="grid-column:2;grid-row:1 / span 2;">
-        <div class="dash-card-hdr">📅 Hitos principales</div>
+        <div class="dash-card-hdr">📅 ${t('dashMilestones')}</div>
         <div class="dash-card-body">
           ${milestones.map(m=>`<div class="timeline-item">
             <div class="tl-dot ${m.st}"></div>
@@ -2567,7 +2641,7 @@ function renderDashboard(){
         </div>
       </div>
       <div class="dash-card" style="grid-column:1;grid-row:2;">
-        <div class="dash-card-hdr">📋 Últimas novedades</div>
+        <div class="dash-card-hdr">📋 ${t('dashLatestUpdates')}</div>
         ${updHtml}
       </div>
     </div>`;
