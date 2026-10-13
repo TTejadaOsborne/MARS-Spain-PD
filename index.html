@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2358 -->
+<!-- BUILD:20261014-0005 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2358';
+  const BUILD='20261014-0005';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1144,70 +1144,61 @@ function translateTopic(topic){
 }
 
 // ── DEEPL TRANSLATION ENGINE ───────────────────────────────────────────────
-const DEEPL_API_KEY = 'c2e3e77e-5fde-4bcf-a064-e0fb7b9c95db:fx';
-const DEEPL_CACHE_KEY = 'mars_deepl_cache_v1';
-let _deeplCache = null;
+// ── TRANSLATION ENGINE (MyMemory API + localStorage cache) ─────────────────
+// DeepL Free blocks browser CORS; MyMemory is free, CORS-open, no key needed.
+// Registered email for higher daily limit:
+const TX_EMAIL = 'tomitejada@gmail.com';
+const TX_CACHE_KEY = 'mars_tx_cache_v2';
+let _txCache = null;
 function _getCache(){
-  if(_deeplCache) return _deeplCache;
-  try { _deeplCache=JSON.parse(localStorage.getItem(DEEPL_CACHE_KEY)||'{}'); }
-  catch(e){ _deeplCache={}; }
-  return _deeplCache;
+  if(_txCache) return _txCache;
+  try { _txCache=JSON.parse(localStorage.getItem(TX_CACHE_KEY)||'{}'); }
+  catch(e){ _txCache={}; }
+  return _txCache;
 }
 function _saveCache(){
-  try { localStorage.setItem(DEEPL_CACHE_KEY,JSON.stringify(_deeplCache||{})); }
+  try { localStorage.setItem(TX_CACHE_KEY,JSON.stringify(_txCache||{})); }
   catch(e){}
 }
-// Translate array of strings ES→EN via DeepL, using cache to avoid re-translating
-async function deeplTranslate(texts){
-  if(!DEEPL_API_KEY||!texts.length) return texts;
+async function _translateOne(text){
+  if(!text||!text.trim()) return text;
   const cache=_getCache();
-  const result=[...texts];
-  const toFetch=[], toFetchIdx=[];
-  texts.forEach((txt,i)=>{
-    if(!txt||lang==='es'){ return; }
-    if(cache[txt]!==undefined){ result[i]=cache[txt]; }
-    else { toFetch.push(txt); toFetchIdx.push(i); }
-  });
-  if(!toFetch.length) return result;
+  if(cache[text]!==undefined) return cache[text];
   try {
-    const body=new URLSearchParams();
-    body.append('auth_key',DEEPL_API_KEY);
-    body.append('target_lang','EN');
-    body.append('source_lang','ES');
-    toFetch.forEach(t=>body.append('text',t));
-    const res=await fetch('https://api-free.deepl.com/v2/translate',{method:'POST',body});
-    if(!res.ok) throw new Error('DeepL '+res.status);
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|en&de=${encodeURIComponent(TX_EMAIL)}`;
+    const res=await fetch(url);
+    if(!res.ok) throw new Error('TX '+res.status);
     const json=await res.json();
-    json.translations.forEach((tr,i)=>{
-      const translated=tr.text;
-      cache[toFetch[i]]=translated;
-      result[toFetchIdx[i]]=translated;
-    });
-    _deeplCache=cache;
+    const translated=(json.responseData&&json.responseData.translatedText)||text;
+    _txCache[text]=translated;
     _saveCache();
-  } catch(e){ console.warn('DeepL error:',e); }
-  return result;
+    return translated;
+  } catch(e){ console.warn('TX error:',e); return text; }
 }
-// Translate all visible free-text fields in the semanal feed after render
+async function translateTexts(texts){
+  if(lang==='es'||!texts.length) return texts;
+  return Promise.all(texts.map(t=>_translateOne(t)));
+}
+// Post-render: translate free-text in Weekly Update feed
 async function translateSemanalFreeText(){
-  if(lang==='es'||!DEEPL_API_KEY) return;
+  if(lang==='es') return;
   const feed=document.getElementById('semanalFeed');
   if(!feed) return;
-  // Collect all .i-text and .act-row span elements
   const textEls=[...feed.querySelectorAll('.i-text')];
   const actEls=[...feed.querySelectorAll('.act-row span:first-of-type')];
   const allEls=[...textEls,...actEls];
   const originals=allEls.map(el=>el.textContent.trim());
-  const translated=await deeplTranslate(originals);
+  const translated=await translateTexts(originals);
   allEls.forEach((el,i)=>{ if(translated[i]) el.textContent=translated[i]; });
 }
+// Post-render: translate free-text in Portfolio feed
 async function translateFeedFreeText(){
-  if(lang==='es'||!DEEPL_API_KEY) return;
+  if(lang==='es') return;
   const feed=document.getElementById('updatesFeed');
   if(!feed) return;
   const textEls=[...feed.querySelectorAll('.update-text')];
   const originals=textEls.map(el=>el.textContent.trim());
-  const translated=await deeplTranslate(originals);
+  const translated=await translateTexts(originals);
   textEls.forEach((el,i)=>{ if(translated[i]) el.textContent=translated[i]; });
 }
 
