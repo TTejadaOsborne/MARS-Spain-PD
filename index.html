@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261013-2355 -->
+<!-- BUILD:20261013-2358 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261013-2355';
+  const BUILD='20261013-2358';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1144,7 +1144,7 @@ function translateTopic(topic){
 }
 
 // ── DEEPL TRANSLATION ENGINE ───────────────────────────────────────────────
-const DEEPL_API_KEY = '';   // ← pegar API key DeepL Free aquí
+const DEEPL_API_KEY = 'c2e3e77e-5fde-4bcf-a064-e0fb7b9c95db:fx';
 const DEEPL_CACHE_KEY = 'mars_deepl_cache_v1';
 let _deeplCache = null;
 function _getCache(){
