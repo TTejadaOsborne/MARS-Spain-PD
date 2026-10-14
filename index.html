@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0759 -->
+<!-- BUILD:20261014-0807 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0759';
+  const BUILD='20261014-0807';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1080,8 +1080,17 @@ const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Terreno", "start": 
 // ── PERSISTENCE ────────────────────────────────────────────────────────────
 const STORAGE_KEY='mars_pd_data_v3';
 const NAV_KEY='mars_pd_nav_v1';
+const LAST_CHANGE_KEY='mars_pd_last_change';
+function _nowTS(){
+  const n=new Date();
+  return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
 function saveData(){
-  try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(allData)); }catch(e){}
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(allData));
+    localStorage.setItem(LAST_CHANGE_KEY,_nowTS());
+    updateLastReportingBadge();
+  }catch(e){}
 }
 function _weekIsEmpty(wd){
   // A week entry is "empty" if it has no projects, or all project arrays are empty
@@ -1245,15 +1254,19 @@ const META = {
 function updateLastReportingBadge(){
   const el=document.getElementById('lastUpdatedBadge');
   if(!el) return;
-  const latest=_latestDataWeek();
-  if(!latest){ el.textContent=''; return; }
-  const [y,m,d]=latest.split('-');
-  // End of reporting week = Sunday = Monday + 6 days
-  const mon=new Date(Number(y),Number(m)-1,Number(d));
-  const sun=new Date(mon); sun.setDate(mon.getDate()+6);
-  const fmt=dt=>String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
-  const label=lang==='en'?`Reporting week of ${fmt(mon)}`:`Semana de reporte del ${fmt(mon)}`;
-  el.textContent=label;
+  let ts='';
+  try{ ts=localStorage.getItem(LAST_CHANGE_KEY)||''; }catch(e){}
+  if(ts){
+    el.textContent=lang==='en'?`Updated ${ts}`:`Actualizado ${ts}`;
+  } else {
+    // Fallback: show most recent reporting week
+    const latest=_latestDataWeek();
+    if(!latest){ el.textContent=''; return; }
+    const [y,m,d]=latest.split('-');
+    const mon=new Date(Number(y),Number(m)-1,Number(d));
+    const fmt=dt=>String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
+    el.textContent=lang==='en'?`Reporting week of ${fmt(mon)}`:`Semana de reporte del ${fmt(mon)}`;
+  }
 }
 function _latestDataWeek(){
   // Returns the most recent Monday key in allData that has actual data
@@ -2715,10 +2728,10 @@ init();
 <script>
 // ── DASHBOARD ───────────────────────────────────────────────────────────────
 const PROJ_COORDS = {
-  begues:       [41.5105, 1.8736],
-  fregacedos:   [40.2445, -3.8821],
-  mutxamel:     [38.4330, -0.4052],
-  entrenucleos: [37.3050, -5.9234]
+  begues:       [41.342636,  1.837134],
+  fregacedos:   [40.276657, -3.811154],
+  mutxamel:     [38.430367, -0.436316],
+  entrenucleos: [37.320170, -5.947184]
 };
 const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
 const PROJ_MILESTONES = {
