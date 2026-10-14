@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-1200 -->
+<!-- BUILD:20261014-1145 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-1200';
+  const BUILD='20261014-1145';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1101,7 +1101,9 @@ const NAV_KEY='mars_pd_nav_v1';
 const LAST_CHANGE_KEY='mars_pd_last_change';
 function _nowTS(){
   const n=new Date();
-  return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  const date=String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear();
+  const time=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  return `${date} a las ${time}`;
 }
 function saveData(){
   try{
@@ -1296,14 +1298,12 @@ function updateLastReportingBadge(){
   let ts='';
   try{ ts=localStorage.getItem(LAST_CHANGE_KEY)||''; }catch(e){}
   if(ts){
-    el.textContent=lang==='en'?`Updated: ${ts}`:`Actualizado: ${ts}`;
+    // ts already contains "DD/MM/YYYY a las HH:MM"
+    el.textContent=lang==='en'
+      ?'Updated on '+ts.replace(' a las ',' at ')
+      :`Actualizado el ${ts}`;
   } else {
-    // Fallback: show most recent reporting week
-    const latest=_latestDataWeek();
-    if(!latest){ el.textContent=''; return; }
-    const [y,m,d]=latest.split('-');
-    const fmt=`${d}/${m}/${y}`;
-    el.textContent=lang==='en'?`Week: ${fmt}`:`Semana: ${fmt}`;
+    el.textContent='';
   }
 }
 function _latestDataWeek(){
