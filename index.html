@@ -12,14 +12,18 @@
 <script>document.addEventListener('DOMContentLoaded',function(){var links=document.querySelectorAll('link[rel*="icon"]');links.forEach(function(l){var h=l.cloneNode();document.head.removeChild(l);document.head.appendChild(h);});});</script>
 <title>MARS Spain PD</title>
 <script>
+// Build stamp — global so updateLastReportingBadge() can read it
+const BUILD='20261014-1200';
+</script>
+<script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-1200';
+  const _B=BUILD;
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
         const m=html.match(/<!--\s*BUILD:([\w-]+)\s*-->/);
-        if(m&&m[1]!==BUILD){ location.reload(true); }
+        if(m&&m[1]!==_B){ location.reload(true); }
       }).catch(()=>{});
   }
   setTimeout(()=>{ check(); setInterval(check,60000); },5000);
@@ -1529,12 +1533,12 @@ function showTab(tab){
 }
 
 function weekRange(iso){
-  const d=new Date(iso);
-  const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
+  const d=new Date(iso+'T12:00:00');
+  const mon=new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7));
   const sun=new Date(mon); sun.setDate(mon.getDate()+6);
-  const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+  const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
   const sep=lang==='en'?' to ':' al ';
-  return `${f(mon)}${sep}${f(sun)}/${sun.getFullYear()}`;
+  return `${f(mon)}${sep}${f(sun)}`;
 }
 
 // ── CALENDAR ───────────────────────────────────────────────────────────────
@@ -2876,40 +2880,35 @@ function renderPortfolioTimeline(){
   el.innerHTML=h;
 }
 
+// Hitos del popup alineados con los 5 hitos estándar del PTL
 const PROJ_MILESTONES = {
   begues:[
-    {label:'Solicitud de acceso a red',date:'Nov 2023',st:'done'},
-    {label:'Obtención punto de acceso (ATR)',date:'Mar 2024',st:'done'},
-    {label:'Estudio de impacto ambiental',date:'En curso',st:'active'},
-    {label:'Autorización administrativa previa',date:'T3 2025',st:'pending'},
-    {label:'Autorización de construcción',date:'T1 2026',st:'pending'},
-    {label:'Inicio de obras',date:'T3 2026',st:'pending'},
-    {label:'COD',date:'T1 2028',st:'pending'}
+    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Mar 2024',st:'done'},
+    {label:'Permiso Ambiental (DIA/IIA)',date:'En curso',st:'active'},
+    {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T1 2026',st:'pending'},
+    {label:'Licencia de Obras (L.O.)',date:'T3 2026',st:'pending'},
+    {label:'Ready-to-Build (RTB)',date:'T1 2028',st:'pending'}
   ],
   fregacedos:[
-    {label:'Solicitud de acceso a red',date:'Sep 2023',st:'done'},
-    {label:'Obtención punto de acceso (ATR)',date:'Feb 2024',st:'done'},
-    {label:'Permisos municipales',date:'En curso',st:'active'},
-    {label:'Autorización administrativa previa',date:'T4 2025',st:'pending'},
-    {label:'Autorización de construcción',date:'T2 2026',st:'pending'},
-    {label:'Inicio de obras',date:'T4 2026',st:'pending'},
-    {label:'COD',date:'T2 2027',st:'pending'}
+    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Feb 2024',st:'done'},
+    {label:'Permiso Ambiental (DIA/IIA)',date:'En curso',st:'active'},
+    {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
+    {label:'Licencia de Obras (L.O.)',date:'T4 2026',st:'pending'},
+    {label:'Ready-to-Build (RTB)',date:'T2 2027',st:'pending'}
   ],
   mutxamel:[
-    {label:'Solicitud de acceso a red',date:'Jun 2023',st:'done'},
-    {label:'Obtención punto de acceso (ATR)',date:'Ene 2024',st:'done'},
-    {label:'Resolución disputa DSA Univergy',date:'En curso',st:'active'},
-    {label:'Autorización administrativa previa',date:'T2 2026',st:'pending'},
-    {label:'Autorización de construcción',date:'T4 2026',st:'pending'},
-    {label:'COD',date:'T4 2027',st:'pending'}
+    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Ene 2024',st:'done'},
+    {label:'Permiso Ambiental (DIA/IIA)',date:'En disputa',st:'blocked'},
+    {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
+    {label:'Licencia de Obras (L.O.)',date:'T4 2026',st:'pending'},
+    {label:'Ready-to-Build (RTB)',date:'T4 2027',st:'pending'}
   ],
   entrenucleos:[
-    {label:'Solicitud de acceso a red',date:'Abr 2023',st:'done'},
-    {label:'Consultas REE (hibridación)',date:'En curso',st:'active'},
-    {label:'Resolución acceso definitivo',date:'T1 2026',st:'pending'},
-    {label:'Estudio de impacto ambiental',date:'T2 2026',st:'pending'},
-    {label:'Autorización administrativa previa',date:'T3 2026',st:'pending'},
-    {label:'COD',date:'T2 2028',st:'pending'}
+    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'En consulta',st:'active'},
+    {label:'Permiso Ambiental (DIA/IIA)',date:'T2 2026',st:'pending'},
+    {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T3 2026',st:'pending'},
+    {label:'Licencia de Obras (L.O.)',date:'T1 2027',st:'pending'},
+    {label:'Ready-to-Build (RTB)',date:'T2 2028',st:'pending'}
   ]
 };
 let _dashMap=null;
