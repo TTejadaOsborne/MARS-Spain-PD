@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-1145 -->
+<!-- BUILD:20261014-1200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-1145';
+  const BUILD='20261014-1200';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -280,9 +280,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-#projPopupFooter{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;flex-shrink:0;}
-.btn-popup-open{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity 0.15s;}
-.btn-popup-open:hover{opacity:0.85;}
+/* portfolio milestone timeline */
+.ptl-wrap{overflow-x:auto;padding-bottom:4px;}
+.ptl-table{width:100%;border-collapse:separate;border-spacing:0;}
+.ptl-table th{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-3);padding:0 8px 10px;white-space:nowrap;text-align:left;}
+.ptl-table th:first-child{min-width:140px;}
+.ptl-table td{padding:7px 8px;border-top:1px solid var(--border);font-size:12px;white-space:nowrap;}
+.ptl-table td:first-child{font-size:11.5px;font-weight:600;color:var(--navy);white-space:normal;}
+.ptl-proj-name{font-size:10px;font-weight:800;letter-spacing:0.3px;color:var(--text-2);margin-bottom:2px;}
+.ptl-cell{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.ptl-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;}
+.ptl-badge.done{background:var(--green-l);color:var(--green);}
+.ptl-badge.active{background:var(--yellow-l);color:#92680a;}
+.ptl-badge.pending{background:var(--bg);color:var(--text-3);border:1px solid var(--border);}
+.ptl-badge.blocked{background:var(--red-l);color:var(--red);}
+.ptl-date{font-size:9.5px;color:var(--text-3);padding-left:2px;}
 .timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
 .timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
 .tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
@@ -516,6 +528,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           <div class="proj-list-mw" style="color:var(--blue);">—</div><span>›</span>
         </div>
       </div>
+    </div>
+    <!-- Milestone Timeline -->
+    <div class="card" style="margin-top:0;">
+      <div class="card-hdr">
+        <h3 data-i18n="timelineTitle">Estado de permisos</h3>
+      </div>
+      <div style="padding:14px 16px 16px;" id="portfolioTimeline"></div>
     </div>
     <!-- Feed -->
     <div class="card">
@@ -1298,12 +1317,25 @@ function updateLastReportingBadge(){
   let ts='';
   try{ ts=localStorage.getItem(LAST_CHANGE_KEY)||''; }catch(e){}
   if(ts){
-    // ts already contains "DD/MM/YYYY a las HH:MM"
+    // ts contains "DD/MM/YYYY a las HH:MM" — set by saveData()
     el.textContent=lang==='en'
       ?'Updated on '+ts.replace(' a las ',' at ')
       :`Actualizado el ${ts}`;
   } else {
-    el.textContent='';
+    // Fallback: parse BUILD constant (YYYYMMDD-HHMM) as last deploy date
+    try{
+      const b=BUILD||'';
+      const m=b.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
+      if(m){
+        const [,y,mo,d,h,mi]=m;
+        const fallback=`${d}/${mo}/${y} a las ${h}:${mi}`;
+        el.textContent=lang==='en'
+          ?'Updated on '+fallback.replace(' a las ',' at ')
+          :`Actualizado el ${fallback}`;
+      } else {
+        el.textContent='';
+      }
+    }catch(e){ el.textContent=''; }
   }
 }
 function _latestDataWeek(){
@@ -1337,6 +1369,7 @@ function init(){
       renderFeed();
     }
   }catch(e){ renderFeed(); }
+  renderPortfolioTimeline();
   applyLang();
 }
 
@@ -2512,6 +2545,7 @@ const T={
     statAlertSub:'Mutxamel requiere atención',
     mapTitle:'Localización de proyectos',
     mapSub:'Selecciona un punto para abrir su ficha',
+    timelineTitle:'Estado de permisos',
     feedTitle:'Últimas actualizaciones',
     openAnalysis:'Abrir análisis →',
     viewProject:'Ver proyecto →',
@@ -2634,6 +2668,7 @@ const T={
     statAlertSub:'Mutxamel requires attention',
     mapTitle:'Project locations',
     mapSub:'Select a point to open its file',
+    timelineTitle:'Permitting status',
     feedTitle:'Latest updates',
     openAnalysis:'Open analysis →',
     viewProject:'View project →',
@@ -2723,6 +2758,8 @@ function applyLang(){
   if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
   // Re-render feed (portfolio) to pick up language changes
   if(document.getElementById('updatesFeed')) renderFeed();
+  // Re-render portfolio timeline
+  renderPortfolioTimeline();
   // Update reporting badge with correct language
   updateLastReportingBadge();
 }
@@ -2769,6 +2806,76 @@ const PROJ_COORDS = {
   entrenucleos: [37.320170, -5.947184]
 };
 const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
+// ── PORTFOLIO MILESTONE TIMELINE ────────────────────────────────────────────
+// 5 standard phases × 4 projects
+// st: 'done' | 'active' | 'pending' | 'blocked'
+const PTL_PHASES = [
+  {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'P.A.C.'},
+  {key:'dia', label:'Permiso\nAmbiental', short:'DIA/IIA'},
+  {key:'aap', label:'Autorizaciones\nAdministrativas', short:'AAP + AAC'},
+  {key:'lo',  label:'Licencia\nde Obras', short:'L.O.'},
+  {key:'rtb', label:'Ready-to-Build', short:'RTB'},
+];
+const PTL_DATA = {
+  begues: [
+    {st:'done',    date:'Mar 2024'},
+    {st:'active',  date:'En curso'},
+    {st:'pending', date:'T1 2026'},
+    {st:'pending', date:'T3 2026'},
+    {st:'pending', date:'T1 2028'},
+  ],
+  fregacedos: [
+    {st:'done',    date:'Feb 2024'},
+    {st:'active',  date:'En curso'},
+    {st:'pending', date:'T2 2026'},
+    {st:'pending', date:'T4 2026'},
+    {st:'pending', date:'T2 2027'},
+  ],
+  mutxamel: [
+    {st:'done',    date:'Ene 2024'},
+    {st:'blocked', date:'En disputa'},
+    {st:'pending', date:'T2 2026'},
+    {st:'pending', date:'T4 2026'},
+    {st:'pending', date:'T4 2027'},
+  ],
+  entrenucleos: [
+    {st:'active',  date:'En consulta'},
+    {st:'pending', date:'T2 2026'},
+    {st:'pending', date:'T3 2026'},
+    {st:'pending', date:'T1 2027'},
+    {st:'pending', date:'T2 2028'},
+  ],
+};
+const PTL_PROJ_META = {
+  begues:       {name:'Begues I & II',       dot:'var(--green)'},
+  fregacedos:   {name:'Fregacedos I, II & V',dot:'var(--green)'},
+  mutxamel:     {name:'Mutxamel',            dot:'var(--red)'},
+  entrenucleos: {name:'Entrenúcleos',        dot:'var(--grey)'},
+};
+function renderPortfolioTimeline(){
+  const el=document.getElementById('portfolioTimeline');
+  if(!el) return;
+  const ST_LABEL={done:'✓ Obtenido',active:'En curso',pending:'Pendiente',blocked:'⚠ Bloqueado'};
+  const pids=['begues','fregacedos','mutxamel','entrenucleos'];
+  let h=`<div class="ptl-wrap"><table class="ptl-table"><thead><tr>
+    <th>Proyecto</th>
+    ${PTL_PHASES.map(p=>`<th>${p.label.replace('\n','<br>')}</th>`).join('')}
+  </tr></thead><tbody>`;
+  pids.forEach(pid=>{
+    const m=PTL_PROJ_META[pid];
+    const phases=PTL_DATA[pid]||[];
+    h+=`<tr>
+      <td><div class="ptl-proj-name" style="display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:${m.dot};flex-shrink:0;display:inline-block;"></span>${m.name}</div></td>
+      ${phases.map(ph=>`<td><div class="ptl-cell">
+        <span class="ptl-badge ${ph.st}">${ST_LABEL[ph.st]||ph.st}</span>
+        <span class="ptl-date">${ph.date||''}</span>
+      </div></td>`).join('')}
+    </tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  el.innerHTML=h;
+}
+
 const PROJ_MILESTONES = {
   begues:[
     {label:'Solicitud de acceso a red',date:'Nov 2023',st:'done'},
@@ -2844,7 +2951,6 @@ function openProjectPopup(pid){
   document.getElementById('projPopupLoc').textContent=meta.loc||'';
   document.getElementById('projPopupUpdates').innerHTML=updHtml;
   document.getElementById('projPopupMilestones').innerHTML=milestonesHtml;
-  document.getElementById('projPopupOpenBtn').onclick=()=>{ closeProjectPopup(); openProject(pid); };
   popup.style.display='flex';
   requestAnimationFrame(()=>popup.classList.add('visible'));
   // Init Leaflet map in popup
@@ -2974,9 +3080,6 @@ function renderDashboard(){
         <div class="popup-section-hdr">📋 Últimas novedades</div>
         <div id="projPopupUpdates"></div>
       </div>
-    </div>
-    <div id="projPopupFooter">
-      <button class="btn-popup-open" id="projPopupOpenBtn">Abrir ficha completa →</button>
     </div>
   </div>
 </div>
