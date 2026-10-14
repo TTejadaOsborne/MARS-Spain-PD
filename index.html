@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0814 -->
+<!-- BUILD:20261014-1200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0814';
+  const BUILD='20261014-1200';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1111,33 +1111,54 @@ function saveData(){
   }catch(e){}
 }
 function _weekIsEmpty(wd){
-  // A week entry is "empty" if it has no projects, or all project arrays are empty
   if(!wd) return true;
   const keys=Object.keys(wd);
   if(!keys.length) return true;
   return keys.every(pid=>!(wd[pid]||[]).length);
 }
+// Normalize any ISO date to its Monday (YYYY-MM-DD)
+function _toMonday(iso){
+  const d=new Date(iso);
+  const dow=(d.getDay()+6)%7; // Mon=0
+  d.setDate(d.getDate()-dow);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+// Rename all keys in a data object to their Monday, merging if collision
+function _normalizeKeys(data){
+  const out={};
+  Object.keys(data).forEach(w=>{
+    const mon=_toMonday(w);
+    if(!out[mon]) out[mon]={};
+    const wd=data[w];
+    Object.keys(wd).forEach(pid=>{
+      if(!out[mon][pid]) out[mon][pid]=[];
+      out[mon][pid]=out[mon][pid].concat(wd[pid]);
+    });
+  });
+  return out;
+}
 function loadData(){
+  const dbNorm=_normalizeKeys(JSON.parse(JSON.stringify(DB)));
   try{
     const raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       const parsed=JSON.parse(raw);
-      const merged=Object.assign({},parsed);
+      const parsedNorm=_normalizeKeys(parsed);
       // For each DB week: add if missing OR restore from DB if stored week is empty
-      Object.keys(DB).forEach(w=>{
-        if(!merged[w]||_weekIsEmpty(merged[w])){
-          merged[w]=JSON.parse(JSON.stringify(DB[w]));
+      Object.keys(dbNorm).forEach(w=>{
+        if(!parsedNorm[w]||_weekIsEmpty(parsedNorm[w])){
+          parsedNorm[w]=dbNorm[w];
         }
       });
-      return merged;
+      return parsedNorm;
     }
   }catch(e){}
-  return JSON.parse(JSON.stringify(DB));
+  return dbNorm;
 }
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let allData = loadData();
-let currentWeek = '2026-10-02';
+let currentWeek = _toMonday('2026-10-05'); // Monday of current data week
 let currentProjId = null;
 let isEditor = false;
 let lang = 'es';
@@ -1275,15 +1296,14 @@ function updateLastReportingBadge(){
   let ts='';
   try{ ts=localStorage.getItem(LAST_CHANGE_KEY)||''; }catch(e){}
   if(ts){
-    el.textContent=lang==='en'?`Updated ${ts}`:`Actualizado ${ts}`;
+    el.textContent=lang==='en'?`Updated: ${ts}`:`Actualizado: ${ts}`;
   } else {
     // Fallback: show most recent reporting week
     const latest=_latestDataWeek();
     if(!latest){ el.textContent=''; return; }
     const [y,m,d]=latest.split('-');
-    const mon=new Date(Number(y),Number(m)-1,Number(d));
-    const fmt=dt=>String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
-    el.textContent=lang==='en'?`Reporting week of ${fmt(mon)}`:`Semana de reporte del ${fmt(mon)}`;
+    const fmt=`${d}/${m}/${y}`;
+    el.textContent=lang==='en'?`Week: ${fmt}`:`Semana: ${fmt}`;
   }
 }
 function _latestDataWeek(){
@@ -1906,12 +1926,10 @@ function copyPrevWeek(srcWeek){
   }
 }
 function navWeekSemanal(dir){
-  const d=new Date(currentWeek);
+  // currentWeek is always a Monday; just add/subtract 7 days
+  const d=new Date(currentWeek+'T12:00:00');
   d.setDate(d.getDate()+dir*7);
-  const dow=(d.getDay()+6)%7;
-  d.setDate(d.getDate()-dow);
-  const toIso=dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
-  currentWeek=toIso(d);
+  currentWeek=_toMonday(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   renderSemanal();
 }
 
