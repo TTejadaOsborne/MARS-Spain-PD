@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0010 -->
+<!-- BUILD:20261014-0759 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0010';
+  const BUILD='20261014-0759';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1242,15 +1242,26 @@ const META = {
 };
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-const BUILD_TS = (function(){const n=new Date();return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');})();
+function updateLastReportingBadge(){
+  const el=document.getElementById('lastUpdatedBadge');
+  if(!el) return;
+  const latest=_latestDataWeek();
+  if(!latest){ el.textContent=''; return; }
+  const [y,m,d]=latest.split('-');
+  // End of reporting week = Sunday = Monday + 6 days
+  const mon=new Date(Number(y),Number(m)-1,Number(d));
+  const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  const fmt=dt=>String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
+  const label=lang==='en'?`Reporting week of ${fmt(mon)}`:`Semana de reporte del ${fmt(mon)}`;
+  el.textContent=label;
+}
 function _latestDataWeek(){
   // Returns the most recent Monday key in allData that has actual data
   const weeks=Object.keys(allData).filter(w=>!_weekIsEmpty(allData[w])).sort();
   return weeks.length?weeks[weeks.length-1]:null;
 }
 function init(){
-  const el=document.getElementById('lastUpdatedBadge');
-  if(el) el.textContent=`Actualizado ${BUILD_TS}`;
+  updateLastReportingBadge();
   // Restore navigation state
   try{
     const nav=JSON.parse(localStorage.getItem(NAV_KEY)||'null');
@@ -2664,6 +2675,8 @@ function applyLang(){
   if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
   // Re-render feed (portfolio) to pick up language changes
   if(document.getElementById('updatesFeed')) renderFeed();
+  // Update reporting badge with correct language
+  updateLastReportingBadge();
 }
 
 // ── UTILS ───────────────────────────────────────────────────────────────────
