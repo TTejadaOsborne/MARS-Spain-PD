@@ -281,6 +281,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #projPopupClose{background:rgba(255,255,255,0.12);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;}
 #projPopupClose:hover{background:rgba(255,255,255,0.22);}
 #projPopupBody{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:14px;padding:16px;}
+#projPopupUpdatesRow{grid-column:1/span 2;}
 #projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
@@ -1685,6 +1686,9 @@ function renderFeed(){
   Object.entries(wd).forEach(([pid,issues])=>{
     if(pid==='custom_nuevas_oportunidades') return; // skip pipeline in feed
     issues.forEach(iss=>{
+      // Skip entries with no actual news
+      const txt=(iss.text||'').trim().toLowerCase();
+      if(txt.startsWith('no hay novedades')) return;
       items.push({pid,iss});
     });
   });
@@ -2796,9 +2800,6 @@ function exportData(){
 }
 document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('on');}));
 
-// ── START ───────────────────────────────────────────────────────────────────
-init();
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
@@ -2814,10 +2815,10 @@ const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
 // 5 standard phases × 4 projects
 // st: 'done' | 'active' | 'pending' | 'blocked'
 const PTL_PHASES = [
-  {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'P.A.C.'},
+  {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'PAC'},
   {key:'dia', label:'Permiso\nAmbiental', short:'DIA/IIA'},
   {key:'aap', label:'Autorizaciones\nAdministrativas', short:'AAP + AAC'},
-  {key:'lo',  label:'Licencia\nde Obras', short:'L.O.'},
+  {key:'lo',  label:'Licencia\nde Obras', short:'LO'},
   {key:'rtb', label:'Ready-to-Build', short:'RTB'},
 ];
 const PTL_DATA = {
@@ -2883,31 +2884,31 @@ function renderPortfolioTimeline(){
 // Hitos del popup alineados con los 5 hitos estándar del PTL
 const PROJ_MILESTONES = {
   begues:[
-    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Mar 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (PAC)',date:'Mar 2024',st:'done'},
     {label:'Permiso Ambiental (DIA/IIA)',date:'En curso',st:'active'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T1 2026',st:'pending'},
-    {label:'Licencia de Obras (L.O.)',date:'T3 2026',st:'pending'},
+    {label:'Licencia de Obras (LO)',date:'T3 2026',st:'pending'},
     {label:'Ready-to-Build (RTB)',date:'T1 2028',st:'pending'}
   ],
   fregacedos:[
-    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Feb 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (PAC)',date:'Feb 2024',st:'done'},
     {label:'Permiso Ambiental (DIA/IIA)',date:'En curso',st:'active'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
-    {label:'Licencia de Obras (L.O.)',date:'T4 2026',st:'pending'},
+    {label:'Licencia de Obras (LO)',date:'T4 2026',st:'pending'},
     {label:'Ready-to-Build (RTB)',date:'T2 2027',st:'pending'}
   ],
   mutxamel:[
-    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'Ene 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (PAC)',date:'Ene 2024',st:'done'},
     {label:'Permiso Ambiental (DIA/IIA)',date:'En disputa',st:'blocked'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
-    {label:'Licencia de Obras (L.O.)',date:'T4 2026',st:'pending'},
+    {label:'Licencia de Obras (LO)',date:'T4 2026',st:'pending'},
     {label:'Ready-to-Build (RTB)',date:'T4 2027',st:'pending'}
   ],
   entrenucleos:[
-    {label:'Permiso de Acceso y Conexión (P.A.C.)',date:'En consulta',st:'active'},
+    {label:'Permiso de Acceso y Conexión (PAC)',date:'En consulta',st:'active'},
     {label:'Permiso Ambiental (DIA/IIA)',date:'T2 2026',st:'pending'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T3 2026',st:'pending'},
-    {label:'Licencia de Obras (L.O.)',date:'T1 2027',st:'pending'},
+    {label:'Licencia de Obras (LO)',date:'T1 2027',st:'pending'},
     {label:'Ready-to-Build (RTB)',date:'T2 2028',st:'pending'}
   ]
 };
@@ -3051,6 +3052,9 @@ function renderDashboard(){
     _dashMap.invalidateSize();
   },50);
 }
+
+// ── START ───────────────────────────────────────────────────────────────────
+init();
 </script>
 
 <!-- ── Project summary popup ── -->
@@ -3074,8 +3078,8 @@ function renderDashboard(){
         <div class="popup-section-hdr">📅 Hitos principales</div>
         <div id="projPopupMilestones"></div>
       </div>
-      <!-- Latest updates (col 1, row 2) -->
-      <div style="grid-column:1;grid-row:2;">
+      <!-- Latest updates (full width, row 2) -->
+      <div id="projPopupUpdatesRow">
         <div class="popup-section-hdr">📋 Últimas novedades</div>
         <div id="projPopupUpdates"></div>
       </div>
