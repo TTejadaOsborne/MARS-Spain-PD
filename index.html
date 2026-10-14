@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0812 -->
+<!-- BUILD:20261014-0814 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0812';
+  const BUILD='20261014-0814';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -1621,15 +1621,14 @@ function renderFeed(){
   const feedWeek=_latestDataWeek()||currentWeek;
   const wd=allData[feedWeek]||{};
   const names={begues:'BEGUES I & II',fregacedos:'FREGACEDOS I, II & V',mutxamel:'MUTXAMEL',entrenucleos:'ENTRENÚCLEOS',custom_nuevas_oportunidades:'NUEVAS OPORTUNIDADES'};
-  const prevKey=_prevWeekKey(currentWeek);
+  const prevKey=_prevWeekKey(feedWeek);
   const prevWd=prevKey?allData[prevKey]||{}:{};
-  // Build items — only those changed vs previous week (or all if no prev week)
+  // Build items — all issues in the latest week, marking new/changed ones
   const items=[];
   Object.entries(wd).forEach(([pid,issues])=>{
     if(pid==='custom_nuevas_oportunidades') return; // skip pipeline in feed
     issues.forEach(iss=>{
-      const prevIssues=prevWd[pid]||[];
-      if(!prevKey||_issueChanged(iss,prevIssues)) items.push({pid,iss});
+      items.push({pid,iss});
     });
   });
   items.sort((a,b)=>({red:0,yellow:1,green:2}[a.iss.status]||1)-({red:0,yellow:1,green:2}[b.iss.status]||1));
