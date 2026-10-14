@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-0807 -->
+<!-- BUILD:20261014-0812 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
-  const BUILD='20261014-0807';
+  const BUILD='20261014-0812';
   function check(){
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(html=>{
@@ -265,6 +265,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .dash-card-hdr{padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);display:flex;align-items:center;gap:6px;}
 .dash-card-body{padding:16px;}
 #dashMap{height:260px;width:100%;z-index:0;}
+/* ── Project popup ── */
+#projPopup{display:none;position:fixed;inset:0;z-index:9000;align-items:center;justify-content:center;background:rgba(5,35,61,0.35);backdrop-filter:blur(3px);opacity:0;transition:opacity 0.22s;}
+#projPopup.visible{opacity:1;}
+#projPopupCard{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(5,35,61,0.22),0 4px 16px rgba(5,35,61,0.12);width:min(820px,92vw);max-height:88vh;overflow-y:auto;transform:translateY(12px);transition:transform 0.22s;display:flex;flex-direction:column;}
+#projPopup.visible #projPopupCard{transform:translateY(0);}
+#projPopupHdr{background:var(--navy);border-radius:16px 16px 0 0;padding:18px 22px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0;}
+#projPopupHdrLeft{display:flex;flex-direction:column;gap:3px;}
+#projPopupName{font-size:17px;font-weight:800;color:#fff;letter-spacing:0.3px;}
+#projPopupLoc{font-size:11px;color:rgba(255,255,255,0.55);}
+#projPopupClose{background:rgba(255,255,255,0.12);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;}
+#projPopupClose:hover{background:rgba(255,255,255,0.22);}
+#projPopupBody{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:14px;padding:16px;}
+#projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
+.popup-section{display:flex;flex-direction:column;gap:0;}
+.popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+#projPopupFooter{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;flex-shrink:0;}
+.btn-popup-open{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity 0.15s;}
+.btn-popup-open:hover{opacity:0.85;}
 .timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
 .timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
 .tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
@@ -432,7 +450,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
               
             </g>
             <!-- BEGUES -->
-            <g class="proj-pin" onclick="openProject('begues')" style="cursor:pointer;">
+            <g class="proj-pin" onclick="openProjectPopup('begues')" style="cursor:pointer;">
               <circle cx="845" cy="178" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="845" cy="178" r="9" fill="#399439"/>
               <rect x="796" y="120" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
@@ -441,7 +459,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
               <text x="845" y="150" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
             </g>
             <!-- FREGACEDOS -->
-            <g class="proj-pin" onclick="openProject('fregacedos')" style="cursor:pointer;">
+            <g class="proj-pin" onclick="openProjectPopup('fregacedos')" style="cursor:pointer;">
               <circle cx="627" cy="218" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="627" cy="218" r="9" fill="#399439"/>
               <rect x="574" y="160" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
@@ -450,7 +468,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
               <text x="627" y="190" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
             </g>
             <!-- MUTXAMEL -->
-            <g class="proj-pin" onclick="openProject('mutxamel')" style="cursor:pointer;">
+            <g class="proj-pin" onclick="openProjectPopup('mutxamel')" style="cursor:pointer;">
               <circle cx="756" cy="336" r="18" fill="none" stroke="#C8201E" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="756" cy="336" r="9" fill="#C8201E"/>
               <rect x="710" y="278" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
@@ -459,7 +477,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
               <text x="756" y="308" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
             </g>
             <!-- ENTRENUCLEOS -->
-            <g class="proj-pin" onclick="openProject('entrenucleos')" style="cursor:pointer;">
+            <g class="proj-pin" onclick="openProjectPopup('entrenucleos')" style="cursor:pointer;">
               <circle cx="566" cy="410" r="13" fill="none" stroke="#6B7280" stroke-width="1.2" opacity="0.5"/>
               <circle cx="566" cy="410" r="7" fill="#6B7280"/>
               <rect x="511" y="352" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
@@ -2772,6 +2790,69 @@ const PROJ_MILESTONES = {
 };
 let _dashMap=null;
 let _dashMapPid=null;
+// ── PROJECT POPUP (from portfolio map) ─────────────────────────────────────
+let _popupMap=null;
+let _popupMapPid=null;
+function openProjectPopup(pid){
+  const meta=META[pid]||{};
+  const milestones=PROJ_MILESTONES[pid]||[];
+  const allWeeks=Object.keys(allData).sort().reverse();
+  let recentUpdates=[];
+  for(const wk of allWeeks){
+    const items=(allData[wk]||{})[pid]||[];
+    items.forEach(u=>recentUpdates.push({week:wk,...u}));
+    if(recentUpdates.length>=3) break;
+  }
+  const updHtml=recentUpdates.length
+    ?recentUpdates.slice(0,3).map(u=>{
+        const st=STATUS_MAP_GET(u.status);
+        return `<div class="dash-last-update">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="i-sbar ${st.sbar}" style="width:3px;height:32px;border-radius:2px;flex-shrink:0;"></div>
+            <div>
+              <div class="dash-upd-topic">${translateTopic(u.topic)||''}</div>
+              <div class="dash-upd-text">${u.text||''}</div>
+              <div class="dash-upd-meta"><span class="status-tag ${st.cls}">${st.lbl}</span><span style="font-size:10px;color:var(--text-3);">${weekRange(u.week)}</span></div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')
+    :`<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px;">${t('noRecentUpdates')}</div>`;
+  const milestonesHtml=milestones.map(m=>`<div class="timeline-item">
+    <div class="tl-dot ${m.st}"></div>
+    <div><div class="tl-label">${m.label}</div><div class="tl-date">${m.date}</div></div>
+  </div>`).join('');
+  const popup=document.getElementById('projPopup');
+  document.getElementById('projPopupName').textContent=meta.name||pid;
+  document.getElementById('projPopupLoc').textContent=meta.loc||'';
+  document.getElementById('projPopupUpdates').innerHTML=updHtml;
+  document.getElementById('projPopupMilestones').innerHTML=milestonesHtml;
+  document.getElementById('projPopupOpenBtn').onclick=()=>{ closeProjectPopup(); openProject(pid); };
+  popup.style.display='flex';
+  requestAnimationFrame(()=>popup.classList.add('visible'));
+  // Init Leaflet map in popup
+  setTimeout(()=>{
+    const coords=PROJ_COORDS[pid];
+    if(!coords) return;
+    const zoom=PROJ_ZOOM[pid]||13;
+    if(_popupMap&&_popupMapPid!==pid){ _popupMap.remove(); _popupMap=null; }
+    if(!_popupMap){
+      _popupMap=L.map('projPopupMap',{zoomControl:false,scrollWheelZoom:false,attributionControl:false}).setView(coords,zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(_popupMap);
+      const icon=L.divIcon({className:'',html:`<div style="width:12px;height:12px;background:var(--navy);border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(5,35,61,0.4);"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
+      L.marker(coords,{icon}).addTo(_popupMap);
+    } else {
+      _popupMap.setView(coords,zoom);
+    }
+    _popupMapPid=pid;
+    _popupMap.invalidateSize();
+  },80);
+}
+function closeProjectPopup(){
+  const popup=document.getElementById('projPopup');
+  popup.classList.remove('visible');
+  setTimeout(()=>{ popup.style.display='none'; },220);
+}
 function renderDashboard(){
   const pid=currentProjId;
   if(!PROJ_COORDS[pid]){
@@ -2849,5 +2930,38 @@ function renderDashboard(){
   },50);
 }
 </script>
+
+<!-- ── Project summary popup ── -->
+<div id="projPopup" onclick="if(event.target===this)closeProjectPopup()">
+  <div id="projPopupCard">
+    <div id="projPopupHdr">
+      <div id="projPopupHdrLeft">
+        <div id="projPopupName"></div>
+        <div id="projPopupLoc"></div>
+      </div>
+      <button id="projPopupClose" onclick="closeProjectPopup()" title="Cerrar">✕</button>
+    </div>
+    <div id="projPopupBody">
+      <!-- Map (col 1, row 1) -->
+      <div style="grid-column:1;grid-row:1;">
+        <div class="popup-section-hdr">📍 Ubicación</div>
+        <div id="projPopupMap"></div>
+      </div>
+      <!-- Milestones (col 2, rows 1-2) -->
+      <div style="grid-column:2;grid-row:1/span 2;">
+        <div class="popup-section-hdr">📅 Hitos principales</div>
+        <div id="projPopupMilestones"></div>
+      </div>
+      <!-- Latest updates (col 1, row 2) -->
+      <div style="grid-column:1;grid-row:2;">
+        <div class="popup-section-hdr">📋 Últimas novedades</div>
+        <div id="projPopupUpdates"></div>
+      </div>
+    </div>
+    <div id="projPopupFooter">
+      <button class="btn-popup-open" id="projPopupOpenBtn">Abrir ficha completa →</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
