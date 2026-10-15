@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1200 -->
+<!-- BUILD:20261015-1215 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1200';
+const BUILD='20261015-1215';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -289,10 +289,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 /* ── Visual Timeline (PTL) — single-line PPTX style ─────────────── */
-.ptl-outer{overflow-x:auto;overflow-y:visible;padding:8px 0 4px;}
-.ptl-scroll{min-width:700px;position:relative;overflow:visible;}
-/* single axis container */
-.ptl-axis-container{position:relative;height:300px;padding:0 24px;overflow:visible;}
+.ptl-outer{overflow-x:auto;overflow-y:auto;padding:0;}
+.ptl-scroll{min-width:700px;position:relative;}
+/* single axis container — must be tall enough to contain all chip lanes without overflow */
+.ptl-axis-container{position:relative;height:380px;padding:0 24px;}
 /* the horizontal axis line */
 .ptl-axis-line{position:absolute;left:24px;right:24px;top:50%;height:4px;background:var(--navy);border-radius:2px;transform:translateY(-50%);}
 /* year circle markers */
@@ -563,7 +563,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div class="card-hdr">
         <h3 data-i18n="timelineTitle">Timeline de permisos</h3>
       </div>
-      <div style="padding:10px 0 10px;" id="portfolioTimeline"></div>
+      <div id="portfolioTimeline"></div>
     </div>
   </div>
 </div>
@@ -3001,7 +3001,7 @@ function renderPortfolioTimeline(){
   // Each chip is ~22px tall; offsets from axis center
   // Lane 0 (nearest above): chip bottom at axis - 8px → top = 150 - 30 - 8 = 112px (top = calc(50% - 38px))
   // Offsets: distance from axis CENTER to chip TOP
-  const laneOffsets=[38,68,98,128, 38,68,98,128]; // px from axis center to chip top
+  const laneOffsets=[34,64,96,130, 34,64,96,130]; // px from axis center to chip edge
 
   // ── Build HTML ──────────────────────────────────────────────────
   let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
