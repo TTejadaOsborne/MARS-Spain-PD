@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261014-1200 -->
+<!-- BUILD:20261015-1100 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261014-1200';
+const BUILD='20261015-1100';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -285,21 +285,52 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-/* portfolio milestone timeline */
-.ptl-wrap{overflow-x:auto;padding-bottom:4px;}
-.ptl-table{width:100%;border-collapse:separate;border-spacing:0;}
-.ptl-table th{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-3);padding:0 8px 10px;white-space:nowrap;text-align:left;}
-.ptl-table th:first-child{min-width:140px;}
-.ptl-table td{padding:7px 8px;border-top:1px solid var(--border);font-size:12px;white-space:nowrap;}
-.ptl-table td:first-child{font-size:11.5px;font-weight:600;color:var(--navy);white-space:normal;}
-.ptl-proj-name{font-size:10px;font-weight:800;letter-spacing:0.3px;color:var(--text-2);margin-bottom:2px;}
-.ptl-cell{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
-.ptl-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;}
-.ptl-badge.done{background:var(--green-l);color:var(--green);}
-.ptl-badge.active{background:var(--yellow-l);color:#92680a;}
-.ptl-badge.pending{background:var(--bg);color:var(--text-3);border:1px solid var(--border);}
-.ptl-badge.blocked{background:var(--red-l);color:var(--red);}
-.ptl-date{font-size:9.5px;color:var(--text-3);padding-left:2px;}
+/* ── Visual Timeline (PTL) ─────────────────────────────────────── */
+.ptl-outer{overflow-x:auto;padding:0 0 8px;}
+.ptl-scroll{min-width:680px;}
+/* legend */
+.ptl-legend{display:flex;align-items:center;gap:16px;padding:0 20px 14px;flex-wrap:wrap;}
+.ptl-leg-item{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--text-2);}
+.ptl-leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+/* phase header row */
+.ptl-phase-row{display:grid;grid-template-columns:120px 1fr;padding:0 20px 6px;}
+.ptl-phases-hdr{display:flex;justify-content:space-between;}
+.ptl-phase-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);text-align:center;flex:1;line-height:1.3;}
+/* project rows */
+.ptl-proj-row{display:grid;grid-template-columns:120px 1fr;align-items:center;border-top:1px solid var(--border);padding:14px 20px;}
+.ptl-proj-row:first-child{border-top:none;}
+.ptl-proj-label{display:flex;align-items:center;gap:7px;}
+.ptl-proj-label-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ptl-proj-label-name{font-size:11px;font-weight:700;color:var(--navy);line-height:1.3;}
+.ptl-proj-label-mw{font-size:9px;color:var(--text-3);}
+/* the timeline track */
+.ptl-track{position:relative;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.ptl-track-line{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--border);transform:translateY(-50%);z-index:0;}
+.ptl-track-fill{position:absolute;left:0;top:50%;height:2px;transform:translateY(-50%);background:var(--green);z-index:1;transition:width .4s ease;}
+/* nodes */
+.ptl-node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;cursor:default;}
+.ptl-node-circle{width:20px;height:20px;border-radius:50%;border:2.5px solid;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:#fff;transition:transform .15s;}
+.ptl-node:hover .ptl-node-circle{transform:scale(1.25);}
+.ptl-node.done .ptl-node-circle{background:var(--green);border-color:var(--green);color:#fff;}
+.ptl-node.active .ptl-node-circle{background:#fff;border-color:#B07D00;color:#B07D00;box-shadow:0 0 0 3px rgba(176,125,0,0.15);}
+.ptl-node.blocked .ptl-node-circle{background:#fff;border-color:var(--red);color:var(--red);box-shadow:0 0 0 3px rgba(200,32,30,0.12);}
+.ptl-node.pending .ptl-node-circle{background:#fff;border-color:var(--border-2);color:var(--text-3);}
+/* date label below node */
+.ptl-node-date{font-size:8.5px;font-weight:600;color:var(--text-3);margin-top:5px;white-space:nowrap;text-align:center;max-width:60px;line-height:1.2;}
+.ptl-node.done .ptl-node-date{color:var(--green);}
+.ptl-node.active .ptl-node-date{color:#92680a;font-weight:700;}
+.ptl-node.blocked .ptl-node-date{color:var(--red);}
+/* short label above node */
+.ptl-node-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;color:var(--text-3);white-space:nowrap;}
+.ptl-node.done .ptl-node-tag{color:var(--green-d);}
+.ptl-node.active .ptl-node-tag{color:#92680a;}
+.ptl-node.blocked .ptl-node-tag{color:var(--red);}
+/* tooltip on hover */
+.ptl-node-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.ptl-node-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--navy);}
+.ptl-node:hover .ptl-node-tooltip{opacity:1;}
+/* RTB node: highlight */
+.ptl-node.rtb-node .ptl-node-circle{width:22px;height:22px;font-size:10px;}
 .timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
 .timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
 .tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
@@ -2553,7 +2584,7 @@ const T={
     statAlertSub:'Mutxamel requiere atención',
     mapTitle:'Localización de proyectos',
     mapSub:'Selecciona un punto para abrir su ficha',
-    timelineTitle:'Estado de permisos',
+    timelineTitle:'Timeline de permisos',
     feedTitle:'Últimas actualizaciones',
     openAnalysis:'Abrir análisis →',
     viewProject:'Ver proyecto →',
@@ -2676,7 +2707,7 @@ const T={
     statAlertSub:'Mutxamel requires attention',
     mapTitle:'Project locations',
     mapSub:'Select a point to open its file',
-    timelineTitle:'Permitting status',
+    timelineTitle:'Permitting Timeline',
     feedTitle:'Latest updates',
     openAnalysis:'Open analysis →',
     viewProject:'View project →',
@@ -2852,32 +2883,81 @@ const PTL_DATA = {
   ],
 };
 const PTL_PROJ_META = {
-  begues:       {name:'Begues I & II',       dot:'var(--green)'},
-  fregacedos:   {name:'Fregacedos I, II & V',dot:'var(--green)'},
-  mutxamel:     {name:'Mutxamel',            dot:'var(--red)'},
-  entrenucleos: {name:'Entrenúcleos',        dot:'var(--grey)'},
+  begues:       {name:'Begues I & II',        dot:'var(--green)', mw:200},
+  fregacedos:   {name:'Fregacedos I, II & V', dot:'var(--blue)',  mw:300},
+  mutxamel:     {name:'Mutxamel',             dot:'var(--red)',   mw:150},
+  entrenucleos: {name:'Entrenúcleos',         dot:'var(--grey)',  mw:100},
 };
 function renderPortfolioTimeline(){
   const el=document.getElementById('portfolioTimeline');
   if(!el) return;
-  const ST_LABEL={done:'✓ Obtenido',active:'En curso',pending:'Pendiente',blocked:'⚠ Bloqueado'};
+  const isEN=lang==='en';
+  // Node icons by status
+  const ST_ICON={done:'✓',active:'●',pending:'○',blocked:'✕'};
+  // Legend labels
+  const LEG=[
+    {st:'done',  color:'var(--green)',  label:isEN?'Obtained':'Obtenido'},
+    {st:'active',color:'#B07D00',       label:isEN?'In progress':'En curso'},
+    {st:'blocked',color:'var(--red)',   label:isEN?'Blocked':'Bloqueado'},
+    {st:'pending',color:'var(--border-2)',label:isEN?'Pending':'Pendiente'},
+  ];
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
-  let h=`<div class="ptl-wrap"><table class="ptl-table"><thead><tr>
-    <th>Proyecto</th>
-    ${PTL_PHASES.map(p=>`<th>${p.label.replace('\n','<br>')}</th>`).join('')}
-  </tr></thead><tbody>`;
-  pids.forEach(pid=>{
+  // build legend
+  let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
+  h+=`<div class="ptl-legend">`;
+  LEG.forEach(l=>{
+    h+=`<div class="ptl-leg-item"><div class="ptl-leg-dot" style="background:${l.color};border:2px solid ${l.color};"></div>${l.label}</div>`;
+  });
+  h+=`</div>`;
+  // phase header
+  h+=`<div class="ptl-phase-row"><div></div><div class="ptl-phases-hdr">`;
+  PTL_PHASES.forEach(p=>{
+    const lbl=p.label.replace('\n','<br>');
+    h+=`<div class="ptl-phase-lbl">${lbl}</div>`;
+  });
+  h+=`</div></div>`;
+  // project rows
+  h+=`<div>`;
+  pids.forEach((pid,pi)=>{
     const m=PTL_PROJ_META[pid];
     const phases=PTL_DATA[pid]||[];
-    h+=`<tr>
-      <td><div class="ptl-proj-name" style="display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:${m.dot};flex-shrink:0;display:inline-block;"></span>${m.name}</div></td>
-      ${phases.map(ph=>`<td><div class="ptl-cell">
-        <span class="ptl-badge ${ph.st}">${ST_LABEL[ph.st]||ph.st}</span>
-        <span class="ptl-date">${ph.date||''}</span>
-      </div></td>`).join('')}
-    </tr>`;
+    // compute fill width: % of track filled based on done/active phases
+    const doneCount=phases.filter(p=>p.st==='done').length;
+    const activeCount=phases.filter(p=>p.st==='active').length;
+    const fillPct=phases.length>1
+      ? Math.round(((doneCount + (activeCount>0?0.5:0))/(phases.length-1))*100)
+      : 0;
+    // nodes HTML
+    const nodesH=phases.map((ph,i)=>{
+      const icon=ST_ICON[ph.st]||'○';
+      const isLast=i===phases.length-1;
+      const shortLbl=PTL_PHASES[i]?PTL_PHASES[i].short:'';
+      const tooltipFull=PTL_PHASES[i]?PTL_PHASES[i].label.replace('\n',' '):'';
+      const tooltip=`<div class="ptl-node-tooltip">${tooltipFull}: ${ph.date}</div>`;
+      return `<div class="ptl-node ${ph.st}${isLast?' rtb-node':''}">
+        ${tooltip}
+        <div class="ptl-node-tag">${shortLbl}</div>
+        <div class="ptl-node-circle">${icon}</div>
+        <div class="ptl-node-date">${ph.date}</div>
+      </div>`;
+    }).join('');
+    const projMW=m.mw?`${m.mw} MW`:'';
+    h+=`<div class="ptl-proj-row">
+      <div class="ptl-proj-label">
+        <div class="ptl-proj-label-dot" style="background:${m.dot};"></div>
+        <div>
+          <div class="ptl-proj-label-name">${m.name}</div>
+          <div class="ptl-proj-label-mw">${projMW}</div>
+        </div>
+      </div>
+      <div class="ptl-track">
+        <div class="ptl-track-line"></div>
+        <div class="ptl-track-fill" style="width:${fillPct}%;"></div>
+        ${nodesH}
+      </div>
+    </div>`;
   });
-  h+=`</tbody></table></div>`;
+  h+=`</div></div></div>`;
   el.innerHTML=h;
 }
 
