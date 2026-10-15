@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1115';
+const BUILD='20261015-1430';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -285,52 +285,55 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-/* ── Visual Timeline (PTL) ─────────────────────────────────────── */
+/* ── Visual Timeline (PTL) — shared axis ─────────────────────────── */
 .ptl-outer{overflow-x:auto;padding:0 0 8px;}
-.ptl-scroll{min-width:680px;}
+.ptl-scroll{min-width:720px;}
 /* legend */
-.ptl-legend{display:flex;align-items:center;gap:16px;padding:0 20px 14px;flex-wrap:wrap;}
+.ptl-legend{display:flex;align-items:center;gap:16px;padding:0 20px 12px;flex-wrap:wrap;}
 .ptl-leg-item{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--text-2);}
 .ptl-leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-/* phase header row */
-.ptl-phase-row{display:grid;grid-template-columns:120px 1fr;padding:0 20px 6px;}
-.ptl-phases-hdr{display:flex;justify-content:space-between;}
-.ptl-phase-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);text-align:center;flex:1;line-height:1.3;}
+/* shared axis wrapper */
+.ptl-axis-wrap{position:relative;padding:0 20px 4px;}
+/* quarter header row */
+.ptl-q-row{position:relative;display:grid;margin-left:130px;margin-right:0;height:22px;}
+.ptl-q-label{position:absolute;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-3);transform:translateX(-50%);white-space:nowrap;}
+/* baseline axis line */
+.ptl-axis-line{height:2px;background:var(--border);margin:0 0 0 130px;border-radius:1px;position:relative;}
+.ptl-q-tick{position:absolute;top:-3px;width:1px;height:8px;background:var(--border-2);}
+/* today marker */
+.ptl-today{position:absolute;top:-14px;width:2px;background:var(--red);bottom:-4px;z-index:5;}
+.ptl-today-lbl{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:7.5px;font-weight:800;color:var(--red);white-space:nowrap;letter-spacing:0.3px;}
 /* project rows */
-.ptl-proj-row{display:grid;grid-template-columns:120px 1fr;align-items:center;border-top:1px solid var(--border);padding:14px 20px;}
+.ptl-proj-row{display:grid;grid-template-columns:130px 1fr;align-items:center;border-top:1px solid var(--border);padding:10px 20px 10px;}
 .ptl-proj-row:first-child{border-top:none;}
 .ptl-proj-label{display:flex;align-items:center;gap:7px;}
 .ptl-proj-label-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .ptl-proj-label-name{font-size:11px;font-weight:700;color:var(--navy);line-height:1.3;}
 .ptl-proj-label-mw{font-size:9px;color:var(--text-3);}
-/* the timeline track */
-.ptl-track{position:relative;display:flex;align-items:center;justify-content:space-between;height:60px;}
-.ptl-track-line{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--border);transform:translateY(-50%);z-index:0;}
-.ptl-track-fill{position:absolute;left:0;top:50%;height:2px;transform:translateY(-50%);background:var(--green);z-index:1;transition:width .4s ease;}
+/* the timeline track per project */
+.ptl-track{position:relative;height:52px;}
 /* nodes */
-.ptl-node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;cursor:default;}
-.ptl-node-circle{width:20px;height:20px;border-radius:50%;border:2.5px solid;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:#fff;transition:transform .15s;}
+.ptl-node{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;cursor:default;}
+.ptl-node-circle{width:20px;height:20px;border-radius:50%;border:2.5px solid;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:var(--bg,#fff);transition:transform .15s;}
 .ptl-node:hover .ptl-node-circle{transform:scale(1.25);}
 .ptl-node.done .ptl-node-circle{background:var(--green);border-color:var(--green);color:#fff;}
-.ptl-node.active .ptl-node-circle{background:#fff;border-color:#B07D00;color:#B07D00;box-shadow:0 0 0 3px rgba(176,125,0,0.15);}
-.ptl-node.blocked .ptl-node-circle{background:#fff;border-color:var(--red);color:var(--red);box-shadow:0 0 0 3px rgba(200,32,30,0.12);}
-.ptl-node.pending .ptl-node-circle{background:#fff;border-color:var(--border-2);color:var(--text-3);}
-/* date label below node */
-.ptl-node-date{font-size:8.5px;font-weight:600;color:var(--text-3);margin-top:5px;white-space:nowrap;text-align:center;max-width:60px;line-height:1.2;}
-.ptl-node.done .ptl-node-date{color:var(--green);}
-.ptl-node.active .ptl-node-date{color:#92680a;font-weight:700;}
-.ptl-node.blocked .ptl-node-date{color:var(--red);}
-/* short label above node */
-.ptl-node-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;color:var(--text-3);white-space:nowrap;}
+.ptl-node.active .ptl-node-circle{background:var(--bg,#fff);border-color:#B07D00;color:#B07D00;box-shadow:0 0 0 3px rgba(176,125,0,0.15);}
+.ptl-node.blocked .ptl-node-circle{background:var(--bg,#fff);border-color:var(--red);color:var(--red);box-shadow:0 0 0 3px rgba(200,32,30,0.12);}
+.ptl-node.pending .ptl-node-circle{background:var(--bg,#fff);border-color:var(--border-2);color:var(--text-3);}
+/* label above node */
+.ptl-node-tag{position:absolute;bottom:calc(100% + 2px);font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;color:var(--text-3);}
 .ptl-node.done .ptl-node-tag{color:var(--green-d);}
 .ptl-node.active .ptl-node-tag{color:#92680a;}
 .ptl-node.blocked .ptl-node-tag{color:var(--red);}
+/* date label below node */
+.ptl-node-date{position:absolute;top:calc(100% + 4px);font-size:8px;font-weight:600;color:var(--text-3);white-space:nowrap;text-align:center;}
+.ptl-node.done .ptl-node-date{color:var(--green);}
+.ptl-node.active .ptl-node-date{color:#92680a;font-weight:700;}
+.ptl-node.blocked .ptl-node-date{color:var(--red);}
 /* tooltip on hover */
-.ptl-node-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.ptl-node-tooltip{position:absolute;bottom:calc(100% + 24px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
 .ptl-node-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--navy);}
 .ptl-node:hover .ptl-node-tooltip{opacity:1;}
-/* RTB node: highlight */
-.ptl-node.rtb-node .ptl-node-circle{width:22px;height:22px;font-size:10px;}
 .timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
 .timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
 .tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
@@ -2852,7 +2855,7 @@ const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
 // 5 standard phases × 4 projects
 // st: 'done' | 'active' | 'pending' | 'blocked'
 const PTL_PHASES = [
-  {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'PAC'},
+  {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'IVA'},
   {key:'dia', label:'Permiso\nAmbiental', short:'DIA'},
   {key:'aap', label:'Autorizaciones\nAdministrativas', short:'AAP + AAC'},
   {key:'lo',  label:'Licencia\nde Obras', short:'LO'},
@@ -2898,56 +2901,116 @@ function renderPortfolioTimeline(){
   const el=document.getElementById('portfolioTimeline');
   if(!el) return;
   const isEN=lang==='en';
-  // Node icons by status
   const ST_ICON={done:'✓',active:'●',pending:'○',blocked:'✕'};
-  // Legend labels
+
+  // ── Shared time axis: Q1 2024 → Q3 2028 ──────────────────────────
+  const AXIS_START={y:2024,q:1}; // inclusive
+  const AXIS_END  ={y:2028,q:3}; // inclusive
+  function qIdx(y,q){ return (y-AXIS_START.y)*4+(q-AXIS_START.q); }
+  const TOTAL_Q = qIdx(AXIS_END.y,AXIS_END.q)+1; // number of quarter slots
+
+  // Convert a milestone date string → fractional quarter position [0..1]
+  // Date strings: "Mar 2024","Feb 2024","Ene 2024" → month-based
+  //               "T1 2026","T2 2027", etc. → quarter based
+  //               "En curso","En disputa","En consulta" → use current quarter
+  const MONTH_Q={ene:1,jan:1,feb:1,mar:1,abr:2,apr:2,may:2,jun:2,
+                 jul:3,ago:3,aug:3,sep:3,oct:4,nov:4,dic:4,dec:4};
+  function dateToPos(dateStr){
+    const s=dateStr.toLowerCase().trim();
+    // "T2 2026" or "T1 2025"
+    const tMatch=s.match(/t([1-4])\s+(\d{4})/);
+    if(tMatch){
+      const qi=qIdx(parseInt(tMatch[2]),parseInt(tMatch[1]));
+      return Math.max(0,Math.min(1,(qi+0.5)/TOTAL_Q));
+    }
+    // "Mar 2024" or "Ene 2024"
+    const mMatch=s.match(/([a-záéíóú]+)\s+(\d{4})/);
+    if(mMatch){
+      const monthKey=mMatch[1].substring(0,3);
+      const q=MONTH_Q[monthKey]||1;
+      const qi=qIdx(parseInt(mMatch[2]),q);
+      return Math.max(0,Math.min(1,(qi+0.3)/TOTAL_Q));
+    }
+    // "en curso", "en disputa", "en consulta" → today
+    return dateToPos(_todayDateStr());
+  }
+  function _todayDateStr(){
+    const now=new Date();
+    const q=Math.ceil((now.getMonth()+1)/3);
+    return `T${q} ${now.getFullYear()}`;
+  }
+  function todayPos(){return dateToPos(_todayDateStr());}
+
+  // ── Quarter tick labels to show on axis ──
+  // Show label every 2 quarters, always Q1 and axis start
+  const qLabels=[];
+  for(let y=AXIS_START.y;y<=AXIS_END.y;y++){
+    for(let q=1;q<=4;q++){
+      if(y===AXIS_END.y && q>AXIS_END.q) break;
+      if(y===AXIS_START.y && q<AXIS_START.q) continue;
+      const idx=qIdx(y,q);
+      // show every 2 quarters
+      if(idx%2===0){
+        qLabels.push({label:`Q${q} ${y}`,pct:(idx/TOTAL_Q)*100});
+      }
+    }
+  }
+
   const LEG=[
-    {st:'done',  color:'var(--green)',  label:isEN?'Obtained':'Obtenido'},
-    {st:'active',color:'#B07D00',       label:isEN?'In progress':'En curso'},
-    {st:'blocked',color:'var(--red)',   label:isEN?'Blocked':'Bloqueado'},
-    {st:'pending',color:'var(--border-2)',label:isEN?'Pending':'Pendiente'},
+    {color:'var(--green)',  label:isEN?'Obtained':'Obtenido'},
+    {color:'#B07D00',       label:isEN?'In progress':'En curso'},
+    {color:'var(--red)',    label:isEN?'Blocked':'Bloqueado'},
+    {color:'var(--border-2)',label:isEN?'Pending':'Pendiente'},
   ];
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
-  // build legend
+
   let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
+
+  // Legend
   h+=`<div class="ptl-legend">`;
   LEG.forEach(l=>{
     h+=`<div class="ptl-leg-item"><div class="ptl-leg-dot" style="background:${l.color};border:2px solid ${l.color};"></div>${l.label}</div>`;
   });
   h+=`</div>`;
-  // phase header
-  h+=`<div class="ptl-phase-row"><div></div><div class="ptl-phases-hdr">`;
-  PTL_PHASES.forEach(p=>{
-    const lbl=p.label.replace('\n','<br>');
-    h+=`<div class="ptl-phase-lbl">${lbl}</div>`;
+
+  // Quarter axis header
+  h+=`<div class="ptl-axis-wrap">`;
+  h+=`<div class="ptl-q-row">`;
+  qLabels.forEach(ql=>{
+    h+=`<div class="ptl-q-label" style="left:calc(130px + ${ql.pct}% * (100% - 130px) / 100)">${ql.label}</div>`;
   });
-  h+=`</div></div>`;
-  // project rows
+  h+=`</div>`;
+
+  // axis baseline with ticks + today marker
+  h+=`<div class="ptl-axis-line" id="ptlAxisLine">`;
+  qLabels.forEach(ql=>{
+    h+=`<div class="ptl-q-tick" style="left:${ql.pct}%"></div>`;
+  });
+  // today line
+  const tPos=todayPos()*100;
+  h+=`<div class="ptl-today" style="left:${tPos}%"><div class="ptl-today-lbl">${isEN?'Today':'Hoy'}</div></div>`;
+  h+=`</div>`; // ptl-axis-line
+
+  h+=`</div>`; // ptl-axis-wrap
+
+  // Project rows
   h+=`<div>`;
-  pids.forEach((pid,pi)=>{
+  pids.forEach(pid=>{
     const m=PTL_PROJ_META[pid];
     const phases=PTL_DATA[pid]||[];
-    // compute fill width: % of track filled based on done/active phases
-    const doneCount=phases.filter(p=>p.st==='done').length;
-    const activeCount=phases.filter(p=>p.st==='active').length;
-    const fillPct=phases.length>1
-      ? Math.round(((doneCount + (activeCount>0?0.5:0))/(phases.length-1))*100)
-      : 0;
-    // nodes HTML
+    const projMW=m.mw?`${m.mw} MW`:'';
     const nodesH=phases.map((ph,i)=>{
       const icon=ST_ICON[ph.st]||'○';
-      const isLast=i===phases.length-1;
       const shortLbl=PTL_PHASES[i]?PTL_PHASES[i].short:'';
       const tooltipFull=PTL_PHASES[i]?PTL_PHASES[i].label.replace('\n',' '):'';
-      const tooltip=`<div class="ptl-node-tooltip">${tooltipFull}: ${ph.date}</div>`;
-      return `<div class="ptl-node ${ph.st}${isLast?' rtb-node':''}">
-        ${tooltip}
+      const pct=dateToPos(ph.date)*100;
+      return `<div class="ptl-node ${ph.st}" style="left:${pct}%">
+        <div class="ptl-node-tooltip">${tooltipFull}: ${ph.date}</div>
         <div class="ptl-node-tag">${shortLbl}</div>
         <div class="ptl-node-circle">${icon}</div>
         <div class="ptl-node-date">${ph.date}</div>
       </div>`;
     }).join('');
-    const projMW=m.mw?`${m.mw} MW`:'';
     h+=`<div class="ptl-proj-row">
       <div class="ptl-proj-label">
         <div class="ptl-proj-label-dot" style="background:${m.dot};"></div>
@@ -2956,11 +3019,7 @@ function renderPortfolioTimeline(){
           <div class="ptl-proj-label-mw">${projMW}</div>
         </div>
       </div>
-      <div class="ptl-track">
-        <div class="ptl-track-line"></div>
-        <div class="ptl-track-fill" style="width:${fillPct}%;"></div>
-        ${nodesH}
-      </div>
+      <div class="ptl-track">${nodesH}</div>
     </div>`;
   });
   h+=`</div></div></div>`;
@@ -2970,28 +3029,28 @@ function renderPortfolioTimeline(){
 // Hitos del popup alineados con los 5 hitos estándar del PTL
 const PROJ_MILESTONES = {
   begues:[
-    {label:'Permiso de Acceso y Conexión (PAC)',date:'Mar 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (IVA)',date:'Mar 2024',st:'done'},
     {label:'Permiso Ambiental (DIA)',date:'En curso',st:'active'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T1 2026',st:'pending'},
     {label:'Licencia de Obras (LO)',date:'T3 2026',st:'pending'},
     {label:'Ready to Build (RTB)',date:'T1 2028',st:'pending'}
   ],
   fregacedos:[
-    {label:'Permiso de Acceso y Conexión (PAC)',date:'Feb 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (IVA)',date:'Feb 2024',st:'done'},
     {label:'Permiso Ambiental (DIA)',date:'En curso',st:'active'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
     {label:'Licencia de Obras (LO)',date:'T4 2026',st:'pending'},
     {label:'Ready to Build (RTB)',date:'T2 2027',st:'pending'}
   ],
   mutxamel:[
-    {label:'Permiso de Acceso y Conexión (PAC)',date:'Ene 2024',st:'done'},
+    {label:'Permiso de Acceso y Conexión (IVA)',date:'Ene 2024',st:'done'},
     {label:'Permiso Ambiental (DIA)',date:'En disputa',st:'blocked'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T2 2026',st:'pending'},
     {label:'Licencia de Obras (LO)',date:'T4 2026',st:'pending'},
     {label:'Ready to Build (RTB)',date:'T4 2027',st:'pending'}
   ],
   entrenucleos:[
-    {label:'Permiso de Acceso y Conexión (PAC)',date:'En consulta',st:'active'},
+    {label:'Permiso de Acceso y Conexión (IVA)',date:'En consulta',st:'active'},
     {label:'Permiso Ambiental (DIA)',date:'T2 2026',st:'pending'},
     {label:'Autorizaciones Administrativas (AAP + AAC)',date:'T3 2026',st:'pending'},
     {label:'Licencia de Obras (LO)',date:'T1 2027',st:'pending'},
