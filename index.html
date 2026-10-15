@@ -250,6 +250,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 /* Custom horizontal scrollbar */
 #ganttSbTrack{transition:opacity 0.2s;}
 #ganttSbThumb{transition:background 0.15s,width 0.1s;}
+/* Hide native scrollbar on gantt wrap */
+.gantt-scroll-wrap::-webkit-scrollbar{display:none;}
+.gantt-scroll-wrap{scrollbar-width:none;}
+/* Insert zone hover */
+.g-row:hover .g-insert-pill{display:block!important;}
+.g-insert-pill:hover{background:#0a3060!important;}
+/* Insert context menu */
+#ganttInsertMenu{position:fixed;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(5,35,61,0.2);border:1px solid var(--border);padding:4px 0;z-index:9999;min-width:160px;}
+#ganttInsertMenu button{display:block;width:100%;text-align:left;padding:7px 14px;border:none;background:none;font-size:12px;color:var(--navy);cursor:pointer;font-family:inherit;}
+#ganttInsertMenu button:hover{background:var(--bg2);}
+#ganttInsertMenu .im-label{padding:5px 14px 3px;font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);margin-bottom:2px;}
 .gantt-progress{position:absolute;top:0;left:0;height:100%;border-radius:3px;opacity:0.4;}
 
 /* MODALS */
@@ -2233,129 +2244,12 @@ function renderGantt(){
   const todayInRange=today>=tMin&&today<=tMax;
 
   // ── TOOLBAR ────────────────────────────────────────────────────
-  const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;">
-    <button onclick="ganttAddPhase()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">+ ${t('ganttPhase')}</button>
-    <button onclick="ganttAddTask()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">+ ${t('ganttTask')}</button>
-    <button onclick="ganttAddMilestone()" style="background:var(--bg);color:var(--navy);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:600;cursor:pointer;">◆ ${t('ganttMilestone')}</button>
-    <div style="flex:1;"></div>
+  const toolbar=isEditor?`<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;">
     <span style="font-size:10px;color:var(--text-3);">${t('ganttHint')}</span>
   </div>`:'';
 
-  // ── LEFT PANEL HEADER ──────────────────────────────────────────
-  const leftHdr=`<div style="flex-shrink:0;width:${LEFT_W}px;background:var(--navy);border-right:2px solid rgba(255,255,255,0.25);">
-    <div style="height:${HDR_H1}px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid rgba(255,255,255,0.1);">
-      <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px;text-transform:uppercase;">Tarea</span>
-    </div>
-    <div style="height:${HDR_H2}px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);">
-      <div style="width:${NAME_W}px;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskName')}</div>
-      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskStart')}</div>
-      <div style="width:${DATE_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);">${t('taskEnd')}</div>
-      <div style="width:${PCT_W}px;text-align:center;font-size:9.5px;color:rgba(255,255,255,0.5);${isEditor?'border-right:1px solid rgba(255,255,255,0.1);':''}">%</div>
-      ${isEditor?`<div style="width:${ACT_W}px;"></div>`:''}
-    </div>
-  </div>`;
-
-  // ── CHART HEADER ───────────────────────────────────────────────
-  let yearCells='';
-  yearGroups.forEach(yg=>{
-    yearCells+=`<div style="position:absolute;left:${yg.start*CW}px;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.3);':''}">${yg.year}</div>`;
-  });
-  let monthCells='';
-  months.forEach((mn,i)=>{
-    const isYS=mn.getMonth()===0;
-    monthCells+=`<div style="position:absolute;left:${i*CW}px;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.65);${isYS?'border-left:2px solid rgba(255,255,255,0.25);':'border-left:1px solid rgba(255,255,255,0.1);'}">${MSHORT[mn.getMonth()]}</div>`;
-  });
-  const chartHdr=`<div style="flex:1;min-width:0;background:var(--navy);overflow:hidden;">
-    <div style="position:relative;width:${CHART_W}px;height:${HDR_H1}px;">${yearCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
-    <div style="position:relative;width:${CHART_W}px;height:${HDR_H2}px;background:#0a2540;">${monthCells}${todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(255,80,80,0.6);pointer-events:none;"></div>`:''}</div>
-  </div>`;
-
-  // ── ROWS ───────────────────────────────────────────────────────
-  let leftRows='', chartRows='';
-  tasks.forEach((task)=>{
-    const isPhase=task.level===1;
-    const isMile=!!task.milestone;
-    const color=task.color||PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2E86AB';
-    const indent=task.level===1?0:task.level===2?12:24;
-    const bgRow=isPhase?'#E8EDF4':'#fff';
-    const fw=isPhase?700:400;
-    const fs=isPhase?12:11.5;
-    const pctVal=task.pct||0;
-    const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
-    const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
-
-    // cell builders — clean attribute separation
-    const phaseAccent=isPhase?`border-left:3px solid ${color};`:'';
-    const nameStyle=`width:${NAME_W}px;padding:0 8px 0 ${isPhase?5+indent:8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}`;
-    const dateStyle=`width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor?'cursor:text;':''}`;
-    const pctStyle=`width:${PCT_W}px;text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;`;
-
-    const nameClick=isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="Doble clic para editar"`:'';
-    const startClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="Doble clic para editar"`:'';
-    const endClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="Doble clic para editar"`:'';
-
-    const pctCell=isMile?`<div style="${pctStyle}"></div>`
-      :(isEditor
-        ?`<div style="${pctStyle}"><input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;"></div>`
-        :`<div style="${pctStyle}"><span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span></div>`);
-
-    const actCell=isEditor?`<div style="width:${ACT_W}px;height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
-      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;" title="Eliminar">×</button>
-    </div>`:'';
-
-    const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.12);':'';
-    leftRows+=`<div style="display:flex;align-items:stretch;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}flex-shrink:0;">
-      <div style="${nameStyle}" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
-      <div style="${dateStyle}" ${startClick}>${fmtDate(task.start)}</div>
-      <div style="${dateStyle}" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
-      ${pctCell}${actCell}
-    </div>`;
-
-    // Chart row — bars positioned with px
-    const s=new Date(task.start), e=new Date(task.end||task.start);
-    const sClamp=s<tMin?tMin:s;
-    const eClamp=e>tMax?tMax:e;
-    const leftPx=dateToPx(sClamp.toISOString().slice(0,10));
-    const rightPx=dateToPx(eClamp.toISOString().slice(0,10));
-    const widPx=Math.max(2,rightPx-leftPx);
-    const vis=s<=tMax&&e>=tMin;
-
-    let barHtml='';
-    if(vis){
-      if(isMile){
-        barHtml=`<div style="position:absolute;top:50%;left:${leftPx}px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;"></div>`;
-      } else if(isPhase){
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${color};opacity:0.85;${isEditor?'cursor:grab;':''}" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.35);border-radius:2px;pointer-events:none;"></div>
-        </div>`;
-      } else {
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPx}px;width:${widPx}px;height:18px;border-radius:3px;background:${color}30;border:1.5px solid ${color}80;${isEditor?'cursor:grab;':''}" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:${color};border-radius:2px;opacity:0.75;pointer-events:none;"></div>
-        </div>`;
-      }
-    }
-
-    // Month grid lines
-    let gridLines='';
-    months.forEach((mn,i)=>{
-      if(i===0) return;
-      const isYS=mn.getMonth()===0;
-      gridLines+=`<div style="position:absolute;top:0;bottom:0;left:${i*CW}px;width:${isYS?2:1}px;background:${isYS?'rgba(0,0,0,0.12)':'rgba(0,0,0,0.05)'};pointer-events:none;"></div>`;
-    });
-    // Today line
-    const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
-
-    chartRows+=`<div style="position:relative;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}width:${CHART_W}px;">${gridLines}${tLine}${barHtml}</div>`;
-  });
-
   // ── ASSEMBLE — single-scroll sticky layout ─────────────────────
-  // We use ONE scroll container. Left columns and top header use
-  // position:sticky so they freeze without any JS scroll-sync.
   const totalW=LEFT_W+CHART_W;
-
-  // Build the single unified table HTML
-  // Each logical row is a flex row inside the scroll container.
-  // Left cells are sticky; chart cells are normal flow.
 
   // Header row 1 (years) — full width sticky top:0
   let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;background:var(--navy);box-shadow:0 1px 0 rgba(255,255,255,0.15);">`;
@@ -2400,26 +2294,28 @@ function renderGantt(){
     const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
     const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
     const phaseAccent=isPhase?`border-left:3px solid ${color};`:'';
-    const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.12);':'';
+    // Row borders — phases get a stronger top separator, tasks get ultra-thin
+    const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.18);':'';
+    const rowBotBorder=isPhase?'border-bottom:1px solid rgba(5,35,61,0.10);':'border-bottom:1px solid rgba(5,35,61,0.06);';
 
     const nameClick=isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="${t('ganttHint')}"` :'';
     const startClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="${t('ganttHint')}"` :'';
     const endClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="${t('ganttHint')}"` :'';
 
-    const pctCell=isMile?`<div class="g-pct-cell" style="width:${PCT_W}px;"></div>`
+    const pctCell=isMile?`<div class="g-pct-cell" style="width:${PCT_W}px;min-width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;${isEditor?'border-right:1px solid var(--border);':''}"></div>`
       :(isEditor
-        ?`<div class="g-pct-cell" style="width:${PCT_W}px;"><input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;"></div>`
-        :`<div class="g-pct-cell" style="width:${PCT_W}px;"><span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span></div>`);
+        ?`<div class="g-pct-cell" style="width:${PCT_W}px;min-width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);box-sizing:border-box;"><input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;"></div>`
+        :`<div class="g-pct-cell" style="width:${PCT_W}px;min-width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;"><span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span></div>`);
 
-    const actCell=isEditor?`<div style="width:${ACT_W}px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;" title="Eliminar">×</button>
+    const actCell=isEditor?`<div style="width:${ACT_W}px;min-width:${ACT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;opacity:0.4;" title="Eliminar">×</button>
     </div>`:'';
 
     // LEFT frozen cell
-    const leftCell=`<div class="g-left-frozen" style="position:sticky;left:0;z-index:10;flex-shrink:0;width:${LEFT_W}px;height:${ROW_H}px;background:${bgRow};display:flex;align-items:stretch;border-right:2px solid var(--border);${rowTopBorder}box-sizing:border-box;">
-      <div class="g-name-cell" data-col="name" style="width:${NAME_W}px;padding:0 8px 0 ${isPhase?5+indent:8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}flex-shrink:0;" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
-      <div class="g-date-cell" data-col="start" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}flex-shrink:0;" ${startClick}>${fmtDate(task.start)}</div>
-      <div class="g-date-cell" data-col="end" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}flex-shrink:0;" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
+    const leftCell=`<div class="g-left-frozen" style="position:sticky;left:0;z-index:10;flex-shrink:0;width:${LEFT_W}px;height:${ROW_H}px;background:${bgRow};display:flex;align-items:stretch;border-right:2px solid rgba(5,35,61,0.12);${rowTopBorder}${rowBotBorder}box-sizing:border-box;">
+      <div class="g-name-cell" data-col="name" style="width:${NAME_W}px;min-width:${NAME_W}px;flex-shrink:0;padding:0 8px 0 ${isPhase?5+indent:8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
+      <div class="g-date-cell" data-col="start" style="width:${DATE_W}px;min-width:${DATE_W}px;flex-shrink:0;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}" ${startClick}>${fmtDate(task.start)}</div>
+      <div class="g-date-cell" data-col="end" style="width:${DATE_W}px;min-width:${DATE_W}px;flex-shrink:0;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
       ${pctCell}${actCell}
     </div>`;
 
@@ -2455,39 +2351,49 @@ function renderGantt(){
     });
     const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${bgRow};${rowTopBorder}border-bottom:1px solid var(--border);overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
+    const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${bgRow};${rowTopBorder}${rowBotBorder}overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
 
-    dataRows+=`<div class="g-row" style="display:flex;flex-shrink:0;border-bottom:1px solid var(--border);">${leftCell}${chartCell}</div>`;
+    // Insert zone — appears between rows on hover (editor only)
+    const insertZone=isEditor?`<div class="g-insert-zone" style="position:relative;height:0;overflow:visible;z-index:30;flex-shrink:0;">
+      <div class="g-insert-pill" onclick="ganttShowInsertMenu('${task.id}',event)" style="display:none;position:absolute;left:50%;transform:translateX(-50%);top:-8px;background:var(--navy);color:#fff;border-radius:10px;padding:1px 12px;font-size:10px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(5,35,61,0.3);white-space:nowrap;line-height:16px;letter-spacing:0.2px;">+ Insertar</div>
+    </div>`:'';
+
+    dataRows+=`<div class="g-row" style="display:flex;flex-direction:column;flex-shrink:0;">${insertZone}<div style="display:flex;flex-shrink:0;">${leftCell}${chartCell}</div></div>`;
   });
 
   const html=`${toolbar}
-  <div id="ganttWrap" style="position:relative;height:calc(100% - ${isEditor?45:0}px);overflow:auto;-webkit-overflow-scrolling:touch;" class="gantt-scroll-wrap">
-    <div style="width:${totalW}px;min-height:100%;">
-      ${hdrYear}
-      ${hdrMonth}
-      ${dataRows}
+  <div style="position:relative;height:calc(100% - ${isEditor?45:0}px);display:flex;flex-direction:column;overflow:hidden;">
+    <!-- Main scroll area -->
+    <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;" class="gantt-scroll-wrap">
+      <div style="width:${totalW}px;min-height:100%;">
+        ${hdrYear}
+        ${hdrMonth}
+        ${dataRows}
+      </div>
     </div>
-    <!-- Custom scrollbar track (horizontal) -->
-    <div id="ganttSbTrack" style="position:sticky;bottom:0;left:0;right:0;height:10px;background:rgba(5,35,61,0.06);z-index:50;border-top:1px solid rgba(5,35,61,0.08);">
-      <div id="ganttSbThumb" style="position:absolute;top:1px;height:8px;background:rgba(5,35,61,0.28);border-radius:4px;cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(5,35,61,0.48)'" onmouseleave="this.style.background='rgba(5,35,61,0.28)'"></div>
+    <!-- Horizontal scrollbar — always visible at bottom -->
+    <div id="ganttSbTrack" style="flex-shrink:0;height:10px;background:rgba(5,35,61,0.05);border-top:1px solid rgba(5,35,61,0.08);position:relative;cursor:pointer;">
+      <div id="ganttSbThumb" style="position:absolute;top:1px;height:8px;background:rgba(5,35,61,0.25);border-radius:4px;cursor:grab;transition:background 0.15s;" onmouseenter="this.style.background='rgba(5,35,61,0.45)'" onmouseleave="this.style.background='rgba(5,35,61,0.25)'"></div>
     </div>
   </div>`;
 
   container.innerHTML=html;
 
-  // ── CUSTOM SCROLLBAR ───────────────────────────────────────────
+  // ── CUSTOM SCROLLBAR (always visible, lives outside scroll container) ─────
   const wrap=document.getElementById('ganttWrap');
   const sbTrack=document.getElementById('ganttSbTrack');
   const sbThumb=document.getElementById('ganttSbThumb');
 
   function updateScrollbar(){
     const ratio=wrap.clientWidth/wrap.scrollWidth;
-    const thumbW=Math.max(40,wrap.clientWidth*ratio);
+    const trackW=sbTrack.clientWidth;
+    const thumbW=Math.max(40,trackW*ratio);
     const maxScroll=wrap.scrollWidth-wrap.clientWidth;
-    const thumbLeft=maxScroll>0?(wrap.scrollLeft/maxScroll)*(wrap.clientWidth-thumbW):0;
+    const thumbLeft=maxScroll>0?(wrap.scrollLeft/maxScroll)*(trackW-thumbW):0;
     sbThumb.style.width=thumbW+'px';
     sbThumb.style.left=thumbLeft+'px';
-    sbTrack.style.display=ratio>=1?'none':'block';
+    // Always show track; dim thumb if no scrolling needed
+    sbThumb.style.opacity=ratio>=1?'0.2':'1';
   }
 
   wrap.addEventListener('scroll',updateScrollbar);
@@ -2499,6 +2405,7 @@ function renderGantt(){
   sbThumb.addEventListener('mousedown',e=>{
     sbDragging=true; sbStartX=e.clientX;
     sbStartLeft=wrap.scrollLeft;
+    document.body.style.cursor='grabbing';
     e.preventDefault();
   });
   document.addEventListener('mousemove',e=>{
@@ -2506,7 +2413,17 @@ function renderGantt(){
     const ratio=wrap.scrollWidth/wrap.clientWidth;
     wrap.scrollLeft=sbStartLeft+(e.clientX-sbStartX)*ratio;
   });
-  document.addEventListener('mouseup',()=>{sbDragging=false;});
+  document.addEventListener('mouseup',()=>{
+    sbDragging=false;
+    document.body.style.cursor='';
+  });
+  // Click on track (not thumb) jumps scroll
+  sbTrack.addEventListener('click',e=>{
+    if(e.target===sbThumb) return;
+    const rect=sbTrack.getBoundingClientRect();
+    const clickPct=(e.clientX-rect.left)/rect.width;
+    wrap.scrollLeft=(wrap.scrollWidth-wrap.clientWidth)*clickPct;
+  });
 
   // Scroll to today
   if(todayInRange){
@@ -2667,6 +2584,72 @@ function ganttDeleteRow(taskId){
   saveGanttData(pid);
   renderGantt();
   toast('✓ '+t('deleted'));
+}
+
+// ── INSERT MENU (appears on row hover) ───────────────────────────────────────
+function ganttShowInsertMenu(afterId,evt){
+  evt.stopPropagation();
+  // Remove any existing menu
+  const old=document.getElementById('ganttInsertMenu');
+  if(old) old.remove();
+
+  const pid=currentProjId;
+  const tasks=getGanttTasks(pid);
+  const afterTask=tasks.find(t=>t.id===afterId);
+  const today=new Date().toISOString().slice(0,10);
+
+  const menu=document.createElement('div');
+  menu.id='ganttInsertMenu';
+
+  const label=document.createElement('div');
+  label.className='im-label';
+  label.textContent=isEN?'Insert after this row':'Insertar después de esta fila';
+  menu.appendChild(label);
+
+  const items=[
+    {icon:'▬',label:isEN?'Phase (main group)':'Fase (grupo principal)',action:()=>{
+      const phaseNum=tasks.filter(t=>t.level===1).length+1;
+      const color=PHASE_COLORS[(phaseNum-1)%PHASE_COLORS.length];
+      const newRow={id:newGanttId(pid),level:1,num:String(phaseNum),name:isEN?'New phase':'Nueva fase',start:today,end:addDays(today,90),pct:0,color};
+      const idx=tasks.findIndex(t=>t.id===afterId);
+      tasks.splice(idx+1,0,newRow);
+      saveGanttData(pid); renderGantt();
+    }},
+    {icon:'—',label:isEN?'Task':'Tarea',action:()=>{
+      const phaseTask=tasks.slice(0,tasks.findIndex(t=>t.id===afterId)+1).reverse().find(t=>t.level===1);
+      const color=phaseTask?.color||PHASE_COLORS[0];
+      const newRow={id:newGanttId(pid),level:2,name:isEN?'New task':'Nueva tarea',start:today,end:addDays(today,14),pct:0,color};
+      const idx=tasks.findIndex(t=>t.id===afterId);
+      tasks.splice(idx+1,0,newRow);
+      saveGanttData(pid); renderGantt();
+    }},
+    {icon:'◆',label:isEN?'Milestone':'Hito',action:()=>{
+      const phaseTask=tasks.slice(0,tasks.findIndex(t=>t.id===afterId)+1).reverse().find(t=>t.level===1);
+      const color=phaseTask?.color||PHASE_COLORS[0];
+      const newRow={id:newGanttId(pid),level:2,name:isEN?'Milestone':'Hito',start:today,end:today,pct:0,color,milestone:true};
+      const idx=tasks.findIndex(t=>t.id===afterId);
+      tasks.splice(idx+1,0,newRow);
+      saveGanttData(pid); renderGantt();
+    }},
+  ];
+
+  items.forEach(item=>{
+    const btn=document.createElement('button');
+    btn.innerHTML=`<span style="display:inline-block;width:16px;opacity:0.5;font-size:9px;">${item.icon}</span> ${item.label}`;
+    btn.onclick=(e)=>{e.stopPropagation();menu.remove();item.action();};
+    menu.appendChild(btn);
+  });
+
+  document.body.appendChild(menu);
+
+  // Position near cursor
+  const x=Math.min(evt.clientX,window.innerWidth-170);
+  const y=Math.min(evt.clientY+4,window.innerHeight-130);
+  menu.style.left=x+'px';
+  menu.style.top=y+'px';
+
+  // Close on outside click
+  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
 }
 
 function ganttAddPhase(){
