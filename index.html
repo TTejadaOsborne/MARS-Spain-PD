@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1215 -->
+<!-- BUILD:20261015-1230 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1215';
+const BUILD='20261015-1230';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -558,8 +558,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div id="updatesFeed" style="overflow-y:auto;flex:1;"></div>
       </div><!-- end updates card -->
     </div><!-- end top grid -->
-    <!-- Milestone Timeline -->
-    <div class="card" style="margin-top:0;">
+    <!-- Milestone Timeline — no overflow:hidden so abs-positioned chips are visible -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:0;">
       <div class="card-hdr">
         <h3 data-i18n="timelineTitle">Timeline de permisos</h3>
       </div>
