@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1600 -->
+<!-- BUILD:20261015-1700 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1600';
+const BUILD='20261015-1700';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -290,7 +290,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 /* ── Visual Timeline v2 — one row per project ───────────────────── */
 /* ── Timeline ejecutivo ── */
-.ptl2-wrap{padding:0 20px 20px;overflow-x:auto;min-width:0;}
+.ptl2-wrap{padding:0 20px 20px;overflow-x:auto;min-width:0;flex:1;}
 /* Eje superior: años */
 .ptl2-axis-years{display:flex;align-items:flex-end;height:20px;position:relative;}
 .ptl2-proj-lbl-space{width:175px;flex-shrink:0;}
@@ -440,14 +440,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <div class="main">
 
 <!-- PORTFOLIO PAGE -->
-<div id="page-portfolio">
+<div id="page-portfolio" style="display:flex;flex-direction:column;flex:1;min-height:0;">
   <div class="page-hdr">
     <div class="page-hdr-left">
       <h2 data-i18n="portfolioTitle">Portfolio de Desarrollo</h2>
       <p data-i18n="portfolioSub">Proyectos BESS Standalone en España · Seguimiento ejecutivo</p>
     </div>
   </div>
-  <div class="content">
+  <div class="content" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card blue">
@@ -572,12 +572,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div id="updatesFeed" style="overflow-y:auto;flex:1;"></div>
       </div><!-- end updates card -->
     </div><!-- end top grid -->
-    <!-- Milestone Timeline — no overflow:hidden so abs-positioned chips are visible -->
-    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:0;">
+    <!-- Milestone Timeline — flex:1 so it fills remaining height -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:0;flex:1;display:flex;flex-direction:column;min-height:0;">
       <div class="card-hdr">
         <h3 data-i18n="timelineTitle">Timeline de permisos</h3>
       </div>
-      <div id="portfolioTimeline"></div>
+      <div id="portfolioTimeline" style="flex:1;display:flex;flex-direction:column;min-height:0;"></div>
     </div>
   </div>
 </div>
@@ -2916,7 +2916,7 @@ function renderPortfolioTimeline(){
 
   // ── Config ──────────────────────────────────────────────────────
   // Axis: 2023 Q1 → 2029 Q4  (starts 2023 to show Mutxamel IVA Aug 2023)
-  const AX_Y0=2023, AX_Y1=2029;
+  const AX_Y0=2023, AX_Y1=2028;
   const AX_M0=1,    AX_M1=12; // Jan→Dec
   const TOTAL_M=(AX_Y1-AX_Y0)*12+(AX_M1-AX_M0+1); // 72 months
 
