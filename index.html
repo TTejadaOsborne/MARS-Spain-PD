@@ -1985,9 +1985,13 @@ function confirmAllDrafts(){
 
 // ── EDIT ISSUE ─────────────────────────────────────────────────────────────
 let _editPid=null, _editIdx=null;
-const ACT_TYPES=['call','email','admin','doc','internal','site'];
-function ACT_TYPE_LABELS_FN(){return{call:t('actCall'),email:t('actEmail'),admin:t('actAdmin'),doc:t('actDoc'),internal:t('actInternal'),site:t('actSite')};}
-const ACT_TYPE_LABELS_STATIC={call:'Llamada',email:'Email',admin:'Gestión admin.',doc:'Documento',internal:'Reunión interna',site:'Visita obra'};
+const ACT_TYPES=['email','call','meeting','doc','site'];
+function ACT_TYPE_LABELS_FN(){return{email:t('actEmail'),call:t('actCall'),meeting:t('actMeeting'),doc:t('actDoc'),site:t('actSite'),
+  // legacy keys — kept for display of existing data
+  admin:t('actDoc'),internal:t('actMeeting')};}
+const ACT_TYPE_LABELS_STATIC={email:'Email',call:'Llamada',meeting:'Reunión presencial',doc:'Documentación',site:'Visita de campo',
+  // legacy
+  admin:'Documentación',internal:'Reunión presencial'};
 
 function openEditIssue(pid,idx){
   _editPid=pid; _editIdx=idx;
@@ -2031,7 +2035,7 @@ function removeEditAct(i){
 }
 function addEditActivity(){
   const acts=_getEditActs();
-  acts.push({type:'admin',text:'',date:''});
+  acts.push({type:'email',text:'',date:''});
   renderEditActList(acts);
 }
 
@@ -2928,7 +2932,7 @@ const T={
     editBtn:'✏️ Editar',
     allDraftsConfirmedMsg:'Todas las novedades confirmadas',
     noActivities:'Sin actividades registradas',
-    actCall:'Llamada',actEmail:'Email',actAdmin:'Gestión admin.',actDoc:'Documento',actInternal:'Reunión interna',actSite:'Visita obra',
+    actCall:'Llamada',actEmail:'Email',actMeeting:'Reunión presencial',actDoc:'Documentación',actSite:'Visita de campo',
     confirmDelete:'¿Eliminar esta novedad?',
     copiedAsDraft:'copiada/s como borrador',
     weekAlreadyHasUpdates:'Esta semana ya tiene novedades en todos los proyectos',
@@ -3051,7 +3055,7 @@ const T={
     editBtn:'✏️ Edit',
     allDraftsConfirmedMsg:'All updates confirmed',
     noActivities:'No activities recorded',
-    actCall:'Call',actEmail:'Email',actAdmin:'Admin task',actDoc:'Document',actInternal:'Internal meeting',actSite:'Site visit',
+    actCall:'Call',actEmail:'Email',actMeeting:'In-person meeting',actDoc:'Documentation',actSite:'Field visit',
     confirmDelete:'Delete this update?',
     copiedAsDraft:'copied as draft',
     weekAlreadyHasUpdates:'This week already has updates for all projects',
