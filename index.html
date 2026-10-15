@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1540 -->
+<!-- BUILD:20261015-1600 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1540';
+const BUILD='20261015-1600';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -323,8 +323,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-mlbl{position:absolute;top:calc(100% + 5px);display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;}
 /* Labels above (for even-indexed milestones to avoid overlap) */
 .ptl2-mlbl.above{top:auto;bottom:calc(100% + 5px);}
-.ptl2-mlbl-short{font-size:8px;font-weight:700;color:var(--navy);white-space:nowrap;letter-spacing:0.02em;}
-.ptl2-mlbl-date{font-size:7.5px;color:var(--text-3);white-space:nowrap;}
+.ptl2-mlbl-short{font-size:8px;font-weight:700;color:var(--navy);white-space:nowrap;letter-spacing:0.02em;background:#fff;padding:0 2px;border-radius:2px;}
+.ptl2-mlbl-date{font-size:7.5px;color:var(--text-3);white-space:nowrap;background:#fff;padding:0 2px;border-radius:2px;}
 @keyframes ptl2-pulse{0%,100%{box-shadow:0 0 0 0 rgba(5,35,61,0.4)}60%{box-shadow:0 0 0 4px rgba(5,35,61,0)}}
 .ptl2-pulse .ptl2-dot{animation:ptl2-pulse 2.2s ease-out infinite;}
 /* Legend */
@@ -453,7 +453,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div class="stat-card blue">
         <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 15V8l6-6 6 6v7H3z" stroke="#3A7BD5" stroke-width="1.5" fill="none"/><rect x="7" y="10" width="4" height="5" rx="0.5" fill="#3A7BD5" opacity=".4"/></svg></div>
         <div class="stat-num">120<span style="font-size:14px;font-weight:500;color:var(--text-3);"> MW</span></div>
-        <div class="stat-lbl" data-i18n="statPower">Potencia activa</div>
+        <div class="stat-lbl" data-i18n="statPower">Potencia instalada</div>
         <div class="stat-sub" data-i18n="statPowerSub">BESS en tramitación</div>
       </div>
       <div class="stat-card green">
@@ -2586,7 +2586,7 @@ const T={
     portfolioTitle:'Portfolio de Desarrollo',
     portfolioSub:'Proyectos BESS Standalone en España · Seguimiento ejecutivo',
     hdrSub:'Portfolio de Proyectos BESS',
-    statPower:'Potencia activa',
+    statPower:'Potencia instalada',
     statPowerSub:'BESS en tramitación',
     statClusters:'Clusters activos',
     statClustersSub:'Begues · Fregacedos · Mutxamel',
@@ -2709,7 +2709,7 @@ const T={
     portfolioTitle:'Development Portfolio',
     portfolioSub:'Standalone BESS Projects in Spain · Executive overview',
     hdrSub:'BESS Project Portfolio',
-    statPower:'Active capacity',
+    statPower:'Installed capacity',
     statPowerSub:'BESS in permitting',
     statClusters:'Active clusters',
     statClustersSub:'Begues · Fregacedos · Mutxamel',
@@ -2876,21 +2876,21 @@ const PTL_PHASES = [
 const PTL_DATA = {
   begues: [
     {st:'done',    date:'Jul 2025', key:'iva'},
-    {st:'active',  date:'Mar 2027', key:'dia',  baseKey:'iva',  offsetMonths:14},
+    {st:'pending', date:'Mar 2027', key:'dia',  baseKey:'iva',  offsetMonths:14},
     {st:'pending', date:'Sep 2027', key:'aap',  baseKey:'dia',  offsetMonths:6},
     {st:'pending', date:'Oct 2027', key:'lo',   baseKey:'aap',  offsetMonths:1},
     {st:'pending', date:'Jan 2028', key:'rtb',  baseKey:'aap',  offsetMonths:3},
   ],
   fregacedos: [
     {st:'done',    date:'Apr 2025', key:'iva'},
-    {st:'active',  date:'Dec 2026', key:'dia',  baseKey:'iva',  offsetMonths:14},
+    {st:'pending', date:'Dec 2026', key:'dia',  baseKey:'iva',  offsetMonths:14},
     {st:'pending', date:'Jun 2027', key:'aap',  baseKey:'dia',  offsetMonths:6},
     {st:'pending', date:'Jul 2027', key:'lo',   baseKey:'aap',  offsetMonths:1},
     {st:'pending', date:'Oct 2027', key:'rtb',  baseKey:'aap',  offsetMonths:3},
   ],
   mutxamel: [
     {st:'done',    date:'Aug 2023', key:'iva'},
-    {st:'blocked', date:'Dec 2026', key:'dia'},
+    {st:'pending', date:'Dec 2026', key:'dia'},
     {st:'pending', date:'Mar 2027', key:'aap',  baseKey:'dia',  offsetMonths:3},
     {st:'pending', date:'Apr 2027', key:'lo',   baseKey:'aap',  offsetMonths:1},
     {st:'pending', date:'Jul 2027', key:'rtb',  baseKey:'aap',  offsetMonths:3},
@@ -2904,9 +2904,9 @@ const PTL_DATA = {
   ],
 };
 const PTL_PROJ_META = {
-  begues:       {name:'Begues I & II',        dot:'var(--green)', mw:200},
-  fregacedos:   {name:'Fregacedos I, II & V', dot:'var(--blue)',  mw:300},
-  mutxamel:     {name:'Mutxamel',             dot:'var(--red)',   mw:150},
+  begues:       {name:'Begues I & II',        dot:'var(--green)', mw:100},
+  fregacedos:   {name:'Fregacedos I, II & V', dot:'var(--blue)',  mw:15},
+  mutxamel:     {name:'Mutxamel',             dot:'var(--red)',   mw:5},
   entrenucleos: {name:'Entrenúcleos',         dot:'var(--grey)',  mw:100},
 };
 function renderPortfolioTimeline(){
