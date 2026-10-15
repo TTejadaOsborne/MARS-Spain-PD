@@ -52,7 +52,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .logo-wrap img{height:22px;}
 .hdr-title h1{font-size:13px;font-weight:700;color:#fff;}
 .hdr-title p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.4px;text-transform:uppercase;}
-.hdr-right{display:flex;align-items:center;gap:8px;}
+.hdr-right{display:flex;align-items:center;gap:8px;position:relative;}
 .hdr-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
 .hdr-pill:hover{background:rgba(255,255,255,0.15);color:#fff;}
 .hdr-pill.green{background:var(--green);border-color:var(--green);color:#fff;font-weight:600;}
@@ -398,7 +398,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
     </div>
     <span id="translatingBadge" style="display:none;font-size:10px;font-weight:600;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);padding:3px 10px;border-radius:4px;letter-spacing:0.3px;">⟳ Translating...</span>
-    <button class="hdr-pill" id="editorBtn" onclick="showPwdModal()">🔒 Editor</button>
+    <button class="hdr-pill" id="editorBtn" onclick="togglePwdPopover(event)">🔒 Editor</button>
+    <div id="pwdPopover" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 24px rgba(5,35,61,0.16);padding:14px 16px;width:220px;z-index:9999;">
+      <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;" data-i18n="pwdTitle">Acceso editor</div>
+      <div style="display:flex;align-items:center;gap:0;border:1px solid var(--border-2);border-radius:6px;overflow:hidden;background:var(--bg);">
+        <input id="pwdInputPop" type="password" placeholder="Contraseña" autocomplete="current-password"
+          style="flex:1;border:none;outline:none;padding:7px 10px;font-size:12px;background:transparent;color:var(--navy);font-family:'Inter',sans-serif;"
+          onkeydown="if(event.key==='Enter')checkPwdPop();if(event.key==='Escape')closePwdPopover();">
+        <button onclick="togglePwdEye()" id="pwdEyeBtn" title="Mostrar/ocultar"
+          style="border:none;background:none;padding:0 9px;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;flex-shrink:0;">👁</button>
+      </div>
+      <div id="pwdErrPop" style="color:var(--red);font-size:11px;margin-top:6px;display:none;" data-i18n="pwdErr">Contraseña incorrecta</div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;" onclick="checkPwdPop()" data-i18n="pwdUnlock">Desbloquear</button>
+        <button class="btn btn-sec" style="font-size:11px;padding:5px 10px;" onclick="closePwdPopover()" data-i18n="cancel">Cancelar</button>
+      </div>
+    </div>
     <button class="hdr-pill green" id="editorBadge" style="display:none" onclick="exitEditor()">✏️ Editor · salir</button>
   </div>
 </div>
@@ -2527,22 +2542,48 @@ function renderDocs(){
 }
 
 // ── EDITOR ─────────────────────────────────────────────────────────────────
-function showPwdModal(){openModal('pwdModal');}
-function checkPwd(){
-  if(document.getElementById('pwdInput').value==='Mars.2026'){
+function togglePwdPopover(e){
+  e.stopPropagation();
+  const pop=document.getElementById('pwdPopover');
+  const open=pop.style.display!=='none';
+  if(open){ closePwdPopover(); return; }
+  pop.style.display='block';
+  const inp=document.getElementById('pwdInputPop');
+  inp.value=''; inp.type='password';
+  document.getElementById('pwdErrPop').style.display='none';
+  setTimeout(()=>inp.focus(),30);
+  // Close on outside click
+  document.addEventListener('click',_pwdOutside,{once:true});
+}
+function _pwdOutside(e){
+  const pop=document.getElementById('pwdPopover');
+  if(pop&&!pop.contains(e.target)) closePwdPopover();
+}
+function closePwdPopover(){
+  const pop=document.getElementById('pwdPopover');
+  if(pop) pop.style.display='none';
+  document.removeEventListener('click',_pwdOutside);
+}
+function togglePwdEye(){
+  const inp=document.getElementById('pwdInputPop');
+  inp.type=inp.type==='password'?'text':'password';
+  inp.focus();
+}
+function checkPwdPop(){
+  if(document.getElementById('pwdInputPop').value==='Mars.2026'){
     isEditor=true;
     document.getElementById('editorBtn').style.display='none';
     document.getElementById('editorBadge').style.display='flex';
-    document.getElementById('pwdInput').value='';
-    closeModal('pwdModal');
+    closePwdPopover();
     toast('✏️ '+t('editorOn'));
     renderPtlEditBtns();
-    // Refresh semanal to show add buttons
     const semPage=document.getElementById('page-semanal');
     if(semPage&&semPage.style.display!=='none') renderSemanal();
   } else {
-    document.getElementById('pwdErr').style.display='block';
-    setTimeout(()=>document.getElementById('pwdErr').style.display='none',2000);
+    const err=document.getElementById('pwdErrPop');
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',2000);
+    document.getElementById('pwdInputPop').select();
   }
 }
 function exitEditor(){
