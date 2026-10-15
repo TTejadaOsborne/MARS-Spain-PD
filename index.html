@@ -2894,7 +2894,7 @@ const PROJ_ZOOM = {begues:13, fregacedos:13, mutxamel:13, entrenucleos:13};
 const PTL_PHASES = [
   {key:'pac', label:'Permiso de\nAcceso y Conexión', short:'IVA'},
   {key:'dia', label:'Permiso\nAmbiental', short:'DIA'},
-  {key:'aap', label:'Autorizaciones\nAdministrativas', short:'AAP + AAC'},
+  {key:'aap', label:'Autorizaciones\nAdministrativas', short:'AA'},
   {key:'lo',  label:'Licencia\nde Obras', short:'LO'},
   {key:'rtb', label:'Ready to Build', short:'RTB'},
 ];
@@ -2973,15 +2973,15 @@ function renderPortfolioTimeline(){
   const PHASES_ES=[
     {key:'iva',short:'IVA'},
     {key:'dia',short:'DIA'},
-    {key:'aap',short:'AAP'},
+    {key:'aap',short:'AA'},
     {key:'lo', short:'LO'},
     {key:'rtb',short:'RTB'},
   ];
   const PHASES_EN=[
     {key:'iva',short:'IVA'},
     {key:'dia',short:'EIA'},
-    {key:'aap',short:'AAP'},
-    {key:'lo', short:'LO'},
+    {key:'aap',short:'AA'},
+    {key:'lo', short:'WL'},
     {key:'rtb',short:'RTB'},
   ];
   const phases=isEN?PHASES_EN:PHASES_ES;
@@ -3127,9 +3127,10 @@ function renderPtlEditBtns(){
 // ── Milestone date editor ────────────────────────────────────────
 const MONTH_NAMES_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const MONTH_NAMES_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const PHASE_LABELS=['IVA','DIA','AAP','LO','RTB'];
-const PHASE_FULL_ES=['Permiso de Acceso y Conexión','Permiso Ambiental (DIA)','Autorizaciones Administrativas','Licencia de Obras','Ready to Build'];
-const PHASE_FULL_EN=['Grid Access Permit','Environmental Impact Assessment','Admin. Authorisations','Building Permit','Ready to Build'];
+const PHASE_LABELS=['IVA','DIA','AA','LO','RTB'];
+const PHASE_LABELS_EN=['IVA','DIA','AA','WL','RTB'];
+const PHASE_FULL_ES=['Permiso de Acceso y Conexión','Permiso Ambiental (DIA)','Autorizaciones Administrativas y de Construcción','Licencia de Obras','Ready to Build'];
+const PHASE_FULL_EN=['Grid Access Permit','Environmental Impact Assessment','Admin. Authorisations','Works Licence','Ready to Build'];
 
 function parseMilestoneDate(dateStr){
   if(!dateStr) return null;
@@ -3183,6 +3184,7 @@ function openMilestoneEditor(pid){
   const m=PTL_PROJ_META[pid];
   const phases=PTL_DATA[pid]||[];
   const fullLabels=isEN?PHASE_FULL_EN:PHASE_FULL_ES;
+  const phaseLabels=isEN?PHASE_LABELS_EN:PHASE_LABELS;
   const stLabels=isEN
     ?{done:'Obtained ✓',active:'In progress',blocked:'Blocked',pending:'Pending'}
     :{done:'Obtenido ✓',active:'En curso',blocked:'Bloqueado',pending:'Pendiente'};
@@ -3206,7 +3208,7 @@ function openMilestoneEditor(pid){
     let depHtml='';
     if(ph.baseKey){
       const baseIdx=phases.findIndex(p=>p.key===ph.baseKey);
-      const baseLabel=baseIdx>=0?PHASE_LABELS[baseIdx]:'?';
+      const baseLabel=baseIdx>=0?phaseLabels[baseIdx]:'?';
       depHtml=`
         <div class="ptl-dep-row">
           <span class="ptl-dep-lbl">${isEN?'Linked to':'Vinculado a'}</span>
@@ -3226,7 +3228,7 @@ function openMilestoneEditor(pid){
     } else if(i>0){
       // Show available bases
       const baseOpts=phases.slice(0,i).map((p,bi)=>
-        `<option value="${p.key}">${PHASE_LABELS[bi]}</option>`).join('');
+        `<option value="${p.key}">${phaseLabels[bi]}</option>`).join('');
       depHtml=`
         <div class="ptl-dep-row">
           <span class="ptl-dep-lbl">${isEN?'Link to':'Vincular a'}</span>
@@ -3242,7 +3244,7 @@ function openMilestoneEditor(pid){
     const estDisabled=ph.baseKey?'disabled style="opacity:0.5;pointer-events:none;"':'';
     rows+=`<div class="ptl-editor-row" id="ptlrow-${pid}-${i}">
       <div class="ptl-editor-phase-hdr">
-        <span class="ptl-editor-phase">${PHASE_LABELS[i]}</span>
+        <span class="ptl-editor-phase">${phaseLabels[i]}</span>
         <span class="ptl-editor-phase-full">${fullLabels[i]}</span>
       </div>
       <div class="ptl-editor-cols">
