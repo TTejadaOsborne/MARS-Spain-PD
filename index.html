@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1800 -->
+<!-- BUILD:20261015-1930 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1800';
+const BUILD='20261015-1930';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -240,6 +240,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 /* GANTT */
 .gantt-bar-wrap{position:relative;height:32px;}
 .gantt-bar{position:absolute;top:7px;height:18px;border-radius:3px;}
+/* Gantt sticky-scroll layout */
+.gantt-scroll-wrap{scrollbar-width:none;-ms-overflow-style:none;}
+.gantt-scroll-wrap::-webkit-scrollbar{display:none;}
+.g-resize-handle{position:absolute;right:-3px;top:0;bottom:0;width:6px;cursor:col-resize;z-index:5;background:transparent;}
+.g-resize-handle:hover,.g-resize-handle:active{background:rgba(255,255,255,0.3);}
+.g-row:hover .g-left-frozen{background:#f0f4fa!important;}
+.g-row:hover>div:last-child{background:#f0f4fa!important;}
+/* Custom horizontal scrollbar */
+#ganttSbTrack{transition:opacity 0.2s;}
+#ganttSbThumb{transition:background 0.15s,width 0.1s;}
 .gantt-progress{position:absolute;top:0;left:0;height:100%;border-radius:3px;opacity:0.4;}
 
 /* MODALS */
@@ -2084,16 +2094,34 @@ function navWeekSemanal(dir){
 }
 
 // ── GANTT v2 — MS Project style ─────────────────────────────────────────────
+const GANTT_STORAGE_KEY='mars_pd_gantt_v1';
 // Per-project mutable task stores
 const ganttData={};
 function getGanttTasks(pid){
   pid=pid||currentProjId;
   if(!ganttData[pid]){
-    // seed with TASKS for mutxamel, empty scaffold for others
-    if(pid==='mutxamel') ganttData[pid]=JSON.parse(JSON.stringify(TASKS));
-    else ganttData[pid]=[];
+    // Try loading from localStorage first
+    try{
+      const raw=localStorage.getItem(GANTT_STORAGE_KEY);
+      if(raw){const saved=JSON.parse(raw); if(saved[pid]) ganttData[pid]=saved[pid];}
+    }catch(e){}
+    if(!ganttData[pid]){
+      if(pid==='mutxamel') ganttData[pid]=JSON.parse(JSON.stringify(TASKS));
+      else ganttData[pid]=[];
+    }
   }
   return ganttData[pid];
+}
+function saveGanttData(pid){
+  pid=pid||currentProjId;
+  try{
+    const raw=localStorage.getItem(GANTT_STORAGE_KEY);
+    const saved=raw?JSON.parse(raw):{};
+    saved[pid]=ganttData[pid];
+    localStorage.setItem(GANTT_STORAGE_KEY,JSON.stringify(saved));
+    localStorage.setItem(LAST_CHANGE_KEY,_nowTS());
+    updateLastReportingBadge();
+  }catch(e){}
 }
 
 // Colour palette per phase index
@@ -2315,62 +2343,180 @@ function renderGantt(){
     chartRows+=`<div style="position:relative;height:${ROW_H}px;background:${bgRow};border-bottom:1px solid var(--border);${rowTopBorder}width:${CHART_W}px;">${gridLines}${tLine}${barHtml}</div>`;
   });
 
-  // ── ASSEMBLE ───────────────────────────────────────────────────
+  // ── ASSEMBLE — single-scroll sticky layout ─────────────────────
+  // We use ONE scroll container. Left columns and top header use
+  // position:sticky so they freeze without any JS scroll-sync.
+  const totalW=LEFT_W+CHART_W;
+
+  // Build the single unified table HTML
+  // Each logical row is a flex row inside the scroll container.
+  // Left cells are sticky; chart cells are normal flow.
+
+  // Header row 1 (years) — full width sticky top:0
+  let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;background:var(--navy);box-shadow:0 1px 0 rgba(255,255,255,0.15);">`;
+  // Left frozen area — year label is just "TAREA"
+  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H1}px;background:var(--navy);display:flex;align-items:center;padding:0 12px;border-right:2px solid rgba(255,255,255,0.2);">
+    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:.6px;text-transform:uppercase;">${t('taskName')}</span>
+  </div>`;
+  // Year cells
+  yearGroups.forEach(yg=>{
+    hdrYear+=`<div style="flex-shrink:0;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.25);':''}">${yg.year}</div>`;
+  });
+  hdrYear+=`</div>`;
+
+  // Header row 2 (columns + months) — sticky top:HDR_H1
+  let hdrMonth=`<div class="g-hdr-row" style="position:sticky;top:${HDR_H1}px;z-index:20;display:flex;width:${totalW}px;background:#0a2540;box-shadow:0 3px 8px rgba(5,35,61,0.22);">`;
+  // Left frozen columns header
+  hdrMonth+=`<div class="g-col-hdr" style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H2}px;background:var(--navy);display:flex;align-items:center;border-right:2px solid rgba(255,255,255,0.2);">`;
+  hdrMonth+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;height:100%;display:flex;align-items:center;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskName')}<div class="g-resize-handle" data-col="name"></div></div>`;
+  hdrMonth+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
+  hdrMonth+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
+  hdrMonth+=`<div style="width:${PCT_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);${isEditor?'border-right:1px solid rgba(255,255,255,0.12);':''}box-sizing:border-box;flex-shrink:0;">%</div>`;
+  if(isEditor) hdrMonth+=`<div style="width:${ACT_W}px;flex-shrink:0;"></div>`;
+  hdrMonth+=`</div>`;
+  // Month cells
+  months.forEach((mn,i)=>{
+    const isYS=mn.getMonth()===0;
+    hdrMonth+=`<div style="flex-shrink:0;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.65);${isYS?'border-left:2px solid rgba(255,255,255,0.25);':'border-left:1px solid rgba(255,255,255,0.1);'}">${MSHORT[mn.getMonth()]}</div>`;
+  });
+  hdrMonth+=`</div>`;
+
+  // Data rows
+  let dataRows='';
+  tasks.forEach((task,ri)=>{
+    const isPhase=task.level===1;
+    const isMile=!!task.milestone;
+    const color=task.color||PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2E86AB';
+    const indent=task.level===1?0:task.level===2?12:24;
+    const bgRow=isPhase?'#E8EDF4':'#fff';
+    const fw=isPhase?700:400;
+    const fs=isPhase?12:11.5;
+    const pctVal=task.pct||0;
+    const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
+    const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
+    const phaseAccent=isPhase?`border-left:3px solid ${color};`:'';
+    const rowTopBorder=isPhase?'border-top:2px solid rgba(5,35,61,0.12);':'';
+
+    const nameClick=isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="${t('ganttHint')}"` :'';
+    const startClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="${t('ganttHint')}"` :'';
+    const endClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','end',this)" title="${t('ganttHint')}"` :'';
+
+    const pctCell=isMile?`<div class="g-pct-cell" style="width:${PCT_W}px;"></div>`
+      :(isEditor
+        ?`<div class="g-pct-cell" style="width:${PCT_W}px;"><input type="number" min="0" max="100" value="${pctVal}" onchange="ganttSetPct('${task.id}',this.value)" style="width:38px;padding:2px 3px;border:1px solid var(--border);border-radius:4px;font-size:10px;text-align:center;"></div>`
+        :`<div class="g-pct-cell" style="width:${PCT_W}px;"><span style="background:${pctBg};color:${pctCol};font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;">${pctVal}%</span></div>`);
+
+    const actCell=isEditor?`<div style="width:${ACT_W}px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;" title="Eliminar">×</button>
+    </div>`:'';
+
+    // LEFT frozen cell
+    const leftCell=`<div class="g-left-frozen" style="position:sticky;left:0;z-index:10;flex-shrink:0;width:${LEFT_W}px;height:${ROW_H}px;background:${bgRow};display:flex;align-items:stretch;border-right:2px solid var(--border);${rowTopBorder}box-sizing:border-box;">
+      <div class="g-name-cell" data-col="name" style="width:${NAME_W}px;padding:0 8px 0 ${isPhase?5+indent:8+indent}px;font-size:${fs}px;font-weight:${fw};color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}flex-shrink:0;" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
+      <div class="g-date-cell" data-col="start" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}flex-shrink:0;" ${startClick}>${fmtDate(task.start)}</div>
+      <div class="g-date-cell" data-col="end" style="width:${DATE_W}px;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}flex-shrink:0;" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
+      ${pctCell}${actCell}
+    </div>`;
+
+    // CHART cell
+    const s=new Date(task.start), e=new Date(task.end||task.start);
+    const sClamp=s<tMin?tMin:s;
+    const eClamp=e>tMax?tMax:e;
+    const leftPx=dateToPx(sClamp.toISOString().slice(0,10));
+    const rightPx=dateToPx(eClamp.toISOString().slice(0,10));
+    const widPx=Math.max(2,rightPx-leftPx);
+    const vis=s<=tMax&&e>=tMin;
+
+    let barHtml='';
+    if(vis){
+      if(isMile){
+        barHtml=`<div style="position:absolute;top:50%;left:${leftPx}px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;z-index:3;"></div>`;
+      } else if(isPhase){
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${color};opacity:0.85;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.35);border-radius:2px;pointer-events:none;"></div>
+        </div>`;
+      } else {
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPx}px;width:${widPx}px;height:18px;border-radius:3px;background:${color}30;border:1.5px solid ${color}80;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${color};border-radius:2px;opacity:0.75;pointer-events:none;"></div>
+        </div>`;
+      }
+    }
+
+    let gridLines='';
+    months.forEach((mn,i)=>{
+      if(i===0) return;
+      const isYS=mn.getMonth()===0;
+      gridLines+=`<div style="position:absolute;top:0;bottom:0;left:${i*CW}px;width:${isYS?2:1}px;background:${isYS?'rgba(0,0,0,0.12)':'rgba(0,0,0,0.05)'};pointer-events:none;z-index:1;"></div>`;
+    });
+    const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
+
+    const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${bgRow};${rowTopBorder}border-bottom:1px solid var(--border);overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
+
+    dataRows+=`<div class="g-row" style="display:flex;flex-shrink:0;border-bottom:1px solid var(--border);">${leftCell}${chartCell}</div>`;
+  });
+
   const html=`${toolbar}
-  <div style="display:flex;flex-direction:column;height:calc(100% - ${isEditor?45:0}px);overflow:hidden;">
-    <!-- Fixed header row -->
-    <div style="display:flex;flex-shrink:0;border-bottom:2px solid rgba(255,255,255,0.25);box-shadow:0 3px 8px rgba(5,35,61,0.18);z-index:10;position:relative;">
-      ${leftHdr}
-      <div style="flex:1;min-width:0;overflow:hidden;" id="ganttHdrScroll">
-        ${chartHdr}
-      </div>
+  <div id="ganttWrap" style="position:relative;height:calc(100% - ${isEditor?45:0}px);overflow:auto;-webkit-overflow-scrolling:touch;" class="gantt-scroll-wrap">
+    <div style="width:${totalW}px;min-height:100%;">
+      ${hdrYear}
+      ${hdrMonth}
+      ${dataRows}
     </div>
-    <!-- Scrollable body -->
-    <div style="display:flex;flex:1;min-height:0;overflow:hidden;">
-      <!-- Frozen left panel -->
-      <div style="flex-shrink:0;width:${LEFT_W}px;overflow-y:auto;overflow-x:hidden;border-right:2px solid var(--border);" id="ganttLeftScroll">
-        ${leftRows}
-      </div>
-      <!-- Chart area: scrolls both X and Y -->
-      <div style="flex:1;min-width:0;overflow:auto;" id="ganttChartScroll">
-        <div style="width:${CHART_W}px;">
-          ${chartRows}
-        </div>
-      </div>
+    <!-- Custom scrollbar track (horizontal) -->
+    <div id="ganttSbTrack" style="position:sticky;bottom:0;left:0;right:0;height:10px;background:rgba(5,35,61,0.06);z-index:50;border-top:1px solid rgba(5,35,61,0.08);">
+      <div id="ganttSbThumb" style="position:absolute;top:1px;height:8px;background:rgba(5,35,61,0.28);border-radius:4px;cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(5,35,61,0.48)'" onmouseleave="this.style.background='rgba(5,35,61,0.28)'"></div>
     </div>
   </div>`;
 
   container.innerHTML=html;
 
-  // ── SYNC SCROLLS ───────────────────────────────────────────────
-  const leftScroll=document.getElementById('ganttLeftScroll');
-  const chartScroll=document.getElementById('ganttChartScroll');
-  const hdrScroll=document.getElementById('ganttHdrScroll');
-  let syncing=false;
-  chartScroll.addEventListener('scroll',()=>{
-    if(syncing) return; syncing=true;
-    leftScroll.scrollTop=chartScroll.scrollTop;
-    hdrScroll.scrollLeft=chartScroll.scrollLeft;
-    syncing=false;
+  // ── CUSTOM SCROLLBAR ───────────────────────────────────────────
+  const wrap=document.getElementById('ganttWrap');
+  const sbTrack=document.getElementById('ganttSbTrack');
+  const sbThumb=document.getElementById('ganttSbThumb');
+
+  function updateScrollbar(){
+    const ratio=wrap.clientWidth/wrap.scrollWidth;
+    const thumbW=Math.max(40,wrap.clientWidth*ratio);
+    const maxScroll=wrap.scrollWidth-wrap.clientWidth;
+    const thumbLeft=maxScroll>0?(wrap.scrollLeft/maxScroll)*(wrap.clientWidth-thumbW):0;
+    sbThumb.style.width=thumbW+'px';
+    sbThumb.style.left=thumbLeft+'px';
+    sbTrack.style.display=ratio>=1?'none':'block';
+  }
+
+  wrap.addEventListener('scroll',updateScrollbar);
+  window.addEventListener('resize',updateScrollbar);
+  updateScrollbar();
+
+  // Drag the custom scrollbar thumb
+  let sbDragging=false,sbStartX,sbStartLeft;
+  sbThumb.addEventListener('mousedown',e=>{
+    sbDragging=true; sbStartX=e.clientX;
+    sbStartLeft=wrap.scrollLeft;
+    e.preventDefault();
   });
-  leftScroll.addEventListener('scroll',()=>{
-    if(syncing) return; syncing=true;
-    chartScroll.scrollTop=leftScroll.scrollTop;
-    syncing=false;
+  document.addEventListener('mousemove',e=>{
+    if(!sbDragging) return;
+    const ratio=wrap.scrollWidth/wrap.clientWidth;
+    wrap.scrollLeft=sbStartLeft+(e.clientX-sbStartX)*ratio;
   });
+  document.addEventListener('mouseup',()=>{sbDragging=false;});
 
   // Scroll to today
   if(todayInRange){
-    const visibleW=chartScroll.clientWidth||600;
-    chartScroll.scrollLeft=Math.max(0,todayPx-visibleW/2);
+    const visibleW=wrap.clientWidth||600;
+    wrap.scrollLeft=Math.max(0,LEFT_W+todayPx-visibleW/2);
   }
 
-  if(isEditor) ganttAttachDrag(pid,months,CW,dateToPx);
+  if(isEditor){
+    ganttAttachDrag(pid,months,CW,dateToPx);
+    ganttAttachColResize(LEFT_W,NAME_W,DATE_W,PCT_W,ACT_W,pid);
+  }
 }
 
 // ── DRAG TO MOVE BARS ────────────────────────────────────────────────────────
 function ganttAttachDrag(pid,months,CW,dateToPxFn){
-  // Inverse: px → date string
   function pxToDate(px){
     const mIdx=Math.floor(px/CW);
     const frac=(px%CW)/CW;
@@ -2378,25 +2524,29 @@ function ganttAttachDrag(pid,months,CW,dateToPxFn){
     const mn=months[safeIdx];
     const mStart=new Date(mn.getFullYear(),mn.getMonth(),1);
     const mEnd=new Date(mn.getFullYear(),mn.getMonth()+1,1);
-    const ms=mStart.getTime()+frac*(mEnd-mStart);
-    return new Date(ms).toISOString().slice(0,10);
+    return new Date(mStart.getTime()+frac*(mEnd-mStart)).toISOString().slice(0,10);
   }
 
+  const wrap=document.getElementById('ganttWrap');
   document.querySelectorAll('[data-bar]').forEach(bar=>{
     const taskId=bar.getAttribute('data-bar');
-    let startX,origLeftPx,dragging=false;
+    let startX,origLeftPx,dragging=false,scrollAtStart=0;
     bar.addEventListener('mousedown',e=>{
+      if(e.target!==bar&&!e.target.closest('[data-bar]')) return;
+      // ignore if clicking on the inner progress div
       if(e.target!==bar) return;
       e.preventDefault();
       dragging=true;
       startX=e.clientX;
       origLeftPx=parseFloat(bar.style.left)||0;
+      scrollAtStart=wrap?wrap.scrollLeft:0;
       bar.style.cursor='grabbing';
       bar.style.opacity='0.7';
     });
     document.addEventListener('mousemove',e=>{
       if(!dragging) return;
-      const dx=e.clientX-startX;
+      const scrollDiff=wrap?(wrap.scrollLeft-scrollAtStart):0;
+      const dx=(e.clientX-startX)+scrollDiff;
       bar.style.left=Math.max(0,origLeftPx+dx)+'px';
     });
     document.addEventListener('mouseup',e=>{
@@ -2412,9 +2562,51 @@ function ganttAttachDrag(pid,months,CW,dateToPxFn){
         const dur=daysBetween(task.start,task.end||task.start);
         task.start=newStart;
         task.end=addDays(newStart,Math.max(0,dur));
+        saveGanttData(pid);
         renderGantt();
-        toast('Tarea movida');
+        toast(isEN?'Task moved':'Tarea movida');
       }
+    });
+  });
+}
+
+// ── COLUMN RESIZE ─────────────────────────────────────────────────────────────
+function ganttAttachColResize(LEFT_W,NAME_W,DATE_W,PCT_W,ACT_W,pid){
+  // Store current widths — mutable
+  const colW={name:NAME_W,start:DATE_W,end:DATE_W};
+  const MIN={name:120,start:60,end:60};
+
+  document.querySelectorAll('.g-resize-handle').forEach(handle=>{
+    const col=handle.getAttribute('data-col');
+    if(!colW[col]) return;
+    let startX,startW,dragging=false;
+    handle.addEventListener('mousedown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      dragging=true; startX=e.clientX; startW=colW[col];
+      document.body.style.cursor='col-resize';
+      document.body.style.userSelect='none';
+    });
+    document.addEventListener('mousemove',e=>{
+      if(!dragging) return;
+      const newW=Math.max(MIN[col],startW+(e.clientX-startX));
+      colW[col]=newW;
+      // Update all cells with that data-col attribute
+      document.querySelectorAll(`[data-col="${col}"]`).forEach(el=>{
+        el.style.width=newW+'px';
+        el.style.minWidth=newW+'px';
+      });
+      // Update the sticky left block total width
+      const newLeftW=colW.name+colW.start+colW.end+PCT_W+(isEditor?ACT_W:0);
+      document.querySelectorAll('.g-left-frozen,.g-col-hdr').forEach(el=>{
+        el.style.width=newLeftW+'px';
+        el.style.minWidth=newLeftW+'px';
+      });
+    });
+    document.addEventListener('mouseup',()=>{
+      if(!dragging) return;
+      dragging=false;
+      document.body.style.cursor='';
+      document.body.style.userSelect='';
     });
   });
 }
@@ -2427,11 +2619,11 @@ function ganttEditName(taskId,cell){
   const orig=task.name;
   const inp=document.createElement('input');
   inp.value=orig;
-  inp.style.cssText='width:100%;box-sizing:border-box;font-size:inherit;font-weight:inherit;font-family:inherit;border:none;outline:2px solid var(--blue);border-radius:3px;padding:1px 4px;';
+  inp.style.cssText='width:100%;box-sizing:border-box;font-size:inherit;font-weight:inherit;font-family:inherit;border:none;outline:2px solid var(--blue);border-radius:3px;padding:1px 4px;background:#fff;color:var(--navy);';
   cell.textContent='';
   cell.appendChild(inp);
   inp.focus(); inp.select();
-  const commit=()=>{task.name=inp.value||orig; renderGantt();};
+  const commit=()=>{task.name=inp.value||orig; saveGanttData(); renderGantt();};
   inp.addEventListener('blur',commit);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter') inp.blur(); if(e.key==='Escape'){task.name=orig;renderGantt();}});
 }
@@ -2448,7 +2640,7 @@ function ganttEditDate(taskId,field,cell){
   cell.appendChild(inp);
   inp.focus();
   const commit=()=>{
-    if(inp.value){ task[field]=inp.value; }
+    if(inp.value){ task[field]=inp.value; saveGanttData(); }
     renderGantt();
   };
   inp.addEventListener('blur',commit);
@@ -2458,8 +2650,7 @@ function ganttEditDate(taskId,field,cell){
 function ganttSetPct(taskId,val){
   const tasks=getGanttTasks();
   const task=tasks.find(t=>t.id===taskId);
-  if(task) task.pct=Math.max(0,Math.min(100,parseInt(val)||0));
-  // don't re-render on every keystroke; will refresh on next action
+  if(task){ task.pct=Math.max(0,Math.min(100,parseInt(val)||0)); saveGanttData(); }
 }
 
 function ganttDeleteRow(taskId){
@@ -2468,6 +2659,7 @@ function ganttDeleteRow(taskId){
   if(idx<0) return;
   if(!confirm(t('confirmDeleteRow'))) return;
   tasks.splice(idx,1);
+  saveGanttData(pid);
   renderGantt();
   toast('✓ '+t('deleted'));
 }
@@ -2480,6 +2672,7 @@ function ganttAddPhase(){
   const phaseNum=tasks.filter(t=>t.level===1).length+1;
   const color=PHASE_COLORS[(phaseNum-1)%PHASE_COLORS.length];
   tasks.push({id:newGanttId(pid),level:1,num:String(phaseNum),name:t('ganttNewPhase'),start:today,end,pct:0,color});
+  saveGanttData(pid);
   renderGantt();
 }
 
@@ -2488,10 +2681,10 @@ function ganttAddTask(){
   const tasks=getGanttTasks(pid);
   const today=new Date().toISOString().slice(0,10);
   const end=addDays(today,30);
-  // Find last phase for color
   const lastPhase=tasks.slice().reverse().find(t=>t.level===1);
   const color=lastPhase?lastPhase.color:PHASE_COLORS[0];
   tasks.push({id:newGanttId(pid),level:2,num:'',name:t('ganttTask'),start:today,end,pct:0,color});
+  saveGanttData(pid);
   renderGantt();
 }
 
@@ -2500,6 +2693,7 @@ function ganttAddMilestone(){
   const tasks=getGanttTasks(pid);
   const today=new Date().toISOString().slice(0,10);
   tasks.push({id:newGanttId(pid),level:2,num:'',name:t('ganttMilestone'),start:today,end:today,pct:0,color:'#05233D',milestone:true});
+  saveGanttData(pid);
   renderGantt();
 }
 
