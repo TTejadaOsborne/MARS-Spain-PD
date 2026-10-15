@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1930 -->
+<!-- BUILD:20261015-1712 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1930';
+const BUILD='20261015-1712';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -305,10 +305,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-hdr-row{display:flex;align-items:stretch;}
 .ptl2-proj-lbl-space{width:180px;flex-shrink:0;border-right:1px solid #BBC5D0;}
 /* Fila 1: años como celdas proporcionales */
-.ptl2-axis-years{display:flex;flex:1;background:#F4F6F9;position:relative;}
+.ptl2-axis-years{display:flex;flex:1;background:#F4F6F9;position:relative;overflow:hidden;}
 .ptl2-year-cell{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--navy);letter-spacing:0.08em;border-bottom:1px solid #D0D7E0;height:22px;overflow:hidden;white-space:nowrap;}
 /* Fila 2: quarters como celdas */
-.ptl2-axis-quarters{display:flex;flex:1;border-bottom:2px solid #BBC5D0;position:relative;background:#F8F9FB;}
+.ptl2-axis-quarters{display:flex;flex:1;border-bottom:2px solid #BBC5D0;position:relative;background:#F8F9FB;overflow:hidden;}
 .ptl2-q-cell{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#8A96A3;height:18px;overflow:hidden;white-space:nowrap;letter-spacing:0.03em;}
 .ptl2-today-line-hdr{position:absolute;top:0;bottom:0;width:2px;background:var(--red);transform:translateX(-50%);z-index:3;}
 .ptl2-today-lbl{position:absolute;top:1px;left:50%;transform:translateX(-50%);font-size:7.5px;font-weight:800;color:var(--red);white-space:nowrap;background:#fff;padding:0 2px;border-radius:2px;}
@@ -321,7 +321,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-proj-lbl{width:180px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:10px 16px 10px 20px;border-right:1px solid #BBC5D0;}
 .ptl2-proj-name{font-size:12px;font-weight:800;color:var(--navy);letter-spacing:0.01em;}
 .ptl2-proj-mw{font-size:10px;color:#8A96A3;font-weight:600;letter-spacing:0.02em;}
-.ptl2-track{flex:1;position:relative;height:80px;}
+.ptl2-track{flex:1;position:relative;height:80px;overflow:hidden;}
 /* Year separator lines — more prominent than Q lines */
 .ptl2-vline{position:absolute;top:0;bottom:0;width:1px;background:#E2E7EC;pointer-events:none;}
 .ptl2-vline-major{position:absolute;top:0;bottom:0;width:2px;background:#BBC5D0;pointer-events:none;}
@@ -1451,8 +1451,9 @@ function updateLastReportingBadge(){
   let lsDt=null;
   try{ lsDt=lsToDate(localStorage.getItem(LAST_CHANGE_KEY)||''); }catch(e){}
 
-  // Use whichever is more recent
-  const winner=(lsDt&&buildDt&&lsDt>buildDt)?lsDt:(buildDt||lsDt);
+  // If there's a real data update in localStorage, always show that.
+  // BUILD is only a fallback when no data has ever been saved locally.
+  const winner=lsDt||(buildDt||null);
   if(!winner){ el.textContent=''; return; }
 
   const ts=fmtDate(winner);
@@ -3342,7 +3343,10 @@ function renderPortfolioTimeline(){
     for(let y=AX_Y0;y<=AX_Y1;y++){
       [1,2,3,4].forEach(q=>{
         const p=(qFrac(y,q)*100).toFixed(2);
-        // Q1 (= year start) and Q4-end (= year end) are major separators
+        // Skip the very first line (left:0%) — that's the container's left edge
+        // (same skip as in header rows, so the border-right of the label is the only separator)
+        if(y===AX_Y0 && q===1) return;
+        // Q1 (= year start) are major separators
         const isMajor=(q===1);
         h+=`<div class="${isMajor?'ptl2-vline-major':'ptl2-vline'}" style="left:${p}%"></div>`;
       });
@@ -3805,7 +3809,7 @@ init();
 
 <!-- ── Project summary popup ── -->
 <div id="projPopup" onclick="if(event.target===this)closeProjectPopup()">
-  <div id="projPopupCard">
+  <div id="projPopupCard" onclick="event.stopPropagation()">
     <div id="projPopupHdr">
       <div id="projPopupHdrLeft">
         <div id="projPopupName"></div>
