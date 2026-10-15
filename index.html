@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1800 -->
+<!-- BUILD:20261015-1630 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1800';
+const BUILD='20261015-1630';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -1377,29 +1377,38 @@ const META = {
 function updateLastReportingBadge(){
   const el=document.getElementById('lastUpdatedBadge');
   if(!el) return;
-  let ts='';
-  try{ ts=localStorage.getItem(LAST_CHANGE_KEY)||''; }catch(e){}
-  if(ts){
-    // ts contains "DD/MM/YYYY a las HH:MM" — set by saveData()
-    el.textContent=lang==='en'
-      ?'Updated on '+ts.replace(' a las ',' at ')
-      :`Actualizado el ${ts}`;
-  } else {
-    // Fallback: parse BUILD constant (YYYYMMDD-HHMM) as last deploy date
-    try{
-      const b=BUILD||'';
-      const m=b.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
-      if(m){
-        const [,y,mo,d,h,mi]=m;
-        const fallback=`${d}/${mo}/${y} a las ${h}:${mi}`;
-        el.textContent=lang==='en'
-          ?'Updated on '+fallback.replace(' a las ',' at ')
-          :`Actualizado el ${fallback}`;
-      } else {
-        el.textContent='';
-      }
-    }catch(e){ el.textContent=''; }
+
+  // Parse BUILD → Date  (YYYYMMDD-HHMM)
+  function buildToDate(b){
+    const m=(b||'').match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
+    if(!m) return null;
+    const [,y,mo,d,h,mi]=m;
+    return new Date(+y,+mo-1,+d,+h,+mi);
   }
+  // Parse localStorage ts → Date  ("DD/MM/YYYY a las HH:MM")
+  function lsToDate(s){
+    const m=(s||'').match(/^(\d{2})\/(\d{2})\/(\d{4}) a las (\d{2}):(\d{2})$/);
+    if(!m) return null;
+    const [,d,mo,y,h,mi]=m;
+    return new Date(+y,+mo-1,+d,+h,+mi);
+  }
+  function fmtDate(dt){
+    const pad=n=>String(n).padStart(2,'0');
+    return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()} a las ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+  }
+
+  const buildDt=buildToDate(BUILD);
+  let lsDt=null;
+  try{ lsDt=lsToDate(localStorage.getItem(LAST_CHANGE_KEY)||''); }catch(e){}
+
+  // Use whichever is more recent
+  const winner=(lsDt&&buildDt&&lsDt>buildDt)?lsDt:(buildDt||lsDt);
+  if(!winner){ el.textContent=''; return; }
+
+  const ts=fmtDate(winner);
+  el.textContent=lang==='en'
+    ?'Updated on '+ts.replace(' a las ',' at ')
+    :`Actualizado el ${ts}`;
 }
 function _latestDataWeek(){
   // Returns the most recent Monday key in allData that has actual data
