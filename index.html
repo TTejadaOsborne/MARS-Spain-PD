@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1145 -->
+<!-- BUILD:20261015-1200 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1145';
+const BUILD='20261015-1200';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -289,10 +289,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 /* ── Visual Timeline (PTL) — single-line PPTX style ─────────────── */
-.ptl-outer{overflow-x:auto;padding:8px 0 4px;}
-.ptl-scroll{min-width:700px;position:relative;}
+.ptl-outer{overflow-x:auto;overflow-y:visible;padding:8px 0 4px;}
+.ptl-scroll{min-width:700px;position:relative;overflow:visible;}
 /* single axis container */
-.ptl-axis-container{position:relative;height:220px;padding:0 24px;}
+.ptl-axis-container{position:relative;height:300px;padding:0 24px;overflow:visible;}
 /* the horizontal axis line */
 .ptl-axis-line{position:absolute;left:24px;right:24px;top:50%;height:4px;background:var(--navy);border-radius:2px;transform:translateY(-50%);}
 /* year circle markers */
@@ -1402,7 +1402,7 @@ function init(){
       renderFeed();
     }
   }catch(e){ renderFeed(); }
-  renderPortfolioTimeline();
+  setTimeout(renderPortfolioTimeline, 0);
   applyLang();
 }
 
@@ -2996,13 +2996,12 @@ function renderPortfolioTimeline(){
   });
 
   // Lane → vertical positioning
-  // above axis (lane 0..3): chips positioned above center line
-  // below axis (lane 4..7): chips positioned below center line
-  const AXIS_TOP_PCT=50; // axis is at 50% of container height
-  // Container height = 220px
-  // Above: row 0 = 8px from axis, row 1 = 38px, row 2 = 68px, row 3=98px
-  // Below: row 4 = 8px below axis, etc.
-  const laneOffsets=[48,82,116,150, 48,82,116,150]; // px from axis center
+  // Container height = 300px, axis at 50% = 150px from top
+  // 4 lanes above (0-3) + 4 lanes below (4-7)
+  // Each chip is ~22px tall; offsets from axis center
+  // Lane 0 (nearest above): chip bottom at axis - 8px → top = 150 - 30 - 8 = 112px (top = calc(50% - 38px))
+  // Offsets: distance from axis CENTER to chip TOP
+  const laneOffsets=[38,68,98,128, 38,68,98,128]; // px from axis center to chip top
 
   // ── Build HTML ──────────────────────────────────────────────────
   let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
@@ -3045,18 +3044,19 @@ function renderPortfolioTimeline(){
     const opacity={done:1,active:1,blocked:0.85,pending:0.65}[chip.st]||0.7;
 
     let top, lineStyle;
+    const CHIP_H=22; // approximate chip height px
     if(isAbove){
-      // chip sits above axis center (50%)
-      // chip bottom edge is at: 50% - offset px + chip height (~22px)
-      top=`calc(50% - ${offset}px)`;
-      // line from chip bottom to axis: height = offset - 20 (chip half-height ~11px, axis radius 2px)
-      const lineH=offset-22;
-      lineStyle=`top:100%;height:${lineH}px;background:${chip.color};opacity:0.6;`;
+      // chip TOP = axis_center - offset - CHIP_H (chip is above axis, bottom near axis)
+      top=`calc(50% - ${offset+CHIP_H}px)`;
+      // connector line: from chip bottom (100%) down to axis
+      const lineH=Math.max(4,offset-2);
+      lineStyle=`top:100%;height:${lineH}px;background:${chip.color};opacity:0.5;`;
     } else {
-      // chip sits below axis
-      top=`calc(50% + ${offset-22}px)`;
-      const lineH=offset-22;
-      lineStyle=`bottom:100%;height:${lineH}px;background:${chip.color};opacity:0.6;`;
+      // chip TOP = axis_center + offset (chip is below axis, top near axis)
+      top=`calc(50% + ${offset}px)`;
+      // connector line: from chip top (bottom:100%) up to axis
+      const lineH=Math.max(4,offset-2);
+      lineStyle=`bottom:100%;height:${lineH}px;background:${chip.color};opacity:0.5;`;
     }
 
     const lineDiv=isAbove
