@@ -3120,8 +3120,7 @@ function renderPtlEditBtns(){
   wrap.style.display='flex';
   wrap.innerHTML=editPids.map(pid=>{
     const m=PTL_PROJ_META[pid];
-    const dot=`<span class="ptl-dot" style="background:${m.dot};"></span>`;
-    return `<button class="ptl-proj-edit-btn" onclick="openMilestoneEditor('${pid}')">${dot}${isEN?m.nameEN||m.name:m.name}</button>`;
+    return `<button class="ptl-proj-edit-btn" onclick="openMilestoneEditor('${pid}')">${m.name}</button>`;
   }).join('');
 }
 
