@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1530';
+const BUILD='20261015-1700';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -96,33 +96,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
 /* MAIN */
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-.page-hdr{background:#FFFFFF;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.page-hdr-left h2{font-size:18px;font-weight:800;color:var(--navy);}
-.page-hdr-left p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.page-hdr{background:#FFFFFF;border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.page-hdr-left h2{font-size:15px;font-weight:800;color:var(--navy);}
+.page-hdr-left p{font-size:11px;color:var(--text-3);margin-top:1px;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;}
 .btn-primary{background:var(--green);color:#fff;}
 .btn-primary:hover{background:var(--green-d);}
 .btn-sec{background:#fff;border:1px solid var(--border);color:var(--text-2);}
 .btn-sec:hover{border-color:var(--navy);color:var(--navy);}
 .week-badge{background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:5px;}
-.content{padding:16px 20px;background:var(--bg);}
+.content{padding:10px 16px;background:var(--bg);}
 
 /* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-.stat-card{background:#fff;border:1px solid #E8ECF0;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(5,35,61,0.05);cursor:default;}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+.stat-card{background:#fff;border:1px solid #E8ECF0;border-radius:8px;padding:10px 14px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(5,35,61,0.05);cursor:default;display:flex;align-items:center;gap:10px;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;}
 .stat-card.blue::before{background:var(--blue);}
 .stat-card.green::before{background:var(--green);}
 .stat-card.navy::before{background:var(--navy);}
 .stat-card.red::before{background:var(--red);}
-.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.stat-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .stat-icon.blue{background:var(--blue-l);}
 .stat-icon.green{background:var(--green-l);}
 .stat-icon.navy{background:rgba(5,35,61,0.07);}
 .stat-icon.red{background:var(--red-l);}
-.stat-num{font-size:26px;font-weight:800;color:var(--navy);line-height:1;margin-bottom:3px;}
-.stat-lbl{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;}
-.stat-sub{font-size:10.5px;color:var(--text-3);margin-top:5px;}
+.stat-num{font-size:20px;font-weight:800;color:var(--navy);line-height:1;margin-bottom:1px;}
+.stat-lbl{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;}
+.stat-sub{font-size:9.5px;color:var(--text-3);margin-top:2px;}
 
 /* CARDS */
 .card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
@@ -132,8 +132,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .tag-navy{background:rgba(5,35,61,0.08);color:var(--navy);}
 
 /* MAP */
-.map-wrap{background:#FFFFFF;height:540px;position:relative;overflow:hidden;}
-.map-svg{width:100%;height:540px;display:block;}
+.map-wrap{background:#FFFFFF;height:340px;position:relative;overflow:hidden;flex:1;}
+.map-svg{width:100%;height:340px;display:block;}
 .proj-pin{cursor:pointer;}
 .proj-pin circle.pulse{animation:pulse 2s ease-out infinite;transform-box:fill-box;transform-origin:center;}
 @keyframes pulse{0%{transform:scale(1);opacity:1;}70%{transform:scale(2.8);opacity:0;}100%{transform:scale(2.8);opacity:0;}}
@@ -285,55 +285,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #projPopupMap{height:190px;width:100%;z-index:0;border-radius:8px;overflow:hidden;}
 .popup-section{display:flex;flex-direction:column;gap:0;}
 .popup-section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-/* ── Visual Timeline (PTL) — shared axis ─────────────────────────── */
-.ptl-outer{overflow-x:auto;padding:0 0 8px;}
-.ptl-scroll{min-width:720px;}
-/* legend */
-.ptl-legend{display:flex;align-items:center;gap:16px;padding:0 20px 12px;flex-wrap:wrap;}
-.ptl-leg-item{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--text-2);}
-.ptl-leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-/* shared axis wrapper */
-.ptl-axis-wrap{position:relative;padding:0 20px 4px;}
-/* quarter header row */
-.ptl-q-row{position:relative;display:grid;margin-left:130px;margin-right:0;height:22px;}
-.ptl-q-label{position:absolute;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-3);transform:translateX(-50%);white-space:nowrap;}
-/* baseline axis line */
-.ptl-axis-line{height:2px;background:var(--border);margin:0 0 0 130px;border-radius:1px;position:relative;}
-.ptl-q-tick{position:absolute;top:-3px;width:1px;height:8px;background:var(--border-2);}
-/* today marker */
-.ptl-today{position:absolute;top:-14px;width:2px;background:var(--red);bottom:-4px;z-index:5;}
-.ptl-today-lbl{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:7.5px;font-weight:800;color:var(--red);white-space:nowrap;letter-spacing:0.3px;}
-/* project rows */
-.ptl-proj-row{display:grid;grid-template-columns:130px 1fr;align-items:center;border-top:1px solid var(--border);padding:10px 20px 10px;}
-.ptl-proj-row:first-child{border-top:none;}
-.ptl-proj-label{display:flex;align-items:center;gap:7px;}
-.ptl-proj-label-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.ptl-proj-label-name{font-size:11px;font-weight:700;color:var(--navy);line-height:1.3;}
-.ptl-proj-label-mw{font-size:9px;color:var(--text-3);}
-/* the timeline track per project */
-.ptl-track{position:relative;height:52px;}
-/* nodes */
-.ptl-node{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;cursor:default;}
-.ptl-node-circle{width:20px;height:20px;border-radius:50%;border:2.5px solid;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:var(--bg,#fff);transition:transform .15s;}
-.ptl-node:hover .ptl-node-circle{transform:scale(1.25);}
-.ptl-node.done .ptl-node-circle{background:var(--green);border-color:var(--green);color:#fff;}
-.ptl-node.active .ptl-node-circle{background:var(--bg,#fff);border-color:#B07D00;color:#B07D00;box-shadow:0 0 0 3px rgba(176,125,0,0.15);}
-.ptl-node.blocked .ptl-node-circle{background:var(--bg,#fff);border-color:var(--red);color:var(--red);box-shadow:0 0 0 3px rgba(200,32,30,0.12);}
-.ptl-node.pending .ptl-node-circle{background:var(--bg,#fff);border-color:var(--border-2);color:var(--text-3);}
-/* label above node */
-.ptl-node-tag{position:absolute;bottom:calc(100% + 2px);font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;color:var(--text-3);}
-.ptl-node.done .ptl-node-tag{color:var(--green-d);}
-.ptl-node.active .ptl-node-tag{color:#92680a;}
-.ptl-node.blocked .ptl-node-tag{color:var(--red);}
-/* date label below node */
-.ptl-node-date{position:absolute;top:calc(100% + 4px);font-size:8px;font-weight:600;color:var(--text-3);white-space:nowrap;text-align:center;}
-.ptl-node.done .ptl-node-date{color:var(--green);}
-.ptl-node.active .ptl-node-date{color:#92680a;font-weight:700;}
-.ptl-node.blocked .ptl-node-date{color:var(--red);}
+/* ── Visual Timeline (PTL) — single-line PPTX style ─────────────── */
+.ptl-outer{overflow-x:auto;padding:8px 0 4px;}
+.ptl-scroll{min-width:700px;position:relative;}
+/* single axis container */
+.ptl-axis-container{position:relative;height:220px;padding:0 24px;}
+/* the horizontal axis line */
+.ptl-axis-line{position:absolute;left:24px;right:24px;top:50%;height:4px;background:var(--navy);border-radius:2px;transform:translateY(-50%);}
+/* year circle markers */
+.ptl-year-circle{position:absolute;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;letter-spacing:-0.3px;z-index:5;cursor:default;}
+/* quarter tick marks */
+.ptl-q-tick{position:absolute;top:50%;transform:translateY(-50%);width:1px;height:14px;background:rgba(5,35,61,0.35);z-index:3;}
+/* today line */
+.ptl-today{position:absolute;top:calc(50% - 30px);width:2px;background:var(--red);height:60px;z-index:6;}
+.ptl-today-lbl{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:var(--red);white-space:nowrap;}
+/* milestone chip/label floating above or below */
+.ptl-chip{position:absolute;z-index:8;cursor:default;}
+.ptl-chip-box{border-radius:4px;padding:3px 7px;font-size:9.5px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:0.1px;line-height:1.4;}
+.ptl-chip-line{position:absolute;left:50%;width:1.5px;background:inherit;transform:translateX(-50%);}
+/* connector line (inherits color from parent via data attr) */
+.ptl-chip.above .ptl-chip-line{top:100%;height:var(--line-h,20px);}
+.ptl-chip.below .ptl-chip-line{bottom:100%;height:var(--line-h,20px);}
 /* tooltip on hover */
-.ptl-node-tooltip{position:absolute;bottom:calc(100% + 24px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
-.ptl-node-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--navy);}
-.ptl-node:hover .ptl-node-tooltip{opacity:1;}
+.ptl-chip-tooltip{position:absolute;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.ptl-chip.above .ptl-chip-tooltip{bottom:calc(100% + 6px);}
+.ptl-chip.below .ptl-chip-tooltip{top:calc(100% + 6px);}
+.ptl-chip-tooltip::after{content:'';position:absolute;left:50%;transform:translateX(-50%);border:4px solid transparent;}
+.ptl-chip.above .ptl-chip-tooltip::after{top:100%;border-top-color:var(--navy);}
+.ptl-chip.below .ptl-chip-tooltip::after{bottom:100%;border-bottom-color:var(--navy);}
+.ptl-chip:hover .ptl-chip-tooltip{opacity:1;}
+/* edit button in bottom-right */
+.ptl-proj-edit-btns{display:flex;gap:8px;justify-content:flex-end;padding:0 24px 6px;flex-wrap:wrap;}
+.ptl-proj-edit-btn{display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--border-2);border-radius:5px;padding:3px 9px;font-size:10px;font-weight:700;color:var(--text-2);cursor:pointer;transition:background .12s,border-color .12s;}
+.ptl-proj-edit-btn:hover{background:var(--border);border-color:var(--navy);}
+.ptl-proj-edit-btn .ptl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 /* ── Milestone editor ───────────────────────────────────────────── */
 .ptl-edit-btn{background:none;border:none;font-size:11px;cursor:pointer;opacity:0.4;padding:2px 4px;border-radius:3px;transition:opacity .15s,background .15s;margin-left:4px;}
 .ptl-edit-btn:hover{opacity:1;background:var(--border);}
@@ -466,9 +451,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="stat-sub" data-i18n="statAlertSub">Mutxamel requiere atención</div>
       </div>
     </div>
-    <!-- Map + Projects -->
-    <div style="display:grid;grid-template-columns:1fr 500px;gap:14px;margin-bottom:14px;">
-      <div class="card">
+    <!-- Map + Updates (top row) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;min-height:0;">
+      <div class="card" style="display:flex;flex-direction:column;overflow:hidden;">
         <div class="card-hdr">
           <h3 data-i18n="mapTitle">Localización de proyectos</h3>
           <span style="font-size:11px;color:var(--text-3);" data-i18n="mapSub">Selecciona un punto para abrir su ficha</span>
@@ -554,49 +539,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           </svg>
         </div>
       </div>
-      <div class="card">
-        <div class="card-hdr"><h3 data-i18n="navProjects">Proyectos</h3></div>
-        <div class="proj-list-item" onclick="openProject('begues')">
-          <div class="proj-dot" style="background:var(--green);"></div>
-          <div><div class="proj-list-name">BEGUES I &amp; II</div><div class="proj-list-loc">Olesa de Bonesvalls, Barcelona</div></div>
-          <div class="proj-list-mw">100 MW (2×50)</div><span>›</span>
+      <!-- Latest Updates (right column) -->
+      <div class="card" style="display:flex;flex-direction:column;overflow:hidden;">
+        <div class="card-hdr">
+          <h3 data-i18n="feedTitle">Últimas actualizaciones</h3>
+          <span class="tag tag-navy" id="feedCount">5 resultados</span>
         </div>
-        <div class="proj-list-item" onclick="openProject('fregacedos')">
-          <div class="proj-dot" style="background:var(--green);"></div>
-          <div><div class="proj-list-name">FREGACEDOS I, II &amp; V</div><div class="proj-list-loc">Humanes de Madrid, Madrid</div></div>
-          <div class="proj-list-mw">15 MW (3×5)</div><span>›</span>
-        </div>
-        <div class="proj-list-item" onclick="openProject('mutxamel')">
-          <div class="proj-dot" style="background:var(--red);"></div>
-          <div><div class="proj-list-name">MUTXAMEL <span style="font-size:10px;color:var(--red);" data-i18n="attentionBadge">⚠️ Atención</span></div><div class="proj-list-loc">Mutxamel, Alicante</div></div>
-          <div class="proj-list-mw">5 MW</div><span>›</span>
-        </div>
-        <div class="proj-list-item" onclick="openProject('entrenucleos')" style="opacity:0.65;">
-          <div class="proj-dot" style="background:var(--grey);"></div>
-          <div><div class="proj-list-name">ENTRENÚCLEOS</div><div class="proj-list-loc">Dos Hermanas, Sevilla</div></div>
-          <div class="proj-list-mw">49 MW</div><span>›</span>
-        </div>
-        <div class="proj-list-item" onclick="openProject('custom_nuevas_oportunidades')" style="background:var(--blue-l);">
-          <div class="proj-dot" style="background:var(--blue);"></div>
-          <div><div class="proj-list-name" style="color:var(--blue);" data-i18n="navOpp">Nuevas Oportunidades</div><div class="proj-list-loc" data-i18n="navOppSub">Pipeline · En análisis</div></div>
-          <div class="proj-list-mw" style="color:var(--blue);">—</div><span>›</span>
-        </div>
-      </div>
-    </div>
+        <div id="updatesFeed" style="overflow-y:auto;flex:1;"></div>
+      </div><!-- end updates card -->
+    </div><!-- end top grid -->
     <!-- Milestone Timeline -->
     <div class="card" style="margin-top:0;">
       <div class="card-hdr">
         <h3 data-i18n="timelineTitle">Estado de permisos</h3>
       </div>
-      <div style="padding:14px 16px 16px;" id="portfolioTimeline"></div>
-    </div>
-    <!-- Feed -->
-    <div class="card">
-      <div class="card-hdr">
-        <h3 data-i18n="feedTitle">Últimas actualizaciones</h3>
-        <span class="tag tag-navy" id="feedCount">5 resultados</span>
-      </div>
-      <div id="updatesFeed"></div>
+      <div style="padding:10px 0 10px;" id="portfolioTimeline"></div>
     </div>
   </div>
 </div>
@@ -2931,29 +2888,29 @@ function renderPortfolioTimeline(){
   const el=document.getElementById('portfolioTimeline');
   if(!el) return;
   const isEN=lang==='en';
-  const ST_ICON={done:'✓',active:'●',pending:'○',blocked:'✕'};
 
-  // ── Shared time axis: Q1 2024 → Q3 2028 ──────────────────────────
-  const AXIS_START={y:2024,q:1}; // inclusive
-  const AXIS_END  ={y:2028,q:3}; // inclusive
+  // ── Time axis: Q1 2025 → Q4 2029 ──────────────────────────────────
+  const AXIS_START={y:2025,q:1};
+  const AXIS_END  ={y:2029,q:4};
+  const YEARS=[2025,2026,2027,2028,2029];
+
+  function totalQuarters(){
+    return (AXIS_END.y-AXIS_START.y)*4+(AXIS_END.q-AXIS_START.q)+1;
+  }
+  const TOTAL_Q=totalQuarters();
+
   function qIdx(y,q){ return (y-AXIS_START.y)*4+(q-AXIS_START.q); }
-  const TOTAL_Q = qIdx(AXIS_END.y,AXIS_END.q)+1; // number of quarter slots
 
-  // Convert a milestone date string → fractional quarter position [0..1]
-  // Date strings: "Mar 2024","Feb 2024","Ene 2024" → month-based
-  //               "T1 2026","T2 2027", etc. → quarter based
-  //               "En curso","En disputa","En consulta" → use current quarter
   const MONTH_Q={ene:1,jan:1,feb:1,mar:1,abr:2,apr:2,may:2,jun:2,
                  jul:3,ago:3,aug:3,sep:3,oct:4,nov:4,dic:4,dec:4};
+
   function dateToPos(dateStr){
-    const s=dateStr.toLowerCase().trim();
-    // "T2 2026" or "T1 2025"
+    const s=(dateStr||'').toLowerCase().trim();
     const tMatch=s.match(/t([1-4])\s+(\d{4})/);
     if(tMatch){
       const qi=qIdx(parseInt(tMatch[2]),parseInt(tMatch[1]));
       return Math.max(0,Math.min(1,(qi+0.5)/TOTAL_Q));
     }
-    // "Mar 2024" or "Ene 2024"
     const mMatch=s.match(/([a-záéíóú]+)\s+(\d{4})/);
     if(mMatch){
       const monthKey=mMatch[1].substring(0,3);
@@ -2961,85 +2918,161 @@ function renderPortfolioTimeline(){
       const qi=qIdx(parseInt(mMatch[2]),q);
       return Math.max(0,Math.min(1,(qi+0.3)/TOTAL_Q));
     }
-    // "en curso", "en disputa", "en consulta" → today
     return dateToPos(_todayDateStr());
   }
   function _todayDateStr(){
     const now=new Date();
-    const q=Math.ceil((now.getMonth()+1)/3);
-    return `T${q} ${now.getFullYear()}`;
+    return `T${Math.ceil((now.getMonth()+1)/3)} ${now.getFullYear()}`;
   }
   function todayPos(){return dateToPos(_todayDateStr());}
 
-  // ── Quarter tick labels to show on axis ──
-  // Show label every 2 quarters, always Q1 and axis start
-  const qLabels=[];
-  for(let y=AXIS_START.y;y<=AXIS_END.y;y++){
-    for(let q=1;q<=4;q++){
-      if(y===AXIS_END.y && q>AXIS_END.q) break;
-      if(y===AXIS_START.y && q<AXIS_START.q) continue;
-      const idx=qIdx(y,q);
-      // show every 2 quarters
-      if(idx%2===0){
-        qLabels.push({label:`Q${q} ${y}`,pct:(idx/TOTAL_Q)*100});
-      }
-    }
-  }
+  // ── Project colors ──
+  const PROJ_COLORS={
+    begues:       '#399439',
+    fregacedos:   '#3A7BD5',
+    mutxamel:     '#C8201E',
+    entrenucleos: '#6B7280',
+  };
 
+  // ── Collect all milestone chips sorted by date ──────────────────
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
-  let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
 
-  // Quarter axis header
-  h+=`<div class="ptl-axis-wrap">`;
-  h+=`<div class="ptl-q-row">`;
-  qLabels.forEach(ql=>{
-    h+=`<div class="ptl-q-label" style="left:calc(130px + ${ql.pct}% * (100% - 130px) / 100)">${ql.label}</div>`;
-  });
-  h+=`</div>`;
-
-  // axis baseline with ticks + today marker
-  h+=`<div class="ptl-axis-line" id="ptlAxisLine">`;
-  qLabels.forEach(ql=>{
-    h+=`<div class="ptl-q-tick" style="left:${ql.pct}%"></div>`;
-  });
-  // today line
-  const tPos=todayPos()*100;
-  h+=`<div class="ptl-today" style="left:${tPos}%"><div class="ptl-today-lbl">${isEN?'Today':'Hoy'}</div></div>`;
-  h+=`</div>`; // ptl-axis-line
-
-  h+=`</div>`; // ptl-axis-wrap
-
-  // Project rows
-  h+=`<div>`;
+  // Build list of all milestones with position
+  const allChips=[];
   pids.forEach(pid=>{
     const m=PTL_PROJ_META[pid];
     const phases=PTL_DATA[pid]||[];
-    const projMW=m.mw?`${m.mw} MW`:'';
-    const nodesH=phases.map((ph,i)=>{
-      const icon=ST_ICON[ph.st]||'○';
+    const color=PROJ_COLORS[pid]||'#6B7280';
+    phases.forEach((ph,i)=>{
       const shortLbl=PTL_PHASES[i]?PTL_PHASES[i].short:'';
       const tooltipFull=PTL_PHASES[i]?PTL_PHASES[i].label.replace('\n',' '):'';
       const pct=dateToPos(ph.date)*100;
-      return `<div class="ptl-node ${ph.st}" style="left:${pct}%">
-        <div class="ptl-node-tooltip">${tooltipFull}: ${ph.date}</div>
-        <div class="ptl-node-tag">${shortLbl}</div>
-        <div class="ptl-node-circle">${icon}</div>
-        <div class="ptl-node-date">${ph.date}</div>
-      </div>`;
-    }).join('');
-    const editBtn=canEdit?`<button class="ptl-edit-btn" onclick="openMilestoneEditor('${pid}')" title="${isEN?'Edit dates':'Editar fechas'}">✏</button>`:'';
-    h+=`<div class="ptl-proj-row">
-      <div class="ptl-proj-label">
-        <div>
-          <div class="ptl-proj-label-name">${m.name}</div>
-          <div class="ptl-proj-label-mw">${projMW}</div>
-        </div>
-        ${editBtn}
-      </div>
-      <div class="ptl-track">${nodesH}</div>
+      allChips.push({pid,pct,date:ph.date,st:ph.st,label:`${shortLbl} ${m.name}`,tooltip:`${tooltipFull} – ${ph.date}`,color,shortLbl,phaseName:m.name});
+    });
+  });
+  // Sort by position
+  allChips.sort((a,b)=>a.pct-b.pct);
+
+  // ── Assign stagger rows (above/below interleaved, avoid overlap) ──
+  // We'll place chips alternating above/below. Track last x per row.
+  // 4 rows above + 4 rows below the axis
+  const chipW=90; // approximate chip width in %pts (rough; axis ~800px => ~90px => 11%)
+  const axisWidthPx=780; // approximate rendered axis width
+  function pctToPx(pct){return(pct/100)*axisWidthPx;}
+
+  // 8 lanes: 0..3 = above (row 0=nearest), 4..7 = below (4=nearest)
+  const lastX=new Array(8).fill(-999);
+  const CHIP_HALF_PX=50;
+
+  allChips.forEach((chip)=>{
+    const xPx=pctToPx(chip.pct);
+    // Try lanes above first alternating with below
+    const order=[0,4,1,5,2,6,3,7];
+    for(const lane of order){
+      if(xPx-lastX[lane]>CHIP_HALF_PX*2+4){
+        chip.lane=lane;
+        lastX[lane]=xPx;
+        break;
+      }
+    }
+    if(chip.lane===undefined){
+      // fallback: pick lane with most space
+      let best=0,bestGap=-1;
+      order.forEach((l,i)=>{if(xPx-lastX[l]>bestGap){bestGap=xPx-lastX[l];best=l;}});
+      chip.lane=best;
+      lastX[best]=xPx;
+    }
+  });
+
+  // Lane → vertical positioning
+  // above axis (lane 0..3): chips positioned above center line
+  // below axis (lane 4..7): chips positioned below center line
+  const AXIS_TOP_PCT=50; // axis is at 50% of container height
+  // Container height = 220px
+  // Above: row 0 = 8px from axis, row 1 = 38px, row 2 = 68px, row 3=98px
+  // Below: row 4 = 8px below axis, etc.
+  const laneOffsets=[48,82,116,150, 48,82,116,150]; // px from axis center
+
+  // ── Build HTML ──────────────────────────────────────────────────
+  let h=`<div class="ptl-outer"><div class="ptl-scroll">`;
+
+  // ── Single axis container ──
+  h+=`<div class="ptl-axis-container">`;
+
+  // Axis line
+  h+=`<div class="ptl-axis-line"></div>`;
+
+  // Year circles on the axis
+  YEARS.forEach(y=>{
+    const pct=((qIdx(y,1))/TOTAL_Q)*100;
+    h+=`<div class="ptl-year-circle" style="left:calc(24px + ${pct}% * (100% - 48px) / 100)">${y}</div>`;
+  });
+
+  // Q ticks between years (Q2, Q3, Q4 of each year)
+  YEARS.forEach(y=>{
+    [2,3,4].forEach(q=>{
+      if(y===AXIS_END.y && q>AXIS_END.q) return;
+      if(y===AXIS_START.y && q<AXIS_START.q) return;
+      const pct=(qIdx(y,q)/TOTAL_Q)*100;
+      h+=`<div class="ptl-q-tick" style="left:calc(24px + ${pct}% * (100% - 48px) / 100)"></div>`;
+    });
+  });
+
+  // Today marker
+  const todayPct=todayPos()*100;
+  const todayLabel=isEN?'Today':'Hoy';
+  h+=`<div class="ptl-today" style="left:calc(24px + ${todayPct}% * (100% - 48px) / 100)"><div class="ptl-today-lbl">${todayLabel}</div></div>`;
+
+  // Milestone chips
+  allChips.forEach(chip=>{
+    const lane=chip.lane||0;
+    const isAbove=lane<4;
+    const offset=laneOffsets[lane];
+    const chipX=`calc(24px + ${chip.pct}% * (100% - 48px) / 100)`;
+
+    // Status-based opacity: done=full, active=full, pending=0.6, blocked=0.8
+    const opacity={done:1,active:1,blocked:0.85,pending:0.65}[chip.st]||0.7;
+
+    let top, lineStyle;
+    if(isAbove){
+      // chip sits above axis center (50%)
+      // chip bottom edge is at: 50% - offset px + chip height (~22px)
+      top=`calc(50% - ${offset}px)`;
+      // line from chip bottom to axis: height = offset - 20 (chip half-height ~11px, axis radius 2px)
+      const lineH=offset-22;
+      lineStyle=`top:100%;height:${lineH}px;background:${chip.color};opacity:0.6;`;
+    } else {
+      // chip sits below axis
+      top=`calc(50% + ${offset-22}px)`;
+      const lineH=offset-22;
+      lineStyle=`bottom:100%;height:${lineH}px;background:${chip.color};opacity:0.6;`;
+    }
+
+    const lineDiv=isAbove
+      ? `<div class="ptl-chip-line" style="${lineStyle}"></div>`
+      : `<div class="ptl-chip-line" style="${lineStyle}"></div>`;
+
+    h+=`<div class="ptl-chip ${isAbove?'above':'below'}" style="left:${chipX};top:${top};transform:translateX(-50%);opacity:${opacity};">
+      <div class="ptl-chip-box" style="background:${chip.color};">${chip.label}</div>
+      ${lineDiv}
+      <div class="ptl-chip-tooltip">${chip.tooltip}</div>
     </div>`;
   });
-  h+=`</div></div></div>`;
+
+  h+=`</div>`; // ptl-axis-container
+
+  // Edit buttons per project (if canEdit)
+  if(canEdit){
+    h+=`<div class="ptl-proj-edit-btns">`;
+    pids.forEach(pid=>{
+      const m=PTL_PROJ_META[pid];
+      const color=PROJ_COLORS[pid]||'#6B7280';
+      h+=`<button class="ptl-proj-edit-btn" onclick="openMilestoneEditor('${pid}')"><span class="ptl-dot" style="background:${color};"></span>${m.name}</button>`;
+    });
+    h+=`</div>`;
+  }
+
+  h+=`</div></div>`;
   el.innerHTML=h;
 }
 
