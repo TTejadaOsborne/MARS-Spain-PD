@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1400 -->
+<!-- BUILD:20261015-1500 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1400';
+const BUILD='20261015-1500';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -309,7 +309,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-proj-lbl{width:175px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 14px 8px 0;border-right:1px solid var(--border-2);}
 .ptl2-proj-name{font-size:11.5px;font-weight:800;color:var(--navy);}
 .ptl2-proj-mw{font-size:10px;color:var(--text-3);font-weight:500;}
-.ptl2-track{flex:1;position:relative;height:60px;}
+.ptl2-track{flex:1;position:relative;height:68px;}
 .ptl2-vline{position:absolute;top:0;bottom:0;width:1px;background:var(--border);pointer-events:none;}
 .ptl2-vline-major{position:absolute;top:0;bottom:0;width:1px;background:var(--border-2);pointer-events:none;}
 .ptl2-baseline{position:absolute;top:50%;left:0;right:0;height:2px;background:#C8D0D8;transform:translateY(-50%);}
@@ -317,11 +317,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-today-track{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:0.5;transform:translateX(-50%);z-index:4;}
 /* Milestone */
 .ptl2-milestone{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:default;z-index:5;}
-.ptl2-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;flex-shrink:0;transition:transform .15s;}
+.ptl2-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;flex-shrink:0;transition:transform .15s;}
 .ptl2-milestone:hover .ptl2-dot{transform:scale(1.2);}
-.ptl2-mlbl{position:absolute;top:calc(100% + 4px);display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;}
-.ptl2-mlbl-short{font-size:8.5px;font-weight:700;color:var(--navy);white-space:nowrap;letter-spacing:0.02em;}
-.ptl2-mlbl-date{font-size:8px;color:var(--text-3);white-space:nowrap;}
+/* Labels below (default) */
+.ptl2-mlbl{position:absolute;top:calc(100% + 5px);display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;}
+/* Labels above (for even-indexed milestones to avoid overlap) */
+.ptl2-mlbl.above{top:auto;bottom:calc(100% + 5px);}
+.ptl2-mlbl-short{font-size:8px;font-weight:700;color:var(--navy);white-space:nowrap;letter-spacing:0.02em;}
+.ptl2-mlbl-date{font-size:7.5px;color:var(--text-3);white-space:nowrap;}
 @keyframes ptl2-pulse{0%,100%{box-shadow:0 0 0 0 rgba(5,35,61,0.4)}60%{box-shadow:0 0 0 4px rgba(5,35,61,0)}}
 .ptl2-pulse .ptl2-dot{animation:ptl2-pulse 2.2s ease-out infinite;}
 /* Legend */
@@ -3053,9 +3056,10 @@ function renderPortfolioTimeline(){
       const p=(dateToFrac(ph.date)*100).toFixed(2);
       const isActive=ph.st==='active';
       const tooltip=`${ph_def.short} · ${ph.date} · ${stLabel(ph.st)}`;
+      const lblClass=i%2===0?'ptl2-mlbl above':'ptl2-mlbl';
       h+=`<div class="ptl2-milestone${isActive?' ptl2-pulse':''}" style="left:${p}%;" title="${tooltip}">
         <div class="ptl2-dot" style="${dotStyle(ph.st)}">${dotChar(ph.st)}</div>
-        <div class="ptl2-mlbl">
+        <div class="${lblClass}">
           <div class="ptl2-mlbl-short">${ph_def.short}</div>
           <div class="ptl2-mlbl-date">${ph.date}</div>
         </div>
