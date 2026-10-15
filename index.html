@@ -1180,6 +1180,7 @@ const TASKS = [{"id": "S1", "level": 1, "num": "1", "name": "Terreno", "start": 
 
 // ── PERSISTENCE ────────────────────────────────────────────────────────────
 const STORAGE_KEY='mars_pd_data_v3';
+const PTL_STORAGE_KEY='mars_pd_ptl_v1';
 const NAV_KEY='mars_pd_nav_v1';
 const LAST_CHANGE_KEY='mars_pd_last_change';
 function _nowTS(){
@@ -1193,6 +1194,32 @@ function saveData(){
     localStorage.setItem(STORAGE_KEY,JSON.stringify(allData));
     localStorage.setItem(LAST_CHANGE_KEY,_nowTS());
     updateLastReportingBadge();
+  }catch(e){}
+}
+function savePtlData(){
+  try{
+    localStorage.setItem(PTL_STORAGE_KEY,JSON.stringify(PTL_DATA));
+    localStorage.setItem(LAST_CHANGE_KEY,_nowTS());
+    updateLastReportingBadge();
+  }catch(e){}
+}
+function loadPtlData(){
+  try{
+    const raw=localStorage.getItem(PTL_STORAGE_KEY);
+    if(!raw) return;
+    const saved=JSON.parse(raw);
+    // Merge saved dates/status into PTL_DATA (keep structure, only overwrite fields)
+    Object.keys(saved).forEach(pid=>{
+      if(!PTL_DATA[pid]) return;
+      saved[pid].forEach((ph,i)=>{
+        if(!PTL_DATA[pid][i]) return;
+        if(ph.date)          PTL_DATA[pid][i].date=ph.date;
+        if(ph.st)            PTL_DATA[pid][i].st=ph.st;
+        if(ph.confirmedDate !== undefined) PTL_DATA[pid][i].confirmedDate=ph.confirmedDate;
+        if(ph.baseKey !== undefined)       PTL_DATA[pid][i].baseKey=ph.baseKey;
+        if(ph.offsetMonths !== undefined)  PTL_DATA[pid][i].offsetMonths=ph.offsetMonths;
+      });
+    });
   }catch(e){}
 }
 function _weekIsEmpty(wd){
@@ -1417,6 +1444,7 @@ function _latestDataWeek(){
   return weeks.length?weeks[weeks.length-1]:null;
 }
 function init(){
+  loadPtlData();
   updateLastReportingBadge();
   // Restore navigation state
   try{
@@ -3292,6 +3320,7 @@ function ptlEstDateChanged(pid,idx){
   if(!m||!y||y<2020||y>2035) return;
   PTL_DATA[pid][idx].date=formatMilestoneDate(y,m);
   ptlPropagateCascade(pid,idx);
+  savePtlData();
   renderPortfolioTimeline();
 }
 
@@ -3311,6 +3340,7 @@ function ptlConfDateChanged(pid,idx){
     PTL_DATA[pid][idx].confirmedDate=null;
   }
   PROJ_MILESTONES[pid]=buildMilestones(pid);
+  savePtlData();
   renderPortfolioTimeline();
 }
 
@@ -3318,6 +3348,7 @@ function ptlStatusChanged(pid,idx){
   const stEl=document.querySelector(`.ptl-editor-st[data-pid="${pid}"][data-idx="${idx}"]`);
   if(stEl) PTL_DATA[pid][idx].st=stEl.value;
   PROJ_MILESTONES[pid]=buildMilestones(pid);
+  savePtlData();
   renderPortfolioTimeline();
 }
 
@@ -3328,12 +3359,14 @@ function ptlOffsetChanged(pid,idx){
   if(isNaN(offset)) return;
   PTL_DATA[pid][idx].offsetMonths=offset;
   ptlPropagateCascade(pid,idx-1); // recalculate from previous
+  savePtlData();
   renderPortfolioTimeline();
 }
 
 function ptlUnlinkDep(pid,idx){
   PTL_DATA[pid][idx].baseKey=null;
   PTL_DATA[pid][idx].offsetMonths=null;
+  savePtlData();
   openMilestoneEditor(pid);
 }
 
@@ -3354,6 +3387,7 @@ function ptlLinkDep(pid,idx){
   }
   PTL_DATA[pid][idx].baseKey=baseKey;
   PTL_DATA[pid][idx].offsetMonths=offset;
+  savePtlData();
   openMilestoneEditor(pid);
   renderPortfolioTimeline();
 }
