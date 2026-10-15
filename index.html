@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1630 -->
+<!-- BUILD:20261015-1800 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1630';
+const BUILD='20261015-1800';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -293,16 +293,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-wrap{padding:0 0 16px;overflow-x:auto;min-width:0;flex:1;}
 /* Cabecera: columna de nombre + área de eje */
 .ptl2-hdr-row{display:flex;align-items:stretch;}
-.ptl2-proj-lbl-space{width:180px;flex-shrink:0;border-right:2px solid #BBC5D0;}
+.ptl2-proj-lbl-space{width:180px;flex-shrink:0;border-right:1px solid #BBC5D0;}
 /* Fila 1: años como celdas proporcionales */
-.ptl2-axis-years{display:flex;flex:1;background:#F4F6F9;}
-.ptl2-year-cell{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--navy);letter-spacing:0.08em;border-right:2px solid #BBC5D0;border-bottom:1px solid #D0D7E0;height:22px;overflow:hidden;white-space:nowrap;}
-.ptl2-year-cell:last-child{border-right:none;}
+.ptl2-axis-years{display:flex;flex:1;background:#F4F6F9;position:relative;}
+.ptl2-year-cell{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--navy);letter-spacing:0.08em;border-bottom:1px solid #D0D7E0;height:22px;overflow:hidden;white-space:nowrap;}
 /* Fila 2: quarters como celdas */
 .ptl2-axis-quarters{display:flex;flex:1;border-bottom:2px solid #BBC5D0;position:relative;background:#F8F9FB;}
-.ptl2-q-cell{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#8A96A3;border-right:1px solid #E2E7EC;height:18px;overflow:hidden;white-space:nowrap;letter-spacing:0.03em;}
-.ptl2-q-cell.major{border-right:2px solid #BBC5D0;}
-.ptl2-q-cell:last-child{border-right:none;}
+.ptl2-q-cell{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#8A96A3;height:18px;overflow:hidden;white-space:nowrap;letter-spacing:0.03em;}
 .ptl2-today-line-hdr{position:absolute;top:0;bottom:0;width:2px;background:var(--red);transform:translateX(-50%);z-index:3;}
 .ptl2-today-lbl{position:absolute;top:1px;left:50%;transform:translateX(-50%);font-size:7.5px;font-weight:800;color:var(--red);white-space:nowrap;background:#fff;padding:0 2px;border-radius:2px;}
 /* Project rows — NO border-bottom between rows */
@@ -311,7 +308,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl2-proj-row:nth-child(even) .ptl2-track{background:#fff;}
 .ptl2-proj-row:nth-child(odd) .ptl2-proj-lbl{background:#FAFBFC;}
 .ptl2-proj-row:nth-child(even) .ptl2-proj-lbl{background:#fff;}
-.ptl2-proj-lbl{width:180px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:10px 16px 10px 20px;border-right:2px solid #BBC5D0;}
+.ptl2-proj-lbl{width:180px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:10px 16px 10px 20px;border-right:1px solid #BBC5D0;}
 .ptl2-proj-name{font-size:12px;font-weight:800;color:var(--navy);letter-spacing:0.01em;}
 .ptl2-proj-mw{font-size:10px;color:#8A96A3;font-weight:600;letter-spacing:0.02em;}
 .ptl2-track{flex:1;position:relative;height:80px;}
@@ -3099,6 +3096,16 @@ function renderPortfolioTimeline(){
   for(let y=AX_Y0;y<=AX_Y1;y++){
     h+=`<div class="ptl2-year-cell" style="width:${yearW}%;min-width:0;">${y}</div>`;
   }
+  // Overlay absolute vlines on year row — same positions as project row vlines
+  for(let y=AX_Y0;y<=AX_Y1;y++){
+    [1,2,3,4].forEach(q=>{
+      const p=(qFrac(y,q)*100).toFixed(2);
+      const isMajor=(q===1);
+      // Skip the very first line (left:0%) — that's the container edge
+      if(y===AX_Y0 && q===1) return;
+      h+=`<div class="${isMajor?'ptl2-vline-major':'ptl2-vline'}" style="left:${p}%"></div>`;
+    });
+  }
   h+=`</div></div>`;
 
   // ── AXIS ROW 2: Quarter cells + Today line ──────────────────────
@@ -3107,10 +3114,16 @@ function renderPortfolioTimeline(){
     <div class="ptl2-axis-quarters">`;
   for(let y=AX_Y0;y<=AX_Y1;y++){
     [1,2,3,4].forEach(q=>{
-      const isLast=(y===AX_Y1 && q===4);
-      // last Q of each year gets major border (= year separator), last cell no border
-      const cls=isLast?'ptl2-q-cell':(q===4?'ptl2-q-cell major':'ptl2-q-cell');
-      h+=`<div class="${cls}" style="width:${qW}%;min-width:0;">Q${q}</div>`;
+      h+=`<div class="ptl2-q-cell" style="width:${qW}%;min-width:0;">Q${q}</div>`;
+    });
+  }
+  // Overlay absolute vlines on quarter row — same positions as project row vlines
+  for(let y=AX_Y0;y<=AX_Y1;y++){
+    [1,2,3,4].forEach(q=>{
+      const p=(qFrac(y,q)*100).toFixed(2);
+      const isMajor=(q===1);
+      if(y===AX_Y0 && q===1) return;
+      h+=`<div class="${isMajor?'ptl2-vline-major':'ptl2-vline'}" style="left:${p}%"></div>`;
     });
   }
   // Today line overlaid on quarter row
