@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1740 -->
+<!-- BUILD:20261015-1800 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1740';
+const BUILD='20261015-1800';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -343,20 +343,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .ptl-proj-edit-btn:hover{background:var(--border);border-color:var(--navy);}
 .ptl-proj-edit-btn .ptl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 /* ── Milestone editor ───────────────────────────────────────────── */
-.ptl-edit-btn{background:none;border:none;font-size:11px;cursor:pointer;opacity:0.4;padding:2px 4px;border-radius:3px;transition:opacity .15s,background .15s;margin-left:4px;}
-.ptl-edit-btn:hover{opacity:1;background:var(--border);}
-.ptl-editor-row{padding:12px 20px;border-bottom:1px solid var(--border);}
+.ptl-editor-row{padding:14px 20px;border-bottom:1px solid var(--border);}
 .ptl-editor-row:last-child{border-bottom:none;}
-.ptl-editor-phase{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;}
-.ptl-editor-phase-full{font-weight:400;color:var(--text-3);margin-left:6px;font-size:10.5px;}
-.ptl-editor-inputs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.ptl-editor-month{font-size:12px;padding:4px 6px;border:1px solid var(--border-2);border-radius:4px;background:var(--bg);color:var(--navy);cursor:pointer;}
-.ptl-editor-year{font-size:12px;padding:4px 6px;border:1px solid var(--border-2);border-radius:4px;background:var(--bg);color:var(--navy);width:70px;}
-.ptl-editor-st{font-size:12px;padding:4px 6px;border:1px solid var(--border-2);border-radius:4px;background:var(--bg);color:var(--navy);cursor:pointer;}
-.ptl-editor-dep{margin-top:6px;font-size:10px;color:var(--text-3);}
-.ptl-dep-info{display:flex;align-items:center;gap:8px;}
-.ptl-dep-unlink,.ptl-dep-link-btn{font-size:9px;padding:2px 7px;border:1px solid var(--border-2);border-radius:3px;background:none;cursor:pointer;color:var(--text-2);}
-.ptl-dep-unlink:hover,.ptl-dep-link-btn:hover{background:var(--border);color:var(--navy);}
+.ptl-editor-phase-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
+.ptl-editor-phase{font-size:12px;font-weight:800;color:var(--navy);}
+.ptl-editor-phase-full{font-weight:400;color:var(--text-3);font-size:10.5px;}
+/* Two-column layout: estimated | confirmed */
+.ptl-editor-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ptl-editor-col-lbl{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:5px;}
+.ptl-editor-col-lbl.confirmed{color:#2e7d32;}
+.ptl-editor-inputs{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.ptl-sel{font-size:12px;padding:5px 7px;border:1px solid var(--border-2);border-radius:5px;background:var(--bg);color:var(--navy);cursor:pointer;}
+.ptl-inp{font-size:12px;padding:5px 7px;border:1px solid var(--border-2);border-radius:5px;background:var(--bg);color:var(--navy);}
+.ptl-inp-year{width:66px;}
+.ptl-inp-offset{width:52px;}
+.ptl-st-confirmed{font-size:11px;padding:5px 8px;border:1px solid #a5d6a7;border-radius:5px;background:#f1f8f1;color:#2e7d32;font-weight:600;}
+/* Dependency row */
+.ptl-dep-row{margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ptl-dep-lbl{font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-3);}
+.ptl-dep-badge{display:flex;align-items:center;gap:6px;background:#EEF1F5;border-radius:5px;padding:4px 8px;font-size:11px;color:var(--navy);font-weight:600;}
+.ptl-dep-offset-wrap{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--navy);}
+.ptl-btn-sm{font-size:10px;padding:3px 8px;border:1px solid var(--border-2);border-radius:4px;background:none;cursor:pointer;color:var(--text-2);transition:background .12s;}
+.ptl-btn-sm:hover{background:var(--border);color:var(--navy);}
+.ptl-btn-sm.danger{border-color:#ef9a9a;color:#c62828;}
+.ptl-btn-sm.danger:hover{background:#ffebee;}
 .timeline-item{display:flex;gap:12px;padding:8px 0;position:relative;}
 .timeline-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-8px;width:1.5px;background:var(--border);}
 .tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:8px;}
@@ -3099,133 +3109,233 @@ function renderPortfolioTimeline(){
 // ── Milestone date editor ────────────────────────────────────────
 const MONTH_NAMES_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const MONTH_NAMES_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const PHASE_LABELS=['IVA','DIA','AAP','LO','RTB'];
+const PHASE_FULL_ES=['Permiso de Acceso y Conexión','Permiso Ambiental (DIA)','Autorizaciones Administrativas','Licencia de Obras','Ready to Build'];
+const PHASE_FULL_EN=['Grid Access Permit','Environmental Impact Assessment','Admin. Authorisations','Building Permit','Ready to Build'];
+
 function parseMilestoneDate(dateStr){
-  // Returns {year,month} or null
+  if(!dateStr) return null;
   const s=dateStr.trim();
-  const tMatch=s.match(/[Tt]([1-4])\s+(\d{4})/);
-  if(tMatch){const q=parseInt(tMatch[1]),y=parseInt(tMatch[2]);return{year:y,month:(q-1)*3+2};}
-  const names=[...MONTH_NAMES_ES,...MONTH_NAMES_EN].map(n=>n.toLowerCase());
-  const mMatch=s.match(/([A-Za-záéíóú]+)\s+(\d{4})/i);
-  if(mMatch){
-    const idx=names.findIndex(n=>n===mMatch[1].toLowerCase().substring(0,3));
-    if(idx>=0){const mi=idx%12;return{year:parseInt(mMatch[2]),month:mi+1};}
+  const tM=s.match(/[Tt]([1-4])\s+(\d{4})/);
+  if(tM){const q=parseInt(tM[1]),y=parseInt(tM[2]);return{year:y,month:(q-1)*3+2};}
+  const all=[...MONTH_NAMES_ES,...MONTH_NAMES_EN].map(n=>n.toLowerCase());
+  const mM=s.match(/([A-Za-záéíóú]+)\s+(\d{4})/i);
+  if(mM){
+    const idx=all.findIndex(n=>n===mM[1].toLowerCase().substring(0,3));
+    if(idx>=0) return{year:parseInt(mM[2]),month:(idx%12)+1};
   }
   return null;
 }
 function formatMilestoneDate(year,month){
-  const mn=MONTH_NAMES_EN;
-  return `${mn[month-1]} ${year}`;
+  return `${MONTH_NAMES_EN[month-1]} ${year}`;
 }
 function addMonths(year,month,n){
-  let total=(year*12+month-1)+n;
-  return{year:Math.floor(total/12),month:(total%12)+1};
+  const t=(year*12+month-1)+n;
+  return{year:Math.floor(t/12),month:(t%12)+1};
 }
+function diffMonths(a,b){ // b - a in months
+  return(b.year*12+b.month)-(a.year*12+a.month);
+}
+
+// Propagate cascade from idx outward — called after any date/dep change
+function ptlPropagateCascade(pid,fromIdx){
+  const phases=PTL_DATA[pid];
+  // Walk ALL phases in order; any that has a baseKey recalculates
+  for(let i=fromIdx+1;i<phases.length;i++){
+    const ph=phases[i];
+    if(!ph.baseKey) continue;
+    const baseIdx=phases.findIndex(p=>p.key===ph.baseKey);
+    if(baseIdx<0) continue;
+    const base=parseMilestoneDate(phases[baseIdx].date);
+    if(!base) continue;
+    const computed=addMonths(base.year,base.month,ph.offsetMonths||0);
+    phases[i].date=formatMilestoneDate(computed.year,computed.month);
+    // refresh inputs if modal open
+    const mEl=document.querySelector(`.ptl-est-month[data-pid="${pid}"][data-idx="${i}"]`);
+    const yEl=document.querySelector(`.ptl-est-year[data-pid="${pid}"][data-idx="${i}"]`);
+    if(mEl) mEl.value=computed.month;
+    if(yEl) yEl.value=computed.year;
+    const depLbl=document.querySelector(`.ptl-dep-computed[data-pid="${pid}"][data-idx="${i}"]`);
+    if(depLbl) depLbl.textContent=formatMilestoneDate(computed.year,computed.month);
+  }
+}
+
 function openMilestoneEditor(pid){
   const isEN=lang==='en';
   const m=PTL_PROJ_META[pid];
   const phases=PTL_DATA[pid]||[];
-  const phaseLabels=['IVA','DIA','AAP + AAC','LO','RTB'];
-  const phaseFull=['Permiso de Acceso y Conexión','Permiso Ambiental','Autorizaciones Administrativas','Licencia de Obras','Ready to Build'];
+  const fullLabels=isEN?PHASE_FULL_EN:PHASE_FULL_ES;
+  const stLabels=isEN
+    ?{done:'Obtained ✓',active:'In progress',blocked:'Blocked',pending:'Pending'}
+    :{done:'Obtenido ✓',active:'En curso',blocked:'Bloqueado',pending:'Pendiente'};
 
   let rows='';
   phases.forEach((ph,i)=>{
-    const parsed=parseMilestoneDate(ph.date);
-    const yearVal=parsed?parsed.year:'';
-    const monthVal=parsed?parsed.month:'';
-    const dependencyInfo=ph.baseKey
-      ? `<span class="ptl-dep-info">${isEN?'Linked to':'Vinculado a'} ${ph.baseKey.toUpperCase()} + ${ph.offsetMonths}m <button class="ptl-dep-unlink" onclick="ptlUnlinkDep('${pid}',${i})">${isEN?'Unlink':'Desvincular'}</button></span>`
-      : `<span class="ptl-dep-add"><button class="ptl-dep-link-btn" onclick="ptlLinkDep('${pid}',${i})">${isEN?'Link to prev':'Vincular a anterior'}</button></span>`;
+    const est=parseMilestoneDate(ph.date);
+    const conf=parseMilestoneDate(ph.confirmedDate||null);
+    const estY=est?est.year:2026, estM=est?est.month:1;
+    const confY=conf?conf.year:'', confM=conf?conf.month:'';
+
+    // Month selects
+    const monthOpts=(sel)=>Array.from({length:12},(_,k)=>
+      `<option value="${k+1}" ${sel==k+1?'selected':''}>${MONTH_NAMES_EN[k]}</option>`).join('');
+
+    // Status select
+    const stOpts=['done','active','blocked','pending'].map(s=>
+      `<option value="${s}" ${ph.st===s?'selected':''}>${stLabels[s]}</option>`).join('');
+
+    // Dependency section
+    let depHtml='';
+    if(ph.baseKey){
+      const baseIdx=phases.findIndex(p=>p.key===ph.baseKey);
+      const baseLabel=baseIdx>=0?PHASE_LABELS[baseIdx]:'?';
+      depHtml=`
+        <div class="ptl-dep-row">
+          <span class="ptl-dep-lbl">${isEN?'Linked to':'Vinculado a'}</span>
+          <span class="ptl-dep-badge">
+            ${baseLabel}
+            <span style="color:var(--text-3);font-weight:400;">+</span>
+            <input type="number" class="ptl-inp ptl-inp-offset" value="${ph.offsetMonths||0}"
+              data-pid="${pid}" data-idx="${i}"
+              onchange="ptlOffsetChanged('${pid}',${i})"
+              title="${isEN?'Months after base milestone':'Meses tras el hito base'}">
+            <span style="color:var(--text-3);font-weight:400;font-size:10px;">${isEN?'mo':'m'}</span>
+          </span>
+          <span class="ptl-dep-computed" data-pid="${pid}" data-idx="${i}" style="font-size:10px;color:var(--text-3);">→ ${ph.date}</span>
+          <button class="ptl-btn-sm danger" onclick="ptlUnlinkDep('${pid}',${i})">${isEN?'Unlink':'Desvincular'}</button>
+          <span style="font-size:9px;color:var(--text-3);">${isEN?'(estimated date auto-calculated)':'(fecha estimada calculada automáticamente)'}</span>
+        </div>`;
+    } else if(i>0){
+      // Show available bases
+      const baseOpts=phases.slice(0,i).map((p,bi)=>
+        `<option value="${p.key}">${PHASE_LABELS[bi]}</option>`).join('');
+      depHtml=`
+        <div class="ptl-dep-row">
+          <span class="ptl-dep-lbl">${isEN?'Link to':'Vincular a'}</span>
+          <select class="ptl-sel" id="ptl-dep-base-${pid}-${i}">${baseOpts}</select>
+          <span style="font-size:11px;color:var(--text-3);">+</span>
+          <input type="number" class="ptl-inp ptl-inp-offset" value="6" id="ptl-dep-offset-${pid}-${i}" min="0" max="120">
+          <span style="font-size:10px;color:var(--text-3);">${isEN?'months':'meses'}</span>
+          <button class="ptl-btn-sm" onclick="ptlLinkDep('${pid}',${i})">${isEN?'Apply link':'Aplicar vínculo'}</button>
+        </div>`;
+    }
+
+    // Estimated column — disabled if linked (auto-calculated)
+    const estDisabled=ph.baseKey?'disabled style="opacity:0.5;pointer-events:none;"':'';
     rows+=`<div class="ptl-editor-row" id="ptlrow-${pid}-${i}">
-      <div class="ptl-editor-phase">${phaseLabels[i]}<span class="ptl-editor-phase-full">${phaseFull[i]}</span></div>
-      <div class="ptl-editor-inputs">
-        <select class="ptl-editor-month" data-pid="${pid}" data-idx="${i}" onchange="ptlDateChanged('${pid}',${i})">
-          ${Array.from({length:12},(_,k)=>`<option value="${k+1}" ${monthVal==k+1?'selected':''}>${MONTH_NAMES_EN[k]}</option>`).join('')}
-        </select>
-        <input type="number" class="ptl-editor-year" data-pid="${pid}" data-idx="${i}" value="${yearVal}" min="2020" max="2035" onchange="ptlDateChanged('${pid}',${i})">
-        <select class="ptl-editor-st" data-pid="${pid}" data-idx="${i}" onchange="ptlStatusChanged('${pid}',${i})">
-          ${['done','active','blocked','pending'].map(s=>`<option value="${s}" ${ph.st===s?'selected':''}>${isEN?{done:'Obtained',active:'In progress',blocked:'Blocked',pending:'Pending'}[s]:{done:'Obtenido',active:'En curso',blocked:'Bloqueado',pending:'Pendiente'}[s]}</option>`).join('')}
-        </select>
+      <div class="ptl-editor-phase-hdr">
+        <span class="ptl-editor-phase">${PHASE_LABELS[i]}</span>
+        <span class="ptl-editor-phase-full">${fullLabels[i]}</span>
       </div>
-      <div class="ptl-editor-dep">${dependencyInfo}</div>
+      <div class="ptl-editor-cols">
+        <div>
+          <div class="ptl-editor-col-lbl">${isEN?'Estimated date':'Fecha estimada'}</div>
+          <div class="ptl-editor-inputs" ${estDisabled}>
+            <select class="ptl-sel ptl-est-month" data-pid="${pid}" data-idx="${i}"
+              onchange="ptlEstDateChanged('${pid}',${i})">${monthOpts(estM)}</select>
+            <input type="number" class="ptl-inp ptl-inp-year ptl-est-year" data-pid="${pid}" data-idx="${i}"
+              value="${estY}" min="2020" max="2035"
+              onchange="ptlEstDateChanged('${pid}',${i})">
+          </div>
+        </div>
+        <div>
+          <div class="ptl-editor-col-lbl confirmed">${isEN?'Confirmed date (obtained)':'Fecha confirmada (obtenido)'}</div>
+          <div class="ptl-editor-inputs">
+            <select class="ptl-sel ptl-conf-month" data-pid="${pid}" data-idx="${i}"
+              onchange="ptlConfDateChanged('${pid}',${i})">
+              <option value="">–</option>${monthOpts(confM)}</select>
+            <input type="number" class="ptl-inp ptl-inp-year ptl-conf-year" data-pid="${pid}" data-idx="${i}"
+              value="${confY}" min="2020" max="2035" placeholder="year"
+              onchange="ptlConfDateChanged('${pid}',${i})">
+            <select class="ptl-sel ptl-editor-st" data-pid="${pid}" data-idx="${i}"
+              onchange="ptlStatusChanged('${pid}',${i})">${stOpts}</select>
+          </div>
+        </div>
+      </div>
+      ${depHtml}
     </div>`;
   });
 
   const modal=document.getElementById('milestoneEditorModal');
-  document.getElementById('milestoneEditorTitle').textContent=(isEN?'Edit milestones – ':'Editar hitos – ')+m.name;
+  document.getElementById('milestoneEditorTitle').textContent=
+    (isEN?'Edit milestones – ':'Editar hitos – ')+m.name;
   document.getElementById('milestoneEditorBody').innerHTML=rows;
   document.getElementById('milestoneEditorPid').value=pid;
   modal.classList.add('on');
 }
-function ptlDateChanged(pid,idx){
-  const mEl=document.querySelector(`.ptl-editor-month[data-pid="${pid}"][data-idx="${idx}"]`);
-  const yEl=document.querySelector(`.ptl-editor-year[data-pid="${pid}"][data-idx="${idx}"]`);
+
+function ptlEstDateChanged(pid,idx){
+  const mEl=document.querySelector(`.ptl-est-month[data-pid="${pid}"][data-idx="${idx}"]`);
+  const yEl=document.querySelector(`.ptl-est-year[data-pid="${pid}"][data-idx="${idx}"]`);
   if(!mEl||!yEl) return;
-  const month=parseInt(mEl.value),year=parseInt(yEl.value);
-  if(!month||!year||year<2020||year>2035) return;
-  PTL_DATA[pid][idx].date=formatMilestoneDate(year,month);
-  // Propagate to linked downstream milestones
-  PTL_DATA[pid].forEach((ph,i)=>{
-    if(ph.baseKey && i>idx){
-      // find the base phase index
-      const baseIdx=PTL_DATA[pid].findIndex(p=>p.key===ph.baseKey);
-      if(baseIdx>=0 && baseIdx===idx){
-        const baseParsed=parseMilestoneDate(PTL_DATA[pid][baseIdx].date);
-        if(baseParsed){
-          const computed=addMonths(baseParsed.year,baseParsed.month,ph.offsetMonths);
-          PTL_DATA[pid][i].date=formatMilestoneDate(computed.year,computed.month);
-          // update UI
-          const dm=document.querySelector(`.ptl-editor-month[data-pid="${pid}"][data-idx="${i}"]`);
-          const dy=document.querySelector(`.ptl-editor-year[data-pid="${pid}"][data-idx="${i}"]`);
-          if(dm) dm.value=computed.month;
-          if(dy) dy.value=computed.year;
-        }
-      }
-    }
-  });
-  // Also propagate cascading (e.g. LO depends on AAP which depends on DIA)
-  for(let i=idx+1;i<PTL_DATA[pid].length;i++){
-    const ph=PTL_DATA[pid][i];
-    if(ph.baseKey){
-      const baseIdx=PTL_DATA[pid].findIndex(p=>p.key===ph.baseKey);
-      if(baseIdx>=0){
-        const baseParsed=parseMilestoneDate(PTL_DATA[pid][baseIdx].date);
-        if(baseParsed){
-          const computed=addMonths(baseParsed.year,baseParsed.month,ph.offsetMonths);
-          PTL_DATA[pid][i].date=formatMilestoneDate(computed.year,computed.month);
-          const dm=document.querySelector(`.ptl-editor-month[data-pid="${pid}"][data-idx="${i}"]`);
-          const dy=document.querySelector(`.ptl-editor-year[data-pid="${pid}"][data-idx="${i}"]`);
-          if(dm) dm.value=computed.month;
-          if(dy) dy.value=computed.year;
-        }
-      }
-    }
-  }
+  const m=parseInt(mEl.value),y=parseInt(yEl.value);
+  if(!m||!y||y<2020||y>2035) return;
+  PTL_DATA[pid][idx].date=formatMilestoneDate(y,m);
+  ptlPropagateCascade(pid,idx);
   renderPortfolioTimeline();
 }
-function ptlStatusChanged(pid,idx){
-  const stEl=document.querySelector(`.ptl-editor-st[data-pid="${pid}"][data-idx="${idx}"]`);
-  if(stEl) PTL_DATA[pid][idx].st=stEl.value;
-  // rebuild milestones
+
+function ptlConfDateChanged(pid,idx){
+  const mEl=document.querySelector(`.ptl-conf-month[data-pid="${pid}"][data-idx="${idx}"]`);
+  const yEl=document.querySelector(`.ptl-conf-year[data-pid="${pid}"][data-idx="${idx}"]`);
+  if(!mEl||!yEl) return;
+  const m=parseInt(mEl.value),y=parseInt(yEl.value);
+  if(m&&y&&y>=2020&&y<=2035){
+    PTL_DATA[pid][idx].confirmedDate=formatMilestoneDate(y,m);
+    // If confirmed, set estimated = confirmed and mark done
+    PTL_DATA[pid][idx].date=formatMilestoneDate(y,m);
+    const stEl=document.querySelector(`.ptl-editor-st[data-pid="${pid}"][data-idx="${idx}"]`);
+    if(stEl){ stEl.value='done'; PTL_DATA[pid][idx].st='done'; }
+    ptlPropagateCascade(pid,idx);
+  } else {
+    PTL_DATA[pid][idx].confirmedDate=null;
+  }
   PROJ_MILESTONES[pid]=buildMilestones(pid);
   renderPortfolioTimeline();
 }
+
+function ptlStatusChanged(pid,idx){
+  const stEl=document.querySelector(`.ptl-editor-st[data-pid="${pid}"][data-idx="${idx}"]`);
+  if(stEl) PTL_DATA[pid][idx].st=stEl.value;
+  PROJ_MILESTONES[pid]=buildMilestones(pid);
+  renderPortfolioTimeline();
+}
+
+function ptlOffsetChanged(pid,idx){
+  const oEl=document.querySelector(`.ptl-inp-offset[data-pid="${pid}"][data-idx="${idx}"]`);
+  if(!oEl) return;
+  const offset=parseInt(oEl.value);
+  if(isNaN(offset)) return;
+  PTL_DATA[pid][idx].offsetMonths=offset;
+  ptlPropagateCascade(pid,idx-1); // recalculate from previous
+  renderPortfolioTimeline();
+}
+
 function ptlUnlinkDep(pid,idx){
   PTL_DATA[pid][idx].baseKey=null;
   PTL_DATA[pid][idx].offsetMonths=null;
   openMilestoneEditor(pid);
 }
+
 function ptlLinkDep(pid,idx){
-  if(idx===0) return;
-  const prevKey=PTL_DATA[pid][idx-1].key;
-  const curParsed=parseMilestoneDate(PTL_DATA[pid][idx].date);
-  const prevParsed=parseMilestoneDate(PTL_DATA[pid][idx-1].date);
-  let offset=0;
-  if(curParsed&&prevParsed){
-    offset=(curParsed.year*12+curParsed.month)-(prevParsed.year*12+prevParsed.month);
+  const baseEl=document.getElementById(`ptl-dep-base-${pid}-${idx}`);
+  const offEl=document.getElementById(`ptl-dep-offset-${pid}-${idx}`);
+  if(!baseEl) return;
+  const baseKey=baseEl.value;
+  const offset=parseInt(offEl?.value||6);
+  // Calculate estimated date from base
+  const baseIdx=PTL_DATA[pid].findIndex(p=>p.key===baseKey);
+  if(baseIdx>=0){
+    const base=parseMilestoneDate(PTL_DATA[pid][baseIdx].date);
+    if(base){
+      const computed=addMonths(base.year,base.month,offset);
+      PTL_DATA[pid][idx].date=formatMilestoneDate(computed.year,computed.month);
+    }
   }
-  PTL_DATA[pid][idx].baseKey=prevKey;
+  PTL_DATA[pid][idx].baseKey=baseKey;
   PTL_DATA[pid][idx].offsetMonths=offset;
   openMilestoneEditor(pid);
+  renderPortfolioTimeline();
 }
 
 // PROJ_MILESTONES: derived from PTL_DATA for popup display
