@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1500 -->
+<!-- BUILD:20261015-1540 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1500';
+const BUILD='20261015-1540';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2915,8 +2915,8 @@ function renderPortfolioTimeline(){
   const isEN=lang==='en';
 
   // ── Config ──────────────────────────────────────────────────────
-  // Axis: 2024 Q1 → 2029 Q4  (full years for cleaner quarterly grid)
-  const AX_Y0=2024, AX_Y1=2029;
+  // Axis: 2023 Q1 → 2029 Q4  (starts 2023 to show Mutxamel IVA Aug 2023)
+  const AX_Y0=2023, AX_Y1=2029;
   const AX_M0=1,    AX_M1=12; // Jan→Dec
   const TOTAL_M=(AX_Y1-AX_Y0)*12+(AX_M1-AX_M0+1); // 72 months
 
@@ -2943,17 +2943,17 @@ function renderPortfolioTimeline(){
   // ── Projects ────────────────────────────────────────────────────
   const PROJ_ORDER=['mutxamel','fregacedos','begues'];
   const PHASES_ES=[
-    {key:'iva',short:'IVA/C'},
+    {key:'iva',short:'IVA'},
     {key:'dia',short:'DIA'},
-    {key:'aap',short:'AA.PP.'},
-    {key:'lo', short:'L.O.'},
+    {key:'aap',short:'AAP'},
+    {key:'lo', short:'LO'},
     {key:'rtb',short:'RTB'},
   ];
   const PHASES_EN=[
-    {key:'iva',short:'Grid'},
+    {key:'iva',short:'IVA'},
     {key:'dia',short:'EIA'},
-    {key:'aap',short:'Permits'},
-    {key:'lo', short:'Build.'},
+    {key:'aap',short:'AAP'},
+    {key:'lo', short:'LO'},
     {key:'rtb',short:'RTB'},
   ];
   const phases=isEN?PHASES_EN:PHASES_ES;
@@ -3056,32 +3056,19 @@ function renderPortfolioTimeline(){
       const p=(dateToFrac(ph.date)*100).toFixed(2);
       const isActive=ph.st==='active';
       const tooltip=`${ph_def.short} · ${ph.date} · ${stLabel(ph.st)}`;
+      // Short date: "Mar 2027" → "Mar'27", "Apr 2025" → "Apr'25"
+      const shortDate=ph.date.replace(/\s(\d{4})$/,(m,y)=>`'${y.slice(2)}`);
       const lblClass=i%2===0?'ptl2-mlbl above':'ptl2-mlbl';
       h+=`<div class="ptl2-milestone${isActive?' ptl2-pulse':''}" style="left:${p}%;" title="${tooltip}">
         <div class="ptl2-dot" style="${dotStyle(ph.st)}">${dotChar(ph.st)}</div>
         <div class="${lblClass}">
           <div class="ptl2-mlbl-short">${ph_def.short}</div>
-          <div class="ptl2-mlbl-date">${ph.date}</div>
+          <div class="ptl2-mlbl-date">${shortDate}</div>
         </div>
       </div>`;
     });
 
     h+=`</div></div>`; // track + proj-row
-  });
-
-  // ── LEGEND ──────────────────────────────────────────────────────
-  const legendItems=[
-    {style:'background:var(--navy);',           label:isEN?'Completed':'Completado'},
-    {style:'background:var(--navy);',           label:isEN?'In progress':'En curso', pulse:true},
-    {style:'background:#fff;border:2px solid var(--navy);', label:isEN?'Blocked':'Bloqueado'},
-    {style:'background:#E8ECF0;border:2px dashed #C8D0D8;', label:isEN?'Pending':'Pendiente'},
-  ];
-  h+=`<div class="ptl2-legend">`;
-  legendItems.forEach(li=>{
-    h+=`<div class="ptl2-legend-item">
-      <div class="ptl2-legend-dot${li.pulse?' ptl2-pulse':''}" style="${li.style}"></div>
-      <span>${li.label}</span>
-    </div>`;
   });
 
   if(isEditor){
@@ -3092,7 +3079,6 @@ function renderPortfolioTimeline(){
     });
   }
 
-  h+=`</div>`; // legend
   h+=`</div>`; // ptl2-wrap
   el.innerHTML=h;
 }
