@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1230 -->
+<!-- BUILD:20261015-1245 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1230';
+const BUILD='20261015-1245';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -3072,8 +3072,8 @@ function renderPortfolioTimeline(){
 
   h+=`</div>`; // ptl-axis-container
 
-  // Edit buttons per project (if canEdit)
-  if(canEdit){
+  // Edit buttons per project (if editor mode)
+  if(isEditor){
     h+=`<div class="ptl-proj-edit-btns">`;
     pids.forEach(pid=>{
       const m=PTL_PROJ_META[pid];
