@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1445 -->
+<!-- BUILD:20261016-1510 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1445';
+const BUILD='20261016-1510';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -181,6 +181,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .tab-content>div{flex:1;min-height:0;}
 /* When Gantt is shown, lock tab-content overflow so only the inner wrap scrolls */
 .tab-content.gantt-active{overflow:hidden;}
+
+/* SECTION PAGES (Cronograma / Documentación) */
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0;}
+.section-header-title{font-size:15px;font-weight:800;color:var(--navy);}
+.proj-pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 12px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;transition:background .12s;}
+.proj-pill:hover{background:var(--border);}
 
 /* UPDATES TAB */
 .issue-row{background:#fff;border-bottom:1px solid var(--border);}
@@ -666,39 +672,43 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 </div>
 
 <!-- PROJECT PAGE -->
-<div id="page-project" class="proj-page">
-  <div class="proj-ficha" id="projFicha">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
-      <button class="btn btn-sec" style="font-size:11px;padding:5px 11px;" onclick="showPage('portfolio')" data-i18n="backToPortfolio">← Volver al portfolio</button>
-    </div>
-    <div style="position:relative;display:inline-block;">
-      <div id="projFichaNameWrap" style="display:flex;align-items:center;gap:8px;">
-        <div class="proj-ficha-name" id="projFichaName"></div>
-        <svg id="fichaSwitcherChevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none;cursor:pointer;opacity:0.6;margin-top:2px;" onclick="toggleProjSwitcher('ficha')"><path d="M3 6l5 5 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<!-- CRONOGRAMA PAGE -->
+<div id="page-cronograma" style="display:none;flex-direction:column;flex:1;">
+  <div class="section-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="section-header-title" data-i18n="navSchedule">Cronograma</span>
+      <div style="position:relative;">
+        <button class="proj-pill" id="cronoProjBtn" onclick="toggleProjSwitcher('crono')">
+          <span id="cronoProjName"></span>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="projSwitcherCrono" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:240px;" class="proj-switcher"></div>
       </div>
-      <div class="proj-ficha-loc" id="projFichaLoc"></div>
-      <div id="projSwitcherFicha" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:260px;" class="proj-switcher"></div>
     </div>
-    <div id="projFichaBadge"></div>
-    <div class="ficha-specs" id="projFichaSpecs"></div>
   </div>
-  <div class="tabs-bar">
-    <div class="tab on" id="tab-cronograma" onclick="showTab('cronograma')" data-i18n="tabSchedule">Cronograma</div>
-    <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')" data-i18n="tabDocs">Documentación</div>
+  <div style="flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);">
+    <div style="position:absolute;inset:0;bottom:auto;height:10px;background:var(--bg);z-index:5;border-bottom:1px solid var(--border);"></div>
+    <div id="ganttContainer" style="position:absolute;inset:0;top:10px;overflow:hidden;"></div>
   </div>
-  <div class="tab-content">
-    <!-- CRONOGRAMA TAB -->
-    <div id="tc-cronograma" style="display:none;padding:0;flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);">
-      <div style="position:absolute;inset:0;bottom:auto;height:10px;background:var(--bg);z-index:5;flex-shrink:0;border-bottom:1px solid var(--border);"></div>
-      <div id="ganttContainer" style="position:absolute;inset:0;top:10px;overflow:hidden;"></div>
-    </div>
-    <!-- DOCUMENTACION TAB -->
-    <div id="tc-documentacion" style="display:none;padding:20px 28px;">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-        <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()" data-i18n="addDocBtn">+ Añadir documento</button>
+</div>
+
+<!-- DOCUMENTACION PAGE -->
+<div id="page-documentacion" style="display:none;flex-direction:column;flex:1;">
+  <div class="section-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="section-header-title" data-i18n="navDocs">Documentación</span>
+      <div style="position:relative;">
+        <button class="proj-pill" id="docsProjBtn" onclick="toggleProjSwitcher('docs')">
+          <span id="docsProjName"></span>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="projSwitcherDocs" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(5,35,61,0.18);z-index:100;min-width:240px;" class="proj-switcher"></div>
       </div>
-      <div id="docsContent"></div>
     </div>
+    <button id="addDocBtn" class="btn btn-primary" style="display:none;font-size:11px;" onclick="openAddDoc()" data-i18n="addDocBtn">+ Añadir documento</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 28px;">
+    <div id="docsContent"></div>
   </div>
 </div>
 
@@ -1489,8 +1499,12 @@ function init(){
       if(nav.semFilt) semanalFilterPid=nav.semFilt;
       if(nav.page==='semanal'){
         showPage('semanal');
-      } else if(nav.page==='project' && nav.pid){
-        openProject(nav.pid);
+      } else if((nav.page==='cronograma'||nav.page==='project') && nav.pid){
+        currentProjId=nav.pid;
+        showPage('cronograma');
+      } else if(nav.page==='documentacion' && nav.pid){
+        currentProjId=nav.pid;
+        showPage('documentacion');
       } else {
         renderFeed();
       }
@@ -1504,13 +1518,12 @@ function init(){
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 function navToTab(tab){
-  const pid=currentProjId||'begues';
-  openProject(pid);
-  showTab(tab);
+  if(!currentProjId) currentProjId='begues';
+  showPage(tab);
 }
 function navToTabWithProj(tab,pid){
-  openProject(pid);
-  showTab(tab);
+  currentProjId=pid;
+  showPage(tab);
 }
 function toggleSidebar(){
   const sb=document.querySelector('.sidebar');
@@ -1526,17 +1539,17 @@ function toggleSidebar(){
 }
 const PSW_ICONS={begues:'⚡',fregacedos:'🔋',mutxamel:'☀️',entrenucleos:'🏗️'};
 const PSW_ICON_BG={begues:'#EEF2FF',fregacedos:'#F0FDF4',mutxamel:'#FFFBEB',entrenucleos:'#F8FAFC'};
-function buildProjSwitcherFicha(){
-  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
-  const el=document.getElementById('projSwitcherFicha');
+function buildProjSwitcher(section){
+  const idMap={crono:'projSwitcherCrono',docs:'projSwitcherDocs'};
+  const el=document.getElementById(idMap[section]);
   if(!el) return;
+  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
   el.innerHTML=pids.map(pid=>{
     const m=META[pid]||{};
     const isActive=pid===currentProjId;
-    const loc=m.loc||'';
-    const city=loc.split(',')[0]||loc;
-    return `<div class="proj-sw-item${isActive?' active':''}" onclick="fichaTabSwitchProj('${pid}')">
+    const city=(m.loc||'').split(',')[0]||(m.loc||'');
+    return `<div class="proj-sw-item${isActive?' active':''}" onclick="switchSectionProj('${section}','${pid}')">
       <div class="psw-info" style="flex:1;min-width:0;">
         <div class="psw-name">${m.name||pid}</div>
         <div class="psw-loc">📍 ${city}</div>
@@ -1545,35 +1558,26 @@ function buildProjSwitcherFicha(){
     </div>`;
   }).join('');
 }
-function toggleProjSwitcher(tab){
-  const id='projSwitcher'+tab.charAt(0).toUpperCase()+tab.slice(1);
+function toggleProjSwitcher(section){
+  const idMap={crono:'projSwitcherCrono',docs:'projSwitcherDocs',ficha:'projSwitcherFicha'};
+  const id=idMap[section]||('projSwitcher'+section.charAt(0).toUpperCase()+section.slice(1));
   const el=document.getElementById(id);
   if(!el) return;
-  const opening=el.style.display==='none';
-  el.style.display=opening?'block':'none';
-  if(opening && tab==='ficha') buildProjSwitcherFicha();
+  const opening=el.style.display==='none'||el.style.display==='';
+  // Close all switchers first
+  ['projSwitcherCrono','projSwitcherDocs'].forEach(sid=>{const s=document.getElementById(sid);if(s)s.style.display='none';});
+  if(opening){el.style.display='block'; buildProjSwitcher(section);}
 }
-function fichaTabSwitchProj(pid){
-  toggleProjSwitcher('ficha');
-  // Determine current tab (cronograma or documentacion) — stay on it, just change project
-  const isCron=document.getElementById('tc-cronograma').style.display!=='none';
-  const tab=isCron?'cronograma':'documentacion';
-  // Update project metadata in header without resetting to updates tab
+function switchSectionProj(section,pid){
   currentProjId=pid;
-  showPage('project'); // ensures project page is visible, doesn't change tab
-  const m=META[pid]||{};
-  document.getElementById('projFichaName').textContent=m.name||pid;
-  document.getElementById('projFichaLoc').innerHTML='📍 '+(m.loc||'');
-  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
-  const statusLbl2=m.statusKey?t('projStatus'+m.statusKey.charAt(0).toUpperCase()+m.statusKey.slice(1)):(m.status||'');
-  document.getElementById('projFichaBadge').innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${statusLbl2}</span>`;
-  document.getElementById('projFichaSpecs').innerHTML=(m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
-  // Re-render just the current tab content
-  if(tab==='cronograma') renderGantt();
-  else renderDocs();
+  toggleProjSwitcher(section); // closes it
+  updateSectionProjPill(section);
+  if(section==='crono') renderGantt();
+  else if(section==='docs') renderDocs();
+  saveNav();
 }
 document.addEventListener('mousedown',e=>{
-  ['projSwitcherFicha'].forEach(id=>{
+  ['projSwitcherCrono','projSwitcherDocs'].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&!el.contains(e.target)&&!e.target.closest('[onclick*="toggleProjSwitcher"]')){
       el.style.display='none';
@@ -1588,79 +1592,45 @@ document.addEventListener('mousedown',e=>{
 });
 function saveNav(){
   try{
-    localStorage.setItem(NAV_KEY,JSON.stringify({
-      page: document.getElementById('page-semanal').style.display!=='none'?'semanal':
-            document.getElementById('page-project').classList.contains('on')?'project':'portfolio',
-      pid: currentProjId,
-      week: currentWeek,
-      semFilt: semanalFilterPid
-    }));
+    const cronOn=document.getElementById('page-cronograma')&&document.getElementById('page-cronograma').style.display!=='none';
+    const docsOn=document.getElementById('page-documentacion')&&document.getElementById('page-documentacion').style.display!=='none';
+    const semOn=document.getElementById('page-semanal').style.display!=='none';
+    const page=semOn?'semanal':cronOn?'cronograma':docsOn?'documentacion':'portfolio';
+    localStorage.setItem(NAV_KEY,JSON.stringify({page,pid:currentProjId,week:currentWeek,semFilt:semanalFilterPid}));
   }catch(e){}
 }
 function showPage(page){
-  document.getElementById('nav-cronograma').classList.remove('active');
-  document.getElementById('nav-documentacion').classList.remove('active');
+  const pages=['portfolio','semanal','cronograma','documentacion'];
   document.getElementById('page-portfolio').style.display = page==='portfolio' ? '' : 'none';
   document.getElementById('page-semanal').style.display = page==='semanal' ? '' : 'none';
-  document.getElementById('page-project').classList.toggle('on', page==='project');
+  document.getElementById('page-cronograma').style.display = page==='cronograma' ? 'flex' : 'none';
+  document.getElementById('page-documentacion').style.display = page==='documentacion' ? 'flex' : 'none';
+  // Hide legacy project page if it still exists
+  const pp=document.getElementById('page-project'); if(pp) pp.classList.remove('on');
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   if(page==='portfolio'){ document.getElementById('nav-portfolio').classList.add('active'); renderPortfolioTimeline(); }
   if(page==='semanal'){ document.getElementById('nav-semanal').classList.add('active'); renderSemanal(); }
+  if(page==='cronograma'){ document.getElementById('nav-cronograma').classList.add('active'); updateSectionProjPill('crono'); renderGantt(); }
+  if(page==='documentacion'){ document.getElementById('nav-documentacion').classList.add('active'); updateSectionProjPill('docs'); renderDocs(); }
+  try{sessionStorage.setItem('mars_active_page',page);}catch(e){}
   saveNav();
 }
 
 function openProject(pid){
   currentProjId = pid;
-  showPage('project');
+  // Navigate to last used section (cronograma by default)
+  let savedPage='cronograma';
+  try{const s=sessionStorage.getItem('mars_active_page'); if(s&&['cronograma','documentacion'].includes(s)) savedPage=s;}catch(e){}
+  showPage(savedPage);
   saveNav();
-  // Sidebar
-  document.querySelectorAll('.sb-proj-item').forEach(e=>e.classList.remove('active'));
-  const el = document.getElementById('nav-'+pid);
-  if(el) el.classList.add('active');
-  document.querySelectorAll('[id^="sub-"]').forEach(e=>e.style.display='none');
-  const sub = document.getElementById('sub-'+pid);
-  if(sub) sub.style.display='block';
-  // Ficha
-  const m = META[pid]||{};
-  document.getElementById('projFichaName').textContent = m.name||pid;
-  document.getElementById('projFichaLoc').innerHTML = '📍 '+(m.loc||'');
-  const smap = {yellow:'background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow-b);',red:'background:var(--red-l);color:var(--red);border:1px solid var(--red-b);',grey:'background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);',blue:'background:var(--blue-l);color:var(--blue);border:1px solid rgba(58,123,213,0.25);'};
-  const statusLbl=m.statusKey?t('projStatus'+m.statusKey.charAt(0).toUpperCase()+m.statusKey.slice(1)):(m.status||'');
-  document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${statusLbl}</span>`;
-  document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
-  let savedTab='cronograma';
-  try{const s=sessionStorage.getItem('mars_active_tab'); if(s&&['cronograma','documentacion'].includes(s)) savedTab=s;}catch(e){}
-  showTab(savedTab);
 }
 
-// ── TABS ───────────────────────────────────────────────────────────────────
-function showTab(tab){
-  try{sessionStorage.setItem('mars_active_tab',tab);}catch(e){}
-  ['cronograma','documentacion'].forEach(t=>{
-    const tc=document.getElementById('tc-'+t);
-    const tb=document.getElementById('tab-'+t);
-    if(tc) tc.style.display = t===tab ? 'flex' : 'none';
-    if(tb) tb.classList.toggle('on', t===tab);
-  });
-  // Lock .tab-content overflow when Gantt is shown (position:absolute layout needs it)
-  const tabContent=document.querySelector('.tab-content');
-  if(tabContent) tabContent.classList.toggle('gantt-active',tab==='cronograma');
-  // Show/hide tabs bar: hide when on cronograma/documentacion or Nuevas Oportunidades
-  const tabsBar = document.querySelector('.tabs-bar');
-  if(tabsBar){
-    const hideBar = (tab==='cronograma'||tab==='documentacion') || (currentProjId==='custom_nuevas_oportunidades');
-    tabsBar.style.display = hideBar ? 'none' : '';
-  }
-  // Show/hide chevron for project switching (only in cronograma/documentacion tabs)
-  const chevron = document.getElementById('fichaSwitcherChevron');
-  if(chevron) chevron.style.display = (tab==='cronograma'||tab==='documentacion') ? 'block' : 'none';
-  // Sync sidebar active state — clear all, then set the right one
-  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  if(tab==='cronograma') document.getElementById('nav-cronograma').classList.add('active');
-  else if(tab==='documentacion') document.getElementById('nav-documentacion').classList.add('active');
-  else if(currentProjId==='custom_nuevas_oportunidades') document.getElementById('nav-custom_nuevas_oportunidades').classList.add('active');
-  if(tab==='cronograma') renderGantt();
-  if(tab==='documentacion') renderDocs();
+// ── SECTION PROJ PILL ──────────────────────────────────────────────────────
+function updateSectionProjPill(section){
+  const m=META[currentProjId]||{};
+  const name=m.name||currentProjId||'—';
+  if(section==='crono'){const el=document.getElementById('cronoProjName'); if(el) el.textContent=name;}
+  if(section==='docs'){const el=document.getElementById('docsProjName'); if(el) el.textContent=name;}
 }
 
 function weekRange(iso){
@@ -3159,8 +3129,8 @@ function setLang(l){
   const semVisible=document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none';
   if(semVisible) renderSemanal();
   if(currentProjId){
-    const projVisible=document.getElementById('page-project')&&document.getElementById('page-project').classList.contains('on');
-    if(projVisible){ openProject(currentProjId); }
+    const cronVisible=document.getElementById('page-cronograma')&&document.getElementById('page-cronograma').style.display!=='none';
+    if(cronVisible) renderGantt();
   }
   setTimeout(()=>{ if(badge) badge.style.display='none'; },600);
 }
