@@ -179,6 +179,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .tab.on{color:var(--green);border-bottom-color:var(--green);}
 .tab-content{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;}
 .tab-content>div{flex:1;min-height:0;}
+/* When Gantt is shown, lock tab-content overflow so only the inner wrap scrolls */
+.tab-content.gantt-active{overflow:hidden;}
 
 /* UPDATES TAB */
 .issue-row{background:#fff;border-bottom:1px solid var(--border);}
@@ -250,12 +252,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 /* Custom horizontal scrollbar */
 #ganttSbTrack{transition:opacity 0.2s;}
 #ganttSbThumb{transition:background 0.15s,width 0.1s;}
-/* Hide native scrollbar on gantt wrap */
-.gantt-scroll-wrap::-webkit-scrollbar{display:none;}
-.gantt-scroll-wrap{scrollbar-width:none;}
-/* Insert zone hover */
-.g-row:hover .g-insert-pill{display:block!important;}
-.g-insert-pill:hover{background:#0a3060!important;}
+/* Insert btn — shows on row hover, pinned to left frozen column */
+.g-row:hover .g-insert-btn{opacity:1!important;pointer-events:auto!important;}
+.g-insert-btn:hover{background:var(--navy)!important;color:#fff!important;}
 /* Insert context menu */
 #ganttInsertMenu{position:fixed;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(5,35,61,0.2);border:1px solid var(--border);padding:4px 0;z-index:9999;min-width:160px;}
 #ganttInsertMenu button{display:block;width:100%;text-align:left;padding:7px 14px;border:none;background:none;font-size:12px;color:var(--navy);cursor:pointer;font-family:inherit;}
@@ -1645,6 +1644,16 @@ function showTab(tab){
     if(tc) tc.style.display = t===tab ? '' : 'none';
     if(tb) tb.classList.toggle('on', t===tab);
   });
+  // Lock/unlock scroll containers so Gantt fills screen without page-level scroll
+  const mainEl=document.querySelector('.main');
+  const tabContent=document.querySelector('.tab-content');
+  const isFull=(tab==='cronograma'||tab==='documentacion');
+  if(mainEl){
+    mainEl.style.overflow=isFull?'hidden':'';
+    if(isFull){mainEl.style.display='flex';mainEl.style.flexDirection='column';}
+    else{mainEl.style.display='';mainEl.style.flexDirection='';}
+  }
+  if(tabContent) tabContent.classList.toggle('gantt-active',tab==='cronograma');
   // Show/hide tabs bar: hide when on cronograma/documentacion or Nuevas Oportunidades
   const tabsBar = document.querySelector('.tabs-bar');
   if(tabsBar){
@@ -2353,19 +2362,19 @@ function renderGantt(){
 
     const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${bgRow};${rowTopBorder}${rowBotBorder}overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
 
-    // Insert zone — appears between rows on hover (editor only)
-    const insertZone=isEditor?`<div class="g-insert-zone" style="position:relative;height:0;overflow:visible;z-index:30;flex-shrink:0;">
-      <div class="g-insert-pill" onclick="ganttShowInsertMenu('${task.id}',event)" style="display:none;position:absolute;left:50%;transform:translateX(-50%);top:-8px;background:var(--navy);color:#fff;border-radius:10px;padding:1px 12px;font-size:10px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(5,35,61,0.3);white-space:nowrap;line-height:16px;letter-spacing:0.2px;">+ Insertar</div>
-    </div>`:'';
+    // Insert btn — shown on hover at the left edge of each row (editor only)
+    const insertBtn=isEditor
+      ?`<button class="g-insert-btn" onclick="ganttShowInsertMenu('${task.id}',event)" title="${isEN?'Insert after':'Insertar después'}" style="opacity:0;pointer-events:none;position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:40;width:18px;height:18px;background:#e8edf5;color:var(--navy);border:1px solid rgba(5,35,61,0.25);border-radius:50%;font-size:11px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(5,35,61,0.18);padding:0;transition:opacity 0.15s,background 0.15s;">+</button>`
+      :'';
 
-    dataRows+=`<div class="g-row" style="display:flex;flex-direction:column;flex-shrink:0;">${insertZone}<div style="display:flex;flex-shrink:0;">${leftCell}${chartCell}</div></div>`;
+    dataRows+=`<div class="g-row" style="display:flex;flex-shrink:0;position:relative;">${insertBtn}<div style="display:flex;flex-shrink:0;width:100%;">${leftCell}${chartCell}</div></div>`;
   });
 
   const html=`${toolbar}
-  <div style="position:relative;height:calc(100% - ${isEditor?45:0}px);display:flex;flex-direction:column;overflow:hidden;">
-    <!-- Main scroll area -->
-    <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;" class="gantt-scroll-wrap">
-      <div style="width:${totalW}px;min-height:100%;">
+  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;">
+    <!-- Main scroll area: both axes scroll here; headers stay sticky inside -->
+    <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;" class="gantt-scroll-wrap">
+      <div style="width:${totalW}px;">
         ${hdrYear}
         ${hdrMonth}
         ${dataRows}
