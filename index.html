@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1159 -->
+<!-- BUILD:20261016-1205 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1159';
+const BUILD='20261016-1205';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -1641,7 +1641,7 @@ function showTab(tab){
   ['dashboard','cronograma','documentacion'].forEach(t=>{
     const tc=document.getElementById('tc-'+t);
     const tb=document.getElementById('tab-'+t);
-    if(tc) tc.style.display = t===tab ? '' : 'none';
+    if(tc) tc.style.display = t===tab ? (t==='cronograma'?'flex':'') : 'none';
     if(tb) tb.classList.toggle('on', t===tab);
   });
   // Lock .tab-content overflow when Gantt is shown (position:absolute layout needs it)
