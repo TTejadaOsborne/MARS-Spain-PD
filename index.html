@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1315 -->
+<!-- BUILD:20261016-1320 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1315';
+const BUILD='20261016-1320';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -686,9 +686,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       </div>
     </div>
   </div>
-  <div style="flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);">
-    <div style="position:absolute;inset:0;bottom:auto;height:10px;background:var(--bg);z-index:5;border-bottom:1px solid var(--border);"></div>
-    <div id="ganttContainer" style="position:absolute;inset:0;top:10px;overflow:hidden;"></div>
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);">
+    <div id="ganttContainer" style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;"></div>
   </div>
 </div>
 
@@ -2144,14 +2143,8 @@ function ganttBounds(tasks){
 
 // ── SIZE GANTT CONTAINER to exact viewport height ────────────────────────────
 function sizeGanttContainer(){
-  const container=document.getElementById('ganttContainer');
-  const cronPage=document.getElementById('page-cronograma');
-  if(!container||!cronPage||cronPage.style.display==='none') return;
-  // Measure available height: viewport minus the container's top offset
-  const rect=container.getBoundingClientRect();
-  const available=window.innerHeight-rect.top;
-  container.style.height=Math.max(200,available)+'px';
-  // Refresh scrollbar after resize
+  // Container now uses flex:1 so no explicit sizing needed.
+  // Just refresh the custom scrollbar if it exists.
   const wrap=document.getElementById('ganttWrap');
   const sbTrack=document.getElementById('ganttSbTrack');
   const sbThumb=document.getElementById('ganttSbThumb');
@@ -2383,7 +2376,7 @@ function renderGantt(){
   });
 
   const html=`${toolbar}
-  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;position:absolute;inset:0;top:${isEditor?45:0}px;">
+  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;">
     <!-- Main scroll area: both axes scroll here; headers stay sticky inside -->
     <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;" class="gantt-scroll-wrap">
       <div style="width:${totalW}px;">
@@ -2399,8 +2392,7 @@ function renderGantt(){
   </div>`;
 
   container.innerHTML=html;
-  // Re-run sizing now that DOM is updated (ganttOuter is position:absolute)
-  // No explicit height needed — ganttOuter fills the container via inset:0
+  // ganttOuter uses flex:1 so it fills the container naturally
 
   // ── CUSTOM SCROLLBAR (always visible, lives outside scroll container) ─────
   const wrap=document.getElementById('ganttWrap');
