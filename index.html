@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1224 -->
+<!-- BUILD:20261016-1445 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1224';
+const BUILD='20261016-1445';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -683,15 +683,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="ficha-specs" id="projFichaSpecs"></div>
   </div>
   <div class="tabs-bar">
-    <div class="tab on" id="tab-dashboard" onclick="showTab('dashboard')" data-i18n="tabDashboard">Dashboard</div>
-    <div class="tab" id="tab-cronograma" onclick="showTab('cronograma')" data-i18n="tabSchedule">Cronograma</div>
+    <div class="tab on" id="tab-cronograma" onclick="showTab('cronograma')" data-i18n="tabSchedule">Cronograma</div>
     <div class="tab" id="tab-documentacion" onclick="showTab('documentacion')" data-i18n="tabDocs">Documentación</div>
   </div>
   <div class="tab-content">
-    <!-- DASHBOARD TAB -->
-    <div id="tc-dashboard" style="padding:24px 28px;">
-      <div id="dashboardContent"></div>
-    </div>
     <!-- CRONOGRAMA TAB -->
     <div id="tc-cronograma" style="display:none;padding:0;flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);">
       <div style="position:absolute;inset:0;bottom:auto;height:10px;background:var(--bg);z-index:5;flex-shrink:0;border-bottom:1px solid var(--border);"></div>
@@ -1633,15 +1628,18 @@ function openProject(pid){
   const statusLbl=m.statusKey?t('projStatus'+m.statusKey.charAt(0).toUpperCase()+m.statusKey.slice(1)):(m.status||'');
   document.getElementById('projFichaBadge').innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;${smap[m.sc]||''}padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;margin-bottom:8px;">● ${statusLbl}</span>`;
   document.getElementById('projFichaSpecs').innerHTML = (m.specs||[]).map((s,i)=>`${i>0?'<div class="ficha-div"></div>':''}<div class="ficha-spec"><div class="ficha-spec-val">${s.v}</div><div class="ficha-spec-lbl">${s.l}</div></div>`).join('');
-  showTab('dashboard');
+  let savedTab='cronograma';
+  try{const s=sessionStorage.getItem('mars_active_tab'); if(s&&['cronograma','documentacion'].includes(s)) savedTab=s;}catch(e){}
+  showTab(savedTab);
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────
 function showTab(tab){
-  ['dashboard','cronograma','documentacion'].forEach(t=>{
+  try{sessionStorage.setItem('mars_active_tab',tab);}catch(e){}
+  ['cronograma','documentacion'].forEach(t=>{
     const tc=document.getElementById('tc-'+t);
     const tb=document.getElementById('tab-'+t);
-    if(tc) tc.style.display = t===tab ? (t==='cronograma'?'flex':'') : 'none';
+    if(tc) tc.style.display = t===tab ? 'flex' : 'none';
     if(tb) tb.classList.toggle('on', t===tab);
   });
   // Lock .tab-content overflow when Gantt is shown (position:absolute layout needs it)
@@ -1661,7 +1659,6 @@ function showTab(tab){
   if(tab==='cronograma') document.getElementById('nav-cronograma').classList.add('active');
   else if(tab==='documentacion') document.getElementById('nav-documentacion').classList.add('active');
   else if(currentProjId==='custom_nuevas_oportunidades') document.getElementById('nav-custom_nuevas_oportunidades').classList.add('active');
-  if(tab==='dashboard') renderDashboard();
   if(tab==='cronograma') renderGantt();
   if(tab==='documentacion') renderDocs();
 }
@@ -2121,7 +2118,7 @@ function getGanttTasks(pid){
     // Try loading from localStorage first
     try{
       const raw=localStorage.getItem(GANTT_STORAGE_KEY);
-      if(raw){const saved=JSON.parse(raw); if(saved[pid]) ganttData[pid]=saved[pid];}
+      if(raw){const saved=JSON.parse(raw); if(saved[pid]&&saved[pid].length) ganttData[pid]=saved[pid];}
     }catch(e){}
     if(!ganttData[pid]){
       if(pid==='mutxamel') ganttData[pid]=JSON.parse(JSON.stringify(TASKS));
