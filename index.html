@@ -2281,41 +2281,54 @@ function renderGantt(){
   // ── ASSEMBLE — single-scroll sticky layout ─────────────────────
   const totalW=LEFT_W+CHART_W;
 
-  // ── HEADER — two rows merged on the left column ───────────────
-  // Row 1 (years) bg: #1a3a56 (distinct from nav header navy)
-  // Row 2 (cols+months) bg: #12304a
-  const HDR_BG1='#1a3a56';
-  const HDR_BG2='#12304a';
-  const MERGED_H=HDR_H1+HDR_H2; // left col spans both rows
+  // ── HEADER — single sticky row, left col has internal 2-row layout ──
+  const HDR_BG='#1a3a56';       // header background (lighter than --navy)
+  const MERGED_H=HDR_H1+HDR_H2; // total header height
 
-  // Row 1: years — left frozen cell spans MERGED_H vertically
-  let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;background:${HDR_BG1};box-shadow:0 1px 0 rgba(255,255,255,0.12);">`;
-  // Left frozen area — spans both rows (overflow:visible, actual height set to MERGED_H)
-  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${MERGED_H}px;background:${HDR_BG1};display:flex;align-items:center;padding:0 12px;border-right:2px solid rgba(255,255,255,0.18);overflow:visible;">
-    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:.5px;text-transform:uppercase;">${t('taskName')}</span>
+  // Single sticky row that is MERGED_H tall
+  let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;height:${MERGED_H}px;background:${HDR_BG};box-shadow:0 3px 8px rgba(5,35,61,0.28);">`;
+
+  // LEFT frozen block: full height, contains column label sub-rows inside
+  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${MERGED_H}px;background:${HDR_BG};border-right:2px solid rgba(255,255,255,0.18);display:flex;flex-direction:column;box-sizing:border-box;">`;
+
+  // Top sub-row: "Nombre Tarea" label centered vertically in HDR_H1
+  hdrYear+=`<div style="height:${HDR_H1}px;display:flex;align-items:center;padding:0 10px;border-bottom:1px solid rgba(255,255,255,0.1);">
+    <span style="font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:.5px;text-transform:uppercase;">${t('taskName')}</span>
   </div>`;
-  // Year cells — normal HDR_H1 height
+
+  // Bottom sub-row: Fecha Inicio | Fecha Fin | % — matching data column widths
+  hdrYear+=`<div style="height:${HDR_H2}px;display:flex;align-items:center;">`;
+  hdrYear+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;padding:0 8px;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${isEN?'Name':'Nombre'}<div class="g-resize-handle" data-col="name"></div></div>`;
+  hdrYear+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
+  hdrYear+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
+  hdrYear+=`<div style="width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;${isEditor?'border-right:1px solid rgba(255,255,255,0.08);':''}box-sizing:border-box;">%</div>`;
+  if(isEditor) hdrYear+=`<div style="width:${ACT_W}px;flex-shrink:0;"></div>`;
+  hdrYear+=`</div>`; // end bottom sub-row
+  hdrYear+=`</div>`; // end left frozen block
+
+  // RIGHT: chart area — top sub-row = years, bottom sub-row = months
+  hdrYear+=`<div style="flex:1;display:flex;flex-direction:column;min-width:0;">`;
+
+  // Year sub-row (HDR_H1)
+  hdrYear+=`<div style="height:${HDR_H1}px;display:flex;border-bottom:1px solid rgba(255,255,255,0.1);">`;
   yearGroups.forEach(yg=>{
-    hdrYear+=`<div style="flex-shrink:0;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.22);':''}">${yg.year}</div>`;
+    hdrYear+=`<div style="flex-shrink:0;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.5px;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.2);':''}">${yg.year}</div>`;
   });
   hdrYear+=`</div>`;
 
-  // Row 2: columns + months — left cell is hidden (overlaid by row 1's merged cell)
-  let hdrMonth=`<div class="g-hdr-row" style="position:sticky;top:${HDR_H1}px;z-index:18;display:flex;width:${totalW}px;background:${HDR_BG2};box-shadow:0 3px 8px rgba(5,35,61,0.22);">`;
-  // Left area: visible portion only shows the column sub-headers; left frozen sticky cell continues the merge
-  hdrMonth+=`<div class="g-col-hdr" style="position:sticky;left:0;z-index:28;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H2}px;background:${HDR_BG1};display:flex;align-items:center;border-right:2px solid rgba(255,255,255,0.18);">`;
-  hdrMonth+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;height:100%;display:flex;align-items:center;padding:0 8px;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;opacity:0;pointer-events:none;"><div class="g-resize-handle" data-col="name"></div></div>`;
-  hdrMonth+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
-  hdrMonth+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
-  hdrMonth+=`<div style="width:${PCT_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);${isEditor?'border-right:1px solid rgba(255,255,255,0.1);':''}box-sizing:border-box;flex-shrink:0;">%</div>`;
-  if(isEditor) hdrMonth+=`<div style="width:${ACT_W}px;flex-shrink:0;"></div>`;
-  hdrMonth+=`</div>`;
-  // Month cells
+  // Month sub-row (HDR_H2)
+  hdrYear+=`<div style="height:${HDR_H2}px;display:flex;">`;
   months.forEach((mn,i)=>{
     const isYS=mn.getMonth()===0;
-    hdrMonth+=`<div style="flex-shrink:0;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.6);${isYS?'border-left:2px solid rgba(255,255,255,0.22);':'border-left:1px solid rgba(255,255,255,0.08);'}">${MSHORT[mn.getMonth()]}</div>`;
+    hdrYear+=`<div style="flex-shrink:0;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:500;color:rgba(255,255,255,0.55);${isYS?'border-left:2px solid rgba(255,255,255,0.2);':'border-left:1px solid rgba(255,255,255,0.07);'}">${MSHORT[mn.getMonth()]}</div>`;
   });
-  hdrMonth+=`</div>`;
+  hdrYear+=`</div>`;
+
+  hdrYear+=`</div>`; // end right chart area
+  hdrYear+=`</div>`; // end sticky header row
+
+  // hdrMonth is now empty — all header content is in hdrYear
+  let hdrMonth='';
 
   // Data rows
   let dataRows='';
