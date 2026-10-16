@@ -152,10 +152,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 /* UPDATES FEED */
 .update-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
 .update-item:hover{background:var(--bg);}
-.update-badge{font-size:9.5px;font-weight:700;padding:3px 6px;border-radius:4px;text-align:center;height:fit-content;margin-top:1px;flex-shrink:0;min-width:58px;}
-.update-proj{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:2px;}
-.update-text{font-size:12px;color:var(--text-2);line-height:1.4;}
-.update-date{font-size:10px;color:var(--text-3);margin-top:3px;}
+.update-badge{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;text-align:center;height:fit-content;margin-top:1px;flex-shrink:0;min-width:54px;}
+.update-proj{font-size:10.5px;font-weight:700;color:var(--navy);margin-bottom:1px;}
+.update-text{font-size:10.5px;color:var(--text-2);line-height:1.4;}
+.update-date{font-size:9.5px;color:var(--text-3);margin-top:2px;}
 
 /* OPP CARD */
 .opp-card{background:linear-gradient(135deg,var(--navy) 0%,#1B4F8A 100%);border-radius:10px;padding:20px;color:#fff;cursor:pointer;}
@@ -394,8 +394,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .tl-date{font-size:10.5px;color:var(--text-3);margin-top:1px;}
 .dash-last-update{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
 .dash-last-update:last-child{border-bottom:none;}
-.dash-upd-topic{font-size:11.5px;font-weight:700;color:var(--navy);}
-.dash-upd-text{font-size:11px;color:var(--text-2);margin-top:1px;}
+.dash-upd-topic{font-size:10.5px;font-weight:700;color:var(--navy);}
+.dash-upd-text{font-size:10.5px;color:var(--text-2);margin-top:1px;}
 .dash-upd-meta{display:flex;gap:6px;align-items:center;margin-top:4px;}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -693,8 +693,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div id="dashboardContent"></div>
     </div>
     <!-- CRONOGRAMA TAB -->
-    <div id="tc-cronograma" style="display:none;padding:0;height:100%;overflow:hidden;">
-      <div id="ganttContainer" style="height:100%;display:flex;flex-direction:column;overflow:hidden;"></div>
+    <div id="tc-cronograma" style="display:none;padding:0;flex:1;min-height:0;position:relative;overflow:hidden;">
+      <div id="ganttContainer" style="position:absolute;inset:0;overflow:hidden;"></div>
     </div>
     <!-- DOCUMENTACION TAB -->
     <div id="tc-documentacion" style="display:none;padding:20px 28px;">
@@ -1644,15 +1644,8 @@ function showTab(tab){
     if(tc) tc.style.display = t===tab ? '' : 'none';
     if(tb) tb.classList.toggle('on', t===tab);
   });
-  // Lock/unlock scroll containers so Gantt fills screen without page-level scroll
-  const mainEl=document.querySelector('.main');
+  // Lock .tab-content overflow when Gantt is shown (position:absolute layout needs it)
   const tabContent=document.querySelector('.tab-content');
-  const isFull=(tab==='cronograma'||tab==='documentacion');
-  if(mainEl){
-    mainEl.style.overflow=isFull?'hidden':'';
-    if(isFull){mainEl.style.display='flex';mainEl.style.flexDirection='column';}
-    else{mainEl.style.display='';mainEl.style.flexDirection='';}
-  }
   if(tabContent) tabContent.classList.toggle('gantt-active',tab==='cronograma');
   // Show/hide tabs bar: hide when on cronograma/documentacion or Nuevas Oportunidades
   const tabsBar = document.querySelector('.tabs-bar');
@@ -2175,6 +2168,31 @@ function ganttBounds(tasks){
   return {min,max};
 }
 
+// ── SIZE GANTT CONTAINER to exact viewport height ────────────────────────────
+function sizeGanttContainer(){
+  const container=document.getElementById('ganttContainer');
+  if(!container||document.getElementById('tc-cronograma').style.display==='none') return;
+  // Measure available height: viewport minus the container's top offset
+  const rect=container.getBoundingClientRect();
+  const available=window.innerHeight-rect.top;
+  container.style.height=Math.max(200,available)+'px';
+  // Refresh scrollbar after resize
+  const wrap=document.getElementById('ganttWrap');
+  const sbTrack=document.getElementById('ganttSbTrack');
+  const sbThumb=document.getElementById('ganttSbThumb');
+  if(wrap&&sbTrack&&sbThumb){
+    const ratio=wrap.clientWidth/wrap.scrollWidth;
+    const trackW=sbTrack.clientWidth;
+    const thumbW=Math.max(40,trackW*ratio);
+    const maxScroll=wrap.scrollWidth-wrap.clientWidth;
+    const thumbLeft=maxScroll>0?(wrap.scrollLeft/maxScroll)*(trackW-thumbW):0;
+    sbThumb.style.width=thumbW+'px';
+    sbThumb.style.left=thumbLeft+'px';
+    sbThumb.style.opacity=ratio>=1?'0.2':'1';
+  }
+}
+window.addEventListener('resize',sizeGanttContainer);
+
 // ── RENDER GANTT (MS Project style) ─────────────────────────────────────────
 function renderGantt(){
   const pid=currentProjId;
@@ -2183,6 +2201,8 @@ function renderGantt(){
   });
   const tasks=getGanttTasks(pid);
   const container=document.getElementById('ganttContainer');
+  // Set explicit height before rendering so flex children have a reference
+  sizeGanttContainer();
 
   if(!tasks.length){
     container.innerHTML=`<div style="text-align:center;padding:60px 32px;color:var(--text-3);">
@@ -2371,7 +2391,7 @@ function renderGantt(){
   });
 
   const html=`${toolbar}
-  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;">
+  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;position:absolute;inset:0;top:${isEditor?45:0}px;">
     <!-- Main scroll area: both axes scroll here; headers stay sticky inside -->
     <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;" class="gantt-scroll-wrap">
       <div style="width:${totalW}px;">
@@ -2387,6 +2407,8 @@ function renderGantt(){
   </div>`;
 
   container.innerHTML=html;
+  // Re-run sizing now that DOM is updated (ganttOuter is position:absolute)
+  // No explicit height needed — ganttOuter fills the container via inset:0
 
   // ── CUSTOM SCROLLBAR (always visible, lives outside scroll container) ─────
   const wrap=document.getElementById('ganttWrap');
