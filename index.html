@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1535 -->
+<!-- BUILD:20261016-1315 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1535';
+const BUILD='20261016-1315';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -1449,7 +1449,8 @@ function updateLastReportingBadge(){
     const m=(b||'').match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
     if(!m) return null;
     const [,y,mo,d,h,mi]=m;
-    return new Date(+y,+mo-1,+d,+h,+mi);
+    // BUILD is in Europe/Madrid local time; use Date.UTC to avoid double-offset
+    return new Date(Date.UTC(+y,+mo-1,+d,+h-2,+mi)); // CEST = UTC+2
   }
   // Parse localStorage ts → Date  ("DD/MM/YYYY a las HH:MM")
   function lsToDate(s){
@@ -1610,7 +1611,13 @@ function showPage(page){
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   if(page==='portfolio'){ document.getElementById('nav-portfolio').classList.add('active'); renderPortfolioTimeline(); }
   if(page==='semanal'){ document.getElementById('nav-semanal').classList.add('active'); renderSemanal(); }
-  if(page==='cronograma'){ document.getElementById('nav-cronograma').classList.add('active'); updateSectionProjPill('crono'); requestAnimationFrame(()=>{sizeGanttContainer();renderGantt();}); }
+  if(page==='cronograma'){
+    document.getElementById('nav-cronograma').classList.add('active');
+    // If current project has no tasks, default to mutxamel which always has data
+    if(!currentProjId || getGanttTasks(currentProjId).length===0) currentProjId='mutxamel';
+    updateSectionProjPill('crono');
+    requestAnimationFrame(()=>{sizeGanttContainer();renderGantt();});
+  }
   if(page==='documentacion'){ document.getElementById('nav-documentacion').classList.add('active'); updateSectionProjPill('docs'); renderDocs(); }
   try{sessionStorage.setItem('mars_active_page',page);}catch(e){}
   saveNav();
