@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261015-1712 -->
+<!-- BUILD:20261016-1159 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261015-1712';
+const BUILD='20261016-1159';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -1462,9 +1462,8 @@ function updateLastReportingBadge(){
   let lsDt=null;
   try{ lsDt=lsToDate(localStorage.getItem(LAST_CHANGE_KEY)||''); }catch(e){}
 
-  // If there's a real data update in localStorage, always show that.
-  // BUILD is only a fallback when no data has ever been saved locally.
-  const winner=lsDt||(buildDt||null);
+  // Show whichever is more recent: last data edit (localStorage) or last deploy (BUILD)
+  const winner=(lsDt&&buildDt)?(lsDt>buildDt?lsDt:buildDt):(lsDt||buildDt||null);
   if(!winner){ el.textContent=''; return; }
 
   const ts=fmtDate(winner);
