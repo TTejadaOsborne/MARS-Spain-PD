@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1442 -->
+<!-- BUILD:20261016-1445 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1442';
+const BUILD='20261016-1445';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -673,7 +673,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
 <!-- PROJECT PAGE -->
 <!-- CRONOGRAMA PAGE -->
-<div id="page-cronograma" style="display:none;flex-direction:column;flex:1;">
+<div id="page-cronograma" style="display:none;flex-direction:column;flex:1;min-height:0;">
   <div class="section-header">
     <div style="display:flex;align-items:center;gap:10px;">
       <span class="section-header-title" data-i18n="navSchedule">Cronograma</span>
@@ -686,7 +686,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       </div>
     </div>
   </div>
-  <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);">
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;background:var(--bg);">
     <div id="ganttContainer" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
   </div>
 </div>
@@ -2304,7 +2304,7 @@ function renderGantt(){
     const nextTask=tasks[taskIdx+1];
     const isLvl2Group=task.level===2&&nextTask&&nextTask.level===3;
     // Row backgrounds: level1 darkest tint, level2-group medium, level2-leaf & level3 white
-    const bgRow=task.level===1?'#D6E4EF':isLvl2Group?'#EBF3F9':'#ffffff';
+    const bgRow=task.level===1?'#C2D8E8':isLvl2Group?'#E8F1F7':'#ffffff';
     const fw=task.level===1?700:isLvl2Group?600:400;
     const fs=task.level===1?12:task.level===2?11.5:11;
     const textColor=task.level===1?'var(--navy)':isLvl2Group?'#2d4a5f':'var(--text-2)';
@@ -2376,7 +2376,7 @@ function renderGantt(){
     });
     const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    const chartBg=task.level===1?'#D6E4EF':isLvl2Group?'#EBF3F9':'#ffffff';
+    const chartBg=task.level===1?'#C2D8E8':isLvl2Group?'#E8F1F7':'#ffffff';
     const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${chartBg};${rowTopBorder}${rowBotBorder}overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
 
     // Insert btn — shown on hover at the left edge of each row (editor only)
