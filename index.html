@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1320 -->
+<!-- BUILD:20261016-1400 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1320';
+const BUILD='20261016-1400';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2090,17 +2090,25 @@ const GANTT_STORAGE_KEY='mars_pd_gantt_v2';
 const ganttData={};
 function getGanttTasks(pid){
   pid=pid||currentProjId;
+  console.log('[GANTT-DBG] getGanttTasks called. pid='+pid+' ganttData keys='+JSON.stringify(Object.keys(ganttData))+' TASKS.length='+(typeof TASKS!=='undefined'?TASKS.length:'UNDEFINED'));
   if(!ganttData[pid]){
     // Try loading from localStorage first
     try{
       const raw=localStorage.getItem(GANTT_STORAGE_KEY);
-      if(raw){const saved=JSON.parse(raw); if(saved[pid]&&saved[pid].length) ganttData[pid]=saved[pid];}
-    }catch(e){}
+      console.log('[GANTT-DBG] localStorage raw='+(raw?'exists ('+raw.length+' chars)':'null'));
+      if(raw){
+        const saved=JSON.parse(raw);
+        console.log('[GANTT-DBG] saved keys='+JSON.stringify(Object.keys(saved))+' saved[pid].length='+(saved[pid]?saved[pid].length:'none'));
+        if(saved[pid]&&saved[pid].length) ganttData[pid]=saved[pid];
+      }
+    }catch(e){console.log('[GANTT-DBG] localStorage error:',e);}
     if(!ganttData[pid]){
+      console.log('[GANTT-DBG] No data from storage. pid===mutxamel? '+(pid==='mutxamel')+' TASKS defined? '+(typeof TASKS!=='undefined')+' TASKS.length='+(typeof TASKS!=='undefined'?TASKS.length:'N/A'));
       if(pid==='mutxamel') ganttData[pid]=JSON.parse(JSON.stringify(TASKS));
       else ganttData[pid]=[];
     }
   }
+  console.log('[GANTT-DBG] returning '+ganttData[pid].length+' tasks for '+pid);
   return ganttData[pid];
 }
 function saveGanttData(pid){
@@ -2164,8 +2172,10 @@ window.addEventListener('resize',sizeGanttContainer);
 // ── RENDER GANTT (MS Project style) ─────────────────────────────────────────
 function renderGantt(){
   const pid=currentProjId;
+  console.log('[GANTT-DBG] renderGantt called. currentProjId='+currentProjId);
   updateSectionProjPill('crono');
   const tasks=getGanttTasks(pid);
+  console.log('[GANTT-DBG] renderGantt got '+tasks.length+' tasks');
   const container=document.getElementById('ganttContainer');
   sizeGanttContainer();
 
