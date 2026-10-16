@@ -693,8 +693,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div id="dashboardContent"></div>
     </div>
     <!-- CRONOGRAMA TAB -->
-    <div id="tc-cronograma" style="display:none;padding:0;flex:1;min-height:0;position:relative;overflow:hidden;">
-      <div id="ganttContainer" style="position:absolute;inset:0;overflow:hidden;"></div>
+    <div id="tc-cronograma" style="display:none;padding:0;flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);">
+      <div style="position:absolute;inset:0;bottom:auto;height:10px;background:var(--bg);z-index:5;flex-shrink:0;border-bottom:1px solid var(--border);"></div>
+      <div id="ganttContainer" style="position:absolute;inset:0;top:10px;overflow:hidden;"></div>
     </div>
     <!-- DOCUMENTACION TAB -->
     <div id="tc-documentacion" style="display:none;padding:20px 28px;">
@@ -2280,32 +2281,39 @@ function renderGantt(){
   // ── ASSEMBLE — single-scroll sticky layout ─────────────────────
   const totalW=LEFT_W+CHART_W;
 
-  // Header row 1 (years) — full width sticky top:0
-  let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;background:var(--navy);box-shadow:0 1px 0 rgba(255,255,255,0.15);">`;
-  // Left frozen area — year label is just "TAREA"
-  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H1}px;background:var(--navy);display:flex;align-items:center;padding:0 12px;border-right:2px solid rgba(255,255,255,0.2);">
-    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:.6px;text-transform:uppercase;">${t('taskName')}</span>
+  // ── HEADER — two rows merged on the left column ───────────────
+  // Row 1 (years) bg: #1a3a56 (distinct from nav header navy)
+  // Row 2 (cols+months) bg: #12304a
+  const HDR_BG1='#1a3a56';
+  const HDR_BG2='#12304a';
+  const MERGED_H=HDR_H1+HDR_H2; // left col spans both rows
+
+  // Row 1: years — left frozen cell spans MERGED_H vertically
+  let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;background:${HDR_BG1};box-shadow:0 1px 0 rgba(255,255,255,0.12);">`;
+  // Left frozen area — spans both rows (overflow:visible, actual height set to MERGED_H)
+  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${MERGED_H}px;background:${HDR_BG1};display:flex;align-items:center;padding:0 12px;border-right:2px solid rgba(255,255,255,0.18);overflow:visible;">
+    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:.5px;text-transform:uppercase;">${t('taskName')}</span>
   </div>`;
-  // Year cells
+  // Year cells — normal HDR_H1 height
   yearGroups.forEach(yg=>{
-    hdrYear+=`<div style="flex-shrink:0;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.25);':''}">${yg.year}</div>`;
+    hdrYear+=`<div style="flex-shrink:0;width:${yg.count*CW}px;height:${HDR_H1}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;${yg.start>0?'border-left:2px solid rgba(255,255,255,0.22);':''}">${yg.year}</div>`;
   });
   hdrYear+=`</div>`;
 
-  // Header row 2 (columns + months) — sticky top:HDR_H1
-  let hdrMonth=`<div class="g-hdr-row" style="position:sticky;top:${HDR_H1}px;z-index:20;display:flex;width:${totalW}px;background:#0a2540;box-shadow:0 3px 8px rgba(5,35,61,0.22);">`;
-  // Left frozen columns header
-  hdrMonth+=`<div class="g-col-hdr" style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H2}px;background:var(--navy);display:flex;align-items:center;border-right:2px solid rgba(255,255,255,0.2);">`;
-  hdrMonth+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;height:100%;display:flex;align-items:center;padding:0 8px;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskName')}<div class="g-resize-handle" data-col="name"></div></div>`;
-  hdrMonth+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
-  hdrMonth+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;flex-shrink:0;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
-  hdrMonth+=`<div style="width:${PCT_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,0.5);${isEditor?'border-right:1px solid rgba(255,255,255,0.12);':''}box-sizing:border-box;flex-shrink:0;">%</div>`;
+  // Row 2: columns + months — left cell is hidden (overlaid by row 1's merged cell)
+  let hdrMonth=`<div class="g-hdr-row" style="position:sticky;top:${HDR_H1}px;z-index:18;display:flex;width:${totalW}px;background:${HDR_BG2};box-shadow:0 3px 8px rgba(5,35,61,0.22);">`;
+  // Left area: visible portion only shows the column sub-headers; left frozen sticky cell continues the merge
+  hdrMonth+=`<div class="g-col-hdr" style="position:sticky;left:0;z-index:28;flex-shrink:0;width:${LEFT_W}px;height:${HDR_H2}px;background:${HDR_BG1};display:flex;align-items:center;border-right:2px solid rgba(255,255,255,0.18);">`;
+  hdrMonth+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;height:100%;display:flex;align-items:center;padding:0 8px;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;opacity:0;pointer-events:none;"><div class="g-resize-handle" data-col="name"></div></div>`;
+  hdrMonth+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
+  hdrMonth+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);border-right:1px solid rgba(255,255,255,0.1);box-sizing:border-box;flex-shrink:0;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
+  hdrMonth+=`<div style="width:${PCT_W}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.45);${isEditor?'border-right:1px solid rgba(255,255,255,0.1);':''}box-sizing:border-box;flex-shrink:0;">%</div>`;
   if(isEditor) hdrMonth+=`<div style="width:${ACT_W}px;flex-shrink:0;"></div>`;
   hdrMonth+=`</div>`;
   // Month cells
   months.forEach((mn,i)=>{
     const isYS=mn.getMonth()===0;
-    hdrMonth+=`<div style="flex-shrink:0;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.65);${isYS?'border-left:2px solid rgba(255,255,255,0.25);':'border-left:1px solid rgba(255,255,255,0.1);'}">${MSHORT[mn.getMonth()]}</div>`;
+    hdrMonth+=`<div style="flex-shrink:0;width:${CW}px;height:${HDR_H2}px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.6);${isYS?'border-left:2px solid rgba(255,255,255,0.22);':'border-left:1px solid rgba(255,255,255,0.08);'}">${MSHORT[mn.getMonth()]}</div>`;
   });
   hdrMonth+=`</div>`;
 
@@ -2862,9 +2870,9 @@ const T={
     noScheduleDesc:'El cronograma de {0} se añadirá próximamente.',
     task:'Tarea',
     editTask:'Editar tarea',
-    taskName:'Nombre',
-    taskStart:'Inicio',
-    taskEnd:'Fin',
+    taskName:'Nombre Tarea',
+    taskStart:'Fecha Inicio',
+    taskEnd:'Fecha Fin',
     taskPct:'% Completado',
     taskPred:'Predecesor (ID)',
     taskDelay:'Delay (días)',
@@ -2985,9 +2993,9 @@ const T={
     noScheduleDesc:'The schedule for {0} will be added soon.',
     task:'Task',
     editTask:'Edit task',
-    taskName:'Name',
-    taskStart:'Start',
-    taskEnd:'End',
+    taskName:'Task Name',
+    taskStart:'Start Date',
+    taskEnd:'End Date',
     taskPct:'% Complete',
     taskPred:'Predecessor (ID)',
     taskDelay:'Delay (days)',
