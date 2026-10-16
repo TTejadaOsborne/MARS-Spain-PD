@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1345 -->
+<!-- BUILD:20261016-1430 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1345';
+const BUILD='20261016-1430';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2116,8 +2116,9 @@ function saveGanttData(pid){
 }
 
 // Colour palette per phase index
-// Phase base colors — one per phase; children derive lighter tones from these
-const PHASE_COLORS=['#2563A8','#1D8A4E','#B87317','#7B3FA0','#C0392B','#0E7490','#B45309','#1A5276'];
+// Single corporate color for all Gantt bars — hierarchy shown by opacity/shade only
+const GANTT_COLOR='#1a3a56'; // --navy equivalent
+const PHASE_COLORS=[GANTT_COLOR]; // kept for API compatibility; all phases use same color
 
 // Date helpers
 function addDays(dateStr,n){ const d=new Date(dateStr); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
@@ -2254,22 +2255,17 @@ function renderGantt(){
   // Single sticky row that is MERGED_H tall
   let hdrYear=`<div class="g-hdr-row" style="position:sticky;top:0;z-index:20;display:flex;width:${totalW}px;height:${MERGED_H}px;background:${HDR_BG};box-shadow:0 3px 8px rgba(5,35,61,0.28);">`;
 
-  // LEFT frozen block: full height, contains column label sub-rows inside
-  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${MERGED_H}px;background:${HDR_BG};border-right:2px solid rgba(255,255,255,0.18);display:flex;flex-direction:column;box-sizing:border-box;">`;
-
-  // Top sub-row: "Nombre Tarea" label centered vertically in HDR_H1
-  hdrYear+=`<div style="height:${HDR_H1}px;display:flex;align-items:center;padding:0 10px;border-bottom:1px solid rgba(255,255,255,0.1);">
-    <span style="font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:.5px;text-transform:uppercase;">${t('taskName')}</span>
-  </div>`;
-
-  // Bottom sub-row: Fecha Inicio | Fecha Fin | % — matching data column widths
-  hdrYear+=`<div style="height:${HDR_H2}px;display:flex;align-items:center;">`;
-  hdrYear+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;padding:0 8px;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${isEN?'Name':'Nombre'}<div class="g-resize-handle" data-col="name"></div></div>`;
-  hdrYear+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
-  hdrYear+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);box-sizing:border-box;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
-  hdrYear+=`<div style="width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.3px;text-transform:uppercase;${isEditor?'border-right:1px solid rgba(255,255,255,0.08);':''}box-sizing:border-box;">%</div>`;
+  // LEFT frozen block: full height, columns merged across both header rows
+  hdrYear+=`<div style="position:sticky;left:0;z-index:30;flex-shrink:0;width:${LEFT_W}px;height:${MERGED_H}px;background:${HDR_BG};border-right:2px solid rgba(255,255,255,0.18);display:flex;align-items:stretch;box-sizing:border-box;">`;
+  // Name column — spans full header height
+  hdrYear+=`<div class="g-col-resize" data-col="name" style="position:relative;width:${NAME_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;padding:0 8px;font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.5px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${t('taskName')}<div class="g-resize-handle" data-col="name"></div></div>`;
+  // Start date column — spans full height
+  hdrYear+=`<div class="g-col-resize" data-col="start" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.4px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;">${t('taskStart')}<div class="g-resize-handle" data-col="start"></div></div>`;
+  // End date column — spans full height
+  hdrYear+=`<div class="g-col-resize" data-col="end" style="position:relative;width:${DATE_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.4px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.12);box-sizing:border-box;">${t('taskEnd')}<div class="g-resize-handle" data-col="end"></div></div>`;
+  // % column — spans full height
+  hdrYear+=`<div style="width:${PCT_W}px;flex-shrink:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.4px;text-transform:uppercase;${isEditor?'border-right:1px solid rgba(255,255,255,0.12);':''}box-sizing:border-box;">%</div>`;
   if(isEditor) hdrYear+=`<div style="width:${ACT_W}px;flex-shrink:0;"></div>`;
-  hdrYear+=`</div>`; // end bottom sub-row
   hdrYear+=`</div>`; // end left frozen block
 
   // RIGHT: chart area — top sub-row = years, bottom sub-row = months
@@ -2300,28 +2296,21 @@ function renderGantt(){
   let dataRows='';
   tasks.forEach((task,ri)=>{
     const isPhase=task.level===1;
-    const isSubGroup=task.level===2&&tasks.some((t2,j)=>j>ri&&t2.level===3&&tasks.slice(ri+1,j).every(t3=>t3.level>=2));
     const isMile=!!task.milestone;
-    const baseColor=PHASE_COLORS[task._phaseIdx%PHASE_COLORS.length]||'#2563A8';
-    // Per-level color: level1=full, level2=mid, level3=light
-    const color=task.level===1?baseColor
-               :task.level===2?baseColor+'CC'  // 80% opacity equivalent — used for bar tint
-               :baseColor+'88';
+    const C=GANTT_COLOR; // corporate navy — single palette
     const indent=task.level===1?0:task.level===2?14:28;
-    // Row background: phases darkest, sub-groups mid, tasks lightest
-    const bgRow=task.level===1?`${baseColor}14`
-               :task.level===2&&isSubGroup?`${baseColor}09`
-               :'#fff';
-    const fw=task.level===1?700:task.level===2&&isSubGroup?600:400;
+    // Row backgrounds: level1 tinted, level2 light tint, level3 white
+    const bgRow=task.level===1?'#EBF0F5':task.level===2?'#F5F7FA':'#ffffff';
+    const fw=task.level===1?700:task.level===2?600:400;
     const fs=task.level===1?12:task.level===2?11.5:11;
-    const textColor=task.level===1?'var(--navy)':task.level===2?'var(--text)':'var(--text-2)';
+    const textColor=task.level===1?'var(--navy)':task.level===2?'#2d4a5f':'var(--text-2)';
     const pctVal=task.pct||0;
     const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
     const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
-    const phaseAccent=task.level===1?`border-left:3px solid ${baseColor};`:'';
+    const phaseAccent=task.level===1?`border-left:3px solid ${C};`:'';
     // Row borders
-    const rowTopBorder=task.level===1?'border-top:2px solid rgba(5,35,61,0.15);':'';
-    const rowBotBorder=task.level===1?'border-bottom:1px solid rgba(5,35,61,0.10);':'border-bottom:1px solid rgba(5,35,61,0.05);';
+    const rowTopBorder=task.level===1?'border-top:2px solid rgba(5,35,61,0.12);':'';
+    const rowBotBorder='border-bottom:1px solid rgba(5,35,61,0.06);';
 
     const nameClick=isEditor?`ondblclick="ganttEditName('${task.id}',this)" title="${t('ganttHint')}"` :'';
     const startClick=isEditor&&!isMile?`ondblclick="ganttEditDate('${task.id}','start',this)" title="${t('ganttHint')}"` :'';
@@ -2336,8 +2325,8 @@ function renderGantt(){
       <button onclick="ganttDeleteRow('${task.id}')" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;opacity:0.4;" title="Eliminar">×</button>
     </div>`:'';
 
-    // LEFT frozen cell
-    const leftCell=`<div class="g-left-frozen" style="position:sticky;left:0;z-index:10;flex-shrink:0;width:${LEFT_W}px;height:${ROW_H}px;background:${bgRow};display:flex;align-items:stretch;border-right:2px solid rgba(5,35,61,0.12);${rowTopBorder}${rowBotBorder}box-sizing:border-box;">
+    // LEFT frozen cell — z-index:15 must beat chart bars (z-index:3) and grid lines (z-index:1-2)
+    const leftCell=`<div class="g-left-frozen" style="position:sticky;left:0;z-index:15;flex-shrink:0;width:${LEFT_W}px;height:${ROW_H}px;background:${bgRow};display:flex;align-items:stretch;border-right:2px solid rgba(5,35,61,0.12);${rowTopBorder}${rowBotBorder}box-sizing:border-box;">
       <div class="g-name-cell" data-col="name" style="width:${NAME_W}px;min-width:${NAME_W}px;flex-shrink:0;padding:0 8px 0 ${5+indent}px;font-size:${fs}px;font-weight:${fw};color:${textColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;box-sizing:border-box;${phaseAccent}${isEditor?'cursor:text;':''}" ${nameClick}>${isMile?'◆ ':''}${task.name||t('taskNoName')}</div>
       <div class="g-date-cell" data-col="start" style="width:${DATE_W}px;min-width:${DATE_W}px;flex-shrink:0;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}" ${startClick}>${fmtDate(task.start)}</div>
       <div class="g-date-cell" data-col="end" style="width:${DATE_W}px;min-width:${DATE_W}px;flex-shrink:0;font-size:10.5px;color:var(--text-2);text-align:center;border-right:1px solid rgba(5,35,61,0.07);height:100%;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box;${isEditor&&!isMile?'cursor:text;':''}" ${endClick}>${isMile?'—':fmtDate(task.end||task.start)}</div>
@@ -2356,21 +2345,21 @@ function renderGantt(){
     let barHtml='';
     if(vis){
       if(isMile){
-        barHtml=`<div style="position:absolute;top:50%;left:${leftPx}px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${baseColor};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;z-index:3;"></div>`;
+        barHtml=`<div style="position:absolute;top:50%;left:${leftPx}px;transform:translate(-50%,-50%) rotate(45deg);width:10px;height:10px;background:${C};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);pointer-events:none;z-index:3;"></div>`;
       } else if(task.level===1){
-        // Phase: solid, full-opacity bar — darkest
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${baseColor};${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.30);border-radius:2px;pointer-events:none;"></div>
+        // Phase: solid dark bar
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${C};${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.28);border-radius:2px;pointer-events:none;"></div>
         </div>`;
       } else if(task.level===2){
-        // Sub-group or task: medium tone
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:8px;left:${leftPx}px;width:${widPx}px;height:18px;border-radius:3px;background:${baseColor}55;border:1.5px solid ${baseColor}AA;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:${baseColor}BB;border-radius:2px;pointer-events:none;"></div>
+        // Sub-group: medium shade
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${C}88;border:1.5px solid ${C}BB;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${C}CC;border-radius:2px;pointer-events:none;"></div>
         </div>`;
       } else {
-        // Level 3 sub-task: lightest
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:15px;border-radius:2px;background:${baseColor}28;border:1px solid ${baseColor}66;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:${baseColor}80;border-radius:2px;pointer-events:none;"></div>
+        // Level 3: light bar with outline
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:10px;left:${leftPx}px;width:${widPx}px;height:14px;border-radius:2px;background:${C}22;border:1px solid ${C}66;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${C}66;border-radius:2px;pointer-events:none;"></div>
         </div>`;
       }
     }
@@ -2379,11 +2368,11 @@ function renderGantt(){
     months.forEach((mn,i)=>{
       if(i===0) return;
       const isYS=mn.getMonth()===0;
-      gridLines+=`<div style="position:absolute;top:0;bottom:0;left:${i*CW}px;width:${isYS?2:1}px;background:${isYS?'rgba(0,0,0,0.12)':'rgba(0,0,0,0.05)'};pointer-events:none;z-index:1;"></div>`;
+      gridLines+=`<div style="position:absolute;top:0;bottom:0;left:${i*CW}px;width:${isYS?2:1}px;background:${isYS?'rgba(0,0,0,0.10)':'rgba(0,0,0,0.04)'};pointer-events:none;z-index:1;"></div>`;
     });
     const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    const chartBg=task.level===1?`${baseColor}0A`:(task.level===2&&isSubGroup?`${baseColor}06`:'#fff');
+    const chartBg=task.level===1?'#EBF0F5':task.level===2?'#F5F7FA':'#ffffff';
     const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${chartBg};${rowTopBorder}${rowBotBorder}overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
 
     // Insert btn — shown on hover at the left edge of each row (editor only)
@@ -2397,7 +2386,7 @@ function renderGantt(){
   const html=`${toolbar}
   <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;min-width:0;">
     <!-- Main scroll area: both axes scroll here; headers stay sticky inside -->
-    <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;" class="gantt-scroll-wrap">
+    <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(5,35,61,0.25) transparent;" class="gantt-scroll-wrap">
       <div style="width:${totalW}px;">
         ${hdrYear}
         ${hdrMonth}
