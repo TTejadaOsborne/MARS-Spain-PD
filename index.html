@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1430 -->
+<!-- BUILD:20261016-1500 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1430';
+const BUILD='20261016-1500';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -687,7 +687,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
   </div>
   <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);">
-    <div id="ganttContainer" style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;"></div>
+    <div id="ganttContainer" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
   </div>
 </div>
 
@@ -2299,11 +2299,15 @@ function renderGantt(){
     const isMile=!!task.milestone;
     const C=GANTT_COLOR; // corporate navy — single palette
     const indent=task.level===1?0:task.level===2?14:28;
-    // Row backgrounds: level1 tinted, level2 light tint, level3 white
-    const bgRow=task.level===1?'#EBF0F5':task.level===2?'#F5F7FA':'#ffffff';
-    const fw=task.level===1?700:task.level===2?600:400;
+    // Detect if level-2 task has children (sub-group) or is a leaf task
+    const taskIdx=tasks.indexOf(task);
+    const nextTask=tasks[taskIdx+1];
+    const isLvl2Group=task.level===2&&nextTask&&nextTask.level===3;
+    // Row backgrounds: level1 darkest tint, level2-group medium, level2-leaf & level3 white
+    const bgRow=task.level===1?'#D6E4EF':isLvl2Group?'#EBF3F9':'#ffffff';
+    const fw=task.level===1?700:isLvl2Group?600:400;
     const fs=task.level===1?12:task.level===2?11.5:11;
-    const textColor=task.level===1?'var(--navy)':task.level===2?'#2d4a5f':'var(--text-2)';
+    const textColor=task.level===1?'var(--navy)':isLvl2Group?'#2d4a5f':'var(--text-2)';
     const pctVal=task.pct||0;
     const pctBg=pctVal===100?'var(--green-s-l)':pctVal>0?'var(--blue-l)':'var(--grey-l)';
     const pctCol=pctVal===100?'var(--green-s)':pctVal>0?'var(--blue)':'var(--grey)';
@@ -2352,14 +2356,14 @@ function renderGantt(){
           <div style="height:100%;width:${pctVal}%;background:rgba(255,255,255,0.28);border-radius:2px;pointer-events:none;"></div>
         </div>`;
       } else if(task.level===2){
-        // Sub-group: medium shade
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${C}88;border:1.5px solid ${C}BB;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:${C}CC;border-radius:2px;pointer-events:none;"></div>
+        // Sub-group or leaf level-2: medium shade bar
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:9px;left:${leftPx}px;width:${widPx}px;height:16px;border-radius:2px;background:${C}66;border:1px solid ${C}99;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${C}99;border-radius:2px;pointer-events:none;"></div>
         </div>`;
       } else {
-        // Level 3: light bar with outline
-        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:10px;left:${leftPx}px;width:${widPx}px;height:14px;border-radius:2px;background:${C}22;border:1px solid ${C}66;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
-          <div style="height:100%;width:${pctVal}%;background:${C}66;border-radius:2px;pointer-events:none;"></div>
+        // Level 3: lightest bar
+        barHtml=`<div data-bar="${task.id}" style="position:absolute;top:10px;left:${leftPx}px;width:${widPx}px;height:14px;border-radius:2px;background:${C}22;border:1px solid ${C}44;${isEditor?'cursor:grab;':''};z-index:3;" title="${task.name}">
+          <div style="height:100%;width:${pctVal}%;background:${C}55;border-radius:2px;pointer-events:none;"></div>
         </div>`;
       }
     }
@@ -2372,7 +2376,7 @@ function renderGantt(){
     });
     const tLine=todayInRange?`<div style="position:absolute;top:0;bottom:0;left:${todayPx}px;width:2px;background:rgba(200,30,30,0.45);pointer-events:none;z-index:2;"></div>`:'';
 
-    const chartBg=task.level===1?'#EBF0F5':task.level===2?'#F5F7FA':'#ffffff';
+    const chartBg=task.level===1?'#D6E4EF':isLvl2Group?'#EBF3F9':'#ffffff';
     const chartCell=`<div style="position:relative;flex-shrink:0;width:${CHART_W}px;height:${ROW_H}px;background:${chartBg};${rowTopBorder}${rowBotBorder}overflow:hidden;">${gridLines}${tLine}${barHtml}</div>`;
 
     // Insert btn — shown on hover at the left edge of each row (editor only)
@@ -2384,7 +2388,7 @@ function renderGantt(){
   });
 
   const html=`${toolbar}
-  <div id="ganttOuter" style="display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;min-width:0;">
+  <div id="ganttOuter" style="display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden;">
     <!-- Main scroll area: both axes scroll here; headers stay sticky inside -->
     <div id="ganttWrap" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(5,35,61,0.25) transparent;" class="gantt-scroll-wrap">
       <div style="width:${totalW}px;">
