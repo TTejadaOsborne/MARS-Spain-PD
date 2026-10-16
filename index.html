@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261016-1205 -->
+<!-- BUILD:20261016-1224 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261016-1205';
+const BUILD='20261016-1224';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -3712,7 +3712,8 @@ function openProjectPopup(pid){
   let recentUpdates=[];
   for(const wk of allWeeks){
     const items=(allData[wk]||{})[pid]||[];
-    items.forEach(u=>recentUpdates.push({week:wk,...u}));
+    items.filter(u=>u.text&&u.text.trim()&&!u.text.trim().toLowerCase().startsWith('no hay novedad'))
+         .forEach(u=>recentUpdates.push({week:wk,...u}));
     if(recentUpdates.length>=3) break;
   }
   const updHtml=recentUpdates.length
@@ -3776,7 +3777,8 @@ function renderDashboard(){
   let recentUpdates=[];
   for(const wk of allWeeks){
     const items=(allData[wk]||{})[pid]||[];
-    items.forEach(u=>recentUpdates.push({week:wk,...u}));
+    items.filter(u=>u.text&&u.text.trim()&&!u.text.trim().toLowerCase().startsWith('no hay novedad'))
+         .forEach(u=>recentUpdates.push({week:wk,...u}));
     if(recentUpdates.length>=3) break;
   }
   const updHtml=recentUpdates.length
