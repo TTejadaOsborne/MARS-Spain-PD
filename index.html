@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1712 -->
+<!-- BUILD:20261019-1714 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1712';
+const BUILD='20261019-1714';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -30,7 +30,7 @@ const BUILD='20261019-1712';
   setTimeout(()=>{ check(); setInterval(check,60000); },5000);
 })();
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Aptos is a Microsoft system font (Windows 11 / Office 365); no external load needed -->
 <style>
 :root{
   --navy:#05233D;--green:#399439;--green-d:#2A7A2A;--green-l:#EBF5EB;
@@ -44,7 +44,7 @@ const BUILD='20261019-1712';
   --sidebar-w:310px;--hdr-h:56px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+body{font-family:'Aptos', Calibri, Arial, sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
 /* HEADER */
 .hdr{height:var(--hdr-h);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:2px solid var(--green);flex-shrink:0;z-index:100;}
@@ -54,11 +54,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .hdr-title h1{font-size:13px;font-weight:700;color:#fff;}
 .hdr-title p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.4px;text-transform:uppercase;}
 .hdr-right{display:flex;align-items:center;gap:8px;position:relative;}
-.hdr-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.hdr-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;}
 .hdr-pill:hover{background:rgba(255,255,255,0.15);color:#fff;}
 .hdr-pill.green{background:var(--green);border-color:var(--green);color:#fff;font-weight:600;}
 .lang-grp{display:flex;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;}
-.lang-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;padding:4px 9px;cursor:pointer;font-family:'Inter',sans-serif;}
+.lang-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;padding:4px 9px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;}
 .lang-btn.on{background:var(--green);color:#fff;}
 
 /* LAYOUT */
@@ -81,7 +81,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .sb-sub-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;color:var(--text-3);transition:all .15s;}
 .sb-sub-item:hover{color:var(--navy);background:var(--bg);}
 .sb-footer{margin-top:auto;padding:10px 10px 8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
-.sb-footer-btn{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--text-3);background:none;border:none;width:100%;font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;}
+.sb-footer-btn{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--text-3);background:none;border:none;width:100%;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;overflow:hidden;}
 .sb-footer-btn:hover{background:var(--bg);color:var(--navy);}
 .sidebar{transition:width .2s ease;}
 .sidebar.collapsed{width:52px;overflow:hidden;}
@@ -103,7 +103,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .page-hdr{background:#FFFFFF;border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .page-hdr-left h2{font-size:15px;font-weight:800;color:var(--navy);}
 .page-hdr-left p{font-size:11px;color:var(--text-3);margin-top:1px;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Aptos', Calibri, Arial, sans-serif;cursor:pointer;border:none;}
 .btn-primary{background:var(--green);color:#fff;}
 .btn-primary:hover{background:var(--green-d);}
 .btn-sec{background:#fff;border:1px solid var(--border);color:var(--text-2);}
@@ -212,7 +212,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .act-date{font-size:10px;color:var(--text-3);flex-shrink:0;margin-top:2px;}
 .prev-week-hdr{padding:16px 18px 6px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;border-top:2px solid var(--border);}
 .prev-week-date{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;color:var(--text-2);}
-.week-sel-btn{background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.week-sel-btn{background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;}
 .draft-banner{background:rgba(245,158,11,0.08);border-top:1px dashed rgba(245,158,11,0.4);padding:6px 14px 6px 180px;font-size:10.5px;color:rgba(180,120,0,0.85);display:flex;align-items:center;gap:6px;}
 .issue-row.is-draft{opacity:0.82;}
 
@@ -221,7 +221,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .cal-popup{position:absolute;top:calc(100% + 8px);right:0;z-index:200;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 24px rgba(5,35,61,0.15);min-width:260px;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,34px);gap:2px;}
 .cal-dow{font-size:9.5px;font-weight:700;color:var(--text-3);text-align:center;padding:2px 0 6px;}
-.cal-day{width:34px;height:34px;border-radius:0;border:none;background:none;font-size:12.5px;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;}
+.cal-day{width:34px;height:34px;border-radius:0;border:none;background:none;font-size:12.5px;color:var(--text-2);cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;display:flex;align-items:center;justify-content:center;}
 .cal-day:hover,.cal-day.week-hover{background:rgba(5,35,61,0.06);}
 .cal-day.has-data{background:rgba(5,35,61,0.12);color:var(--navy);font-weight:700;}
 .cal-day.week-sel{background:var(--green)!important;color:#fff!important;font-weight:700;}
@@ -280,7 +280,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .modal-foot{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
 .form-row{margin-bottom:13px;}
 .form-lbl{display:block;font-size:10.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;}
-.form-input{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none;}
+.form-input{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:6px;font-family:'Aptos', Calibri, Arial, sans-serif;font-size:13px;color:var(--text);outline:none;}
 .form-input:focus{border-color:var(--navy);}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238DA0B0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
 .form-textarea{min-height:80px;resize:vertical;}
@@ -427,7 +427,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;" data-i18n="pwdTitle">Acceso editor</div>
       <div style="display:flex;align-items:center;gap:0;border:1px solid var(--border-2);border-radius:6px;overflow:hidden;background:var(--bg);">
         <input id="pwdInputPop" type="password" placeholder="Contraseña" autocomplete="current-password"
-          style="flex:1;border:none;outline:none;padding:7px 10px;font-size:12px;background:transparent;color:var(--navy);font-family:'Inter',sans-serif;"
+          style="flex:1;border:none;outline:none;padding:7px 10px;font-size:12px;background:transparent;color:var(--navy);font-family:'Aptos', Calibri, Arial, sans-serif;"
           onkeydown="if(event.key==='Enter')checkPwdPop();if(event.key==='Escape')closePwdPopover();">
         <button onclick="togglePwdEye()" id="pwdEyeBtn" title="Mostrar/ocultar"
           style="border:none;background:none;padding:0 9px;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;flex-shrink:0;">👁</button>
@@ -584,36 +584,36 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
               <circle cx="845" cy="178" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="845" cy="178" r="9" fill="#399439"/>
               <rect x="796" y="120" width="98" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="845" y="133" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
+              <text x="845" y="133" text-anchor="middle" fill="white" font-family="Aptos,Calibri,Arial,sans-serif" font-size="11" font-weight="700">BEGUES I &amp; II</text>
               <rect x="806" y="139" width="78" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="845" y="150" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">100 MW (2×50)</text>
+              <text x="845" y="150" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Aptos,Calibri,Arial,sans-serif" font-size="10">100 MW (2×50)</text>
             </g>
             <!-- FREGACEDOS -->
             <g class="proj-pin" onclick="openProjectPopup('fregacedos')" style="cursor:pointer;">
               <circle cx="627" cy="218" r="18" fill="none" stroke="#399439" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="627" cy="218" r="9" fill="#399439"/>
               <rect x="574" y="160" width="106" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="627" y="173" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
+              <text x="627" y="173" text-anchor="middle" fill="white" font-family="Aptos,Calibri,Arial,sans-serif" font-size="11" font-weight="700">FREGACEDOS</text>
               <rect x="589" y="179" width="76" height="14" rx="3" fill="rgba(3,16,38,0.65)"/>
-              <text x="627" y="190" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Inter,sans-serif" font-size="10">15 MW (3×5)</text>
+              <text x="627" y="190" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Aptos,Calibri,Arial,sans-serif" font-size="10">15 MW (3×5)</text>
             </g>
             <!-- MUTXAMEL -->
             <g class="proj-pin" onclick="openProjectPopup('mutxamel')" style="cursor:pointer;">
               <circle cx="756" cy="336" r="18" fill="none" stroke="#C8201E" stroke-width="1.5" opacity="0.8" class="pulse"/>
               <circle cx="756" cy="336" r="9" fill="#C8201E"/>
               <rect x="710" y="278" width="92" height="17" rx="4" fill="rgba(3,16,38,0.88)"/>
-              <text x="756" y="291" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
+              <text x="756" y="291" text-anchor="middle" fill="white" font-family="Aptos,Calibri,Arial,sans-serif" font-size="11" font-weight="700">MUTXAMEL</text>
               <rect x="706" y="297" width="100" height="14" rx="3" fill="rgba(200,32,30,0.75)"/>
-              <text x="756" y="308" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
+              <text x="756" y="308" text-anchor="middle" fill="white" font-family="Aptos,Calibri,Arial,sans-serif" font-size="10" font-weight="600">5 MW · Atención ⚠️</text>
             </g>
             <!-- ENTRENUCLEOS -->
             <g class="proj-pin" onclick="openProjectPopup('entrenucleos')" style="cursor:pointer;">
               <circle cx="566" cy="410" r="13" fill="none" stroke="#6B7280" stroke-width="1.2" opacity="0.5"/>
               <circle cx="566" cy="410" r="7" fill="#6B7280"/>
               <rect x="511" y="352" width="110" height="17" rx="4" fill="rgba(60,60,60,0.82)"/>
-              <text x="566" y="365" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
+              <text x="566" y="365" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Aptos,Calibri,Arial,sans-serif" font-size="11" font-weight="700">ENTRENÚCLEOS</text>
               <rect x="519" y="371" width="94" height="14" rx="3" fill="rgba(60,60,60,0.55)"/>
-              <text x="566" y="382" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Inter,sans-serif" font-size="10">49 MW · Stand-by</text>
+              <text x="566" y="382" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-family="Aptos,Calibri,Arial,sans-serif" font-size="10">49 MW · Stand-by</text>
             </g>
           </svg>
         </div>
@@ -647,10 +647,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <!-- Editor: add update button (shown only in editor mode) -->
-      <button id="semanalAddBtn" onclick="openAddUpdateSemanal()" style="display:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;" data-i18n="addUpdate">+ Nueva novedad</button>
+      <button id="semanalAddBtn" onclick="openAddUpdateSemanal()" style="display:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;" data-i18n="addUpdate">+ Nueva novedad</button>
       <!-- Project filter -->
       <div style="position:relative;">
-        <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
+        <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           <span id="semanalProjFilterLbl" data-i18n="allProjects">Todos los proyectos</span>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -660,17 +660,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <!-- Week nav -->
       <button onclick="navWeekSemanal(-1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">‹</button>
       <div style="position:relative;">
-        <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;"><span data-i18n="weekTitle">Semana del</span> <span id="weekSelLblSemanal">—</span></button>
+        <button onclick="toggleCal('semanal')" id="weekSelBtn" style="background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;"><span data-i18n="weekTitle">Semana del</span> <span id="weekSelLblSemanal">—</span></button>
         <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:280px;"></div>
       </div>
       <button onclick="navWeekSemanal(1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">›</button>
       <!-- Comparativa toggle -->
-      <button onclick="toggleSemanalCompare()" id="semanalCompareBtn" style="display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all .15s;" title="Comparar con semana anterior">
+      <button onclick="toggleSemanalCompare()" id="semanalCompareBtn" style="display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;transition:all .15s;" title="Comparar con semana anterior">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="5" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="7.5" y="0.5" width="5" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/><line x1="2.75" y1="3.5" x2="4" y2="3.5" stroke="currentColor" stroke-width="1"/><line x1="2.75" y1="5.5" x2="4" y2="5.5" stroke="currentColor" stroke-width="1"/><line x1="9" y1="3.5" x2="10.25" y2="3.5" stroke="currentColor" stroke-width="1"/><line x1="9" y1="5.5" x2="10.25" y2="5.5" stroke="currentColor" stroke-width="1"/></svg>
         <span id="semanalCompareLbl">Comparar</span>
       </button>
       <!-- Export email (editor only) -->
-      <button id="semanalEmailBtn" onclick="exportEmailSemanal()" style="display:none;align-items:center;gap:5px;background:#16a34a;color:#fff;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
+      <button id="semanalEmailBtn" onclick="exportEmailSemanal()" style="display:none;align-items:center;gap:5px;background:#16a34a;color:#fff;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2.5" width="11" height="8" rx="1.2" stroke="white" stroke-width="1.3"/><path d="M1 4l5.5 3.5L12 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
         Email
       </button>
@@ -703,12 +703,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <!-- Intro text editor -->
       <div>
         <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:0.3px;">TEXTO INTRODUCTORIO <span style="font-weight:400;color:var(--text-3);">(aparecerá al inicio del email)</span></div>
-        <textarea id="emailIntroText" rows="4" placeholder="Ej: Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo." style="width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--text);resize:vertical;outline:none;background:var(--bg-2,#f8fafc);line-height:1.5;"></textarea>
+        <textarea id="emailIntroText" rows="4" placeholder="Ej: Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo." style="width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:'Aptos', Calibri, Arial, sans-serif;color:var(--text);resize:vertical;outline:none;background:var(--bg-2,#f8fafc);line-height:1.5;"></textarea>
       </div>
       <!-- Action buttons -->
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button onclick="copyEmailHtml()" id="emailCopyBtn" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar email</button>
-        <button onclick="regenerateEmailHtml()" style="background:#fff;border:1.5px solid var(--border);color:var(--navy);border-radius:7px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">🔄 Actualizar preview</button>
+        <button onclick="copyEmailHtml()" id="emailCopyBtn" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">📋 Copiar email</button>
+        <button onclick="regenerateEmailHtml()" style="background:#fff;border:1.5px solid var(--border);color:var(--navy);border-radius:7px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">🔄 Actualizar preview</button>
         <span id="emailCopyStatus" style="font-size:11px;color:#16a34a;font-weight:600;display:none;">✓ ¡Copiado!</span>
       </div>
       <!-- Preview -->
@@ -735,7 +735,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
     <div style="padding:16px 24px;border-top:1px solid var(--border);text-align:right;flex-shrink:0;">
       <a href="https://ttejadaosborne.github.io/mars-spain-pd/" target="_blank" id="guideAppLink" style="display:inline-block;background:#1a3a56;color:#fff;font-size:12px;font-weight:700;padding:8px 18px;border-radius:7px;text-decoration:none;margin-right:8px;">Abrir la app →</a>
-      <button onclick="closeModal('guideModal')" style="background:#f1f5f9;border:1px solid var(--border);color:var(--navy);border-radius:7px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;" id="guideCloseBtn">Cerrar</button>
+      <button onclick="closeModal('guideModal')" style="background:#f1f5f9;border:1px solid var(--border);color:var(--navy);border-radius:7px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;" id="guideCloseBtn">Cerrar</button>
     </div>
   </div>
 </div>
@@ -858,7 +858,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div style="margin-top:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <label class="form-lbl" style="margin:0;" data-i18n="formActivities">Actividades</label>
-          <button onclick="addEditActivity()" style="background:var(--blue);border:none;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">+ <span data-i18n="addBtn">Añadir</span></button>
+          <button onclick="addEditActivity()" style="background:var(--blue);border:none;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">+ <span data-i18n="addBtn">Añadir</span></button>
         </div>
         <div id="editActList" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
@@ -1986,8 +1986,8 @@ function renderSemanal(){
       <div style="font-size:14px;font-weight:600;color:var(--text-2);">${t('noUpdates')}</div>
       <div style="font-size:12px;color:var(--text-3);margin-top:4px;">${d}/${m}/${y}</div>
       ${isEditor?`<div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
-        <button onclick="openAddUpdateSemanal()" style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Inter',sans-serif;">${t('addUpdate')}</button>
-        ${prevWkWithData?`<button onclick="copyPrevWeek('${prevWkWithData}')" style="background:#fff;color:var(--navy);font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;font-family:'Inter',sans-serif;">📋 ${t('copyPrevWeek')}</button>`:''}
+        <button onclick="openAddUpdateSemanal()" style="background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:none;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">${t('addUpdate')}</button>
+        ${prevWkWithData?`<button onclick="copyPrevWeek('${prevWkWithData}')" style="background:#fff;color:var(--navy);font-size:12px;font-weight:600;padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">📋 ${t('copyPrevWeek')}</button>`:''}
       </div>`:''}
     </div>`;
   } else {
@@ -1999,7 +1999,7 @@ function renderSemanal(){
           <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
           <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span><span onclick="openProjectPopup('${pid}')" style="margin-left:8px;font-size:10px;font-weight:500;color:var(--blue);cursor:pointer;text-decoration:none;white-space:nowrap;opacity:0.75;">ℹ Info del proyecto</span>
           <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
-          ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ ${t('addBtn')}</button>`:''}
+          ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;">+ ${t('addBtn')}</button>`:''}
         </div>`;
       // Use the week with data as base for comparison (currentWeek may be empty)
       const _semanalBaseWeek=(()=>{const wd2=allData[currentWeek]||{};const hasCurrent=Object.values(wd2).some(arr=>arr&&arr.length);return hasCurrent?currentWeek:(_latestDataWeek()||currentWeek);})();
@@ -2065,14 +2065,14 @@ function renderSemanal(){
               <span class="status-tag ${st.cls}">${st.lbl}</span>
               ${imp?`<span class="impact-tag">${imp}</span>`:''}
               ${iss.attention?`<span class="status-tag s-red">⚠️ ${t('attention')}</span>`:''}
-              ${isEditor?`<button onclick="openEditIssue('${pid}',${issIdx})" style="margin-top:4px;background:none;border:1px solid var(--border-2);color:var(--text-2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">${t('editBtn')}</button>`:''}
+              ${isEditor?`<button onclick="openEditIssue('${pid}',${issIdx})" style="margin-top:4px;background:none;border:1px solid var(--border-2);color:var(--text-2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;white-space:nowrap;">${t('editBtn')}</button>`:''}
             </div>
           </div>
-          ${iss.draft?`<div class="draft-banner">📋 ${t('draftBanner')}${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issIdx})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;">✓ ${t('confirmBtn')}</button>`:''}
+          ${iss.draft?`<div class="draft-banner">📋 ${t('draftBanner')}${isEditor?` &nbsp;<button onclick="confirmDraft('${pid}',${issIdx})" style="background:rgba(180,120,0,0.12);border:1px solid rgba(180,120,0,0.3);color:rgba(140,90,0,1);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">✓ ${t('confirmBtn')}</button>`:''}
           </div>`:''}
           ${cmpBlock}
           ${acts.length||isEditor?`<div class="act-section">
-            <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0 0 0 6px;">+ ${t('manageBtn')}</button>`:''}
+            <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;padding:0 0 0 6px;">+ ${t('manageBtn')}</button>`:''}
             </div>
             <div>${acts.map(a=>`<div class="act-row"><span class="act-icon">${ICONS[a.type]||'·'}</span><span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div>
           </div>`:''}
@@ -2173,7 +2173,7 @@ async function exportEmailSemanal(){
   const wrap=document.getElementById('emailPreviewWrap');
   if(title) title.textContent=isEN?'📧 Executive email — weekly update':'📧 Email ejecutivo — actualización semanal';
   if(sub) sub.textContent=isEN?'Customise the intro and copy the full email':'Personaliza el texto introductorio y copia el email completo';
-  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Building email…':'Generando email…'}</div>`;
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13px;">${isEN?'Building email…':'Generando email…'}</div>`;
   modal.classList.add('on');
   // Reset copy status
   const st=document.getElementById('emailCopyStatus');
@@ -2222,7 +2222,7 @@ async function _refreshEmailPreview(){
 }
 async function regenerateEmailHtml(){
   const wrap=document.getElementById('emailPreviewWrap');
-  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">Actualizando…</div>`;
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13px;">Actualizando…</div>`;
   const st=document.getElementById('emailCopyStatus');
   if(st) st.style.display='none';
   await _refreshEmailPreview();
@@ -2234,7 +2234,7 @@ async function _renderEmailContentAsImage(htmlContent, widthPx){
     try{
       if(typeof html2canvas==='undefined'){resolve(null);return;}
       const wrapper=document.createElement('div');
-      wrapper.style.cssText=`position:fixed;left:-9999px;top:0;width:${widthPx}px;background:#ffffff;font-family:Inter,Calibri,Arial,sans-serif;font-size:12px;line-height:1.5;color:#1e2d3d;`;
+      wrapper.style.cssText=`position:fixed;left:-9999px;top:0;width:${widthPx}px;background:#ffffff;font-family:Aptos,Calibri,Arial,sans-serif;font-size:12px;line-height:1.5;color:#1e2d3d;`;
       wrapper.innerHTML=htmlContent;
       document.body.appendChild(wrapper);
       // Give browser a tick to lay out
@@ -2346,20 +2346,20 @@ async function buildEmailHtml(forceLang){
           <td width="4" style="width:4px;padding:0;background:#1a5276;border-top:2px solid #ccdae8;"></td>
           <td width="154" style="width:154px;padding:0;background:#eaf0f7;border-top:2px solid #ccdae8;vertical-align:top;"></td>
           <td colspan="2" style="padding:9px 14px 11px 14px;background:#eaf0f7;border-top:2px solid #ccdae8;">
-            <p style="margin:0 0 6px 0;padding:0;font-size:8.5px;font-weight:700;color:#1a5276;letter-spacing:1.2px;text-transform:uppercase;font-family:Inter,Calibri,Arial,sans-serif;">${TX.activitiesTitle}</p>
+            <p style="margin:0 0 6px 0;padding:0;font-size:8.5px;font-weight:700;color:#1a5276;letter-spacing:1.2px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;">${TX.activitiesTitle}</p>
             ${acts.map(a=>{
               const typeLbl=ACT_LBL[a.type]||a.type||'';
-              const dateStr=a.date?`<span style="color:#1a5276;font-weight:700;font-size:10px;font-family:Inter,Calibri,Arial,sans-serif;"> ${a.date}</span>`:'';
-              return `<div style="display:flex;align-items:baseline;margin-bottom:4px;font-family:Inter,Calibri,Arial,sans-serif;">
-                <span style="display:inline-block;font-size:9px;font-weight:700;color:#1a5276;background:#ccdae8;padding:1px 6px;border-radius:3px;white-space:nowrap;margin-right:7px;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.2px;text-transform:uppercase;">${typeLbl}</span>
-                <span style="font-size:11.5px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.5;">${_tx(a.text||'')}${dateStr}</span>
+              const dateStr=a.date?`<span style="color:#1a5276;font-weight:700;font-size:10px;font-family:Aptos,Calibri,Arial,sans-serif;"> ${a.date}</span>`:'';
+              return `<div style="display:flex;align-items:baseline;margin-bottom:4px;font-family:Aptos,Calibri,Arial,sans-serif;">
+                <span style="display:inline-block;font-size:9px;font-weight:700;color:#1a5276;background:#ccdae8;padding:1px 6px;border-radius:3px;white-space:nowrap;margin-right:7px;font-family:Aptos,Calibri,Arial,sans-serif;letter-spacing:0.2px;text-transform:uppercase;">${typeLbl}</span>
+                <span style="font-size:11.5px;color:#1e2d3d;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.5;">${_tx(a.text||'')}${dateStr}</span>
               </div>`;
             }).join('')}
           </td>
         </tr>`:'';
       if(iss.attention){hasAttention=true;attentionRows+=`<tr>
         <td width="4" style="width:4px;padding:0;background:#ef4444;border-bottom:1px solid #fecaca;"></td>
-        <td colspan="3" style="padding:9px 16px;font-size:11.5px;font-family:Inter,Calibri,Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
+        <td colspan="3" style="padding:9px 16px;font-size:11.5px;font-family:Aptos,Calibri,Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
           <span style="font-weight:700;color:#991b1b;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">${names[pid]||pid}</span>
           <span style="color:#9db4c8;font-weight:400;"> - ${topicLbl}: </span>
           <span style="color:#1e2d3d;">${issText}</span>
@@ -2369,13 +2369,13 @@ async function buildEmailHtml(forceLang){
       rowsHtml+=`<tr>
         <td width="4" style="width:4px;padding:0;background:${sc.bar};${borderStyle}"></td>
         <td width="148" style="width:148px;padding:10px 10px 10px 14px;vertical-align:top;background:#f8fafc;${borderStyle}">
-          <p style="margin:0;padding:0;font-size:9.5px;font-weight:700;color:#1a5276;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.6px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
+          <p style="margin:0;padding:0;font-size:9.5px;font-weight:700;color:#1a5276;font-family:Aptos,Calibri,Arial,sans-serif;letter-spacing:0.6px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
         </td>
         <td style="padding:10px 10px;vertical-align:top;${borderStyle}">
-          <p style="margin:0;padding:0;font-size:12px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.55;">${issText}</p>
+          <p style="margin:0;padding:0;font-size:12px;color:#1e2d3d;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.55;">${issText}</p>
         </td>
         <td width="88" style="width:88px;padding:10px 14px 10px 4px;vertical-align:top;text-align:right;white-space:nowrap;${borderStyle}">
-          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.2px;font-family:Inter,Calibri,Arial,sans-serif;white-space:nowrap;">${stLbl}</span>
+          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.2px;font-family:Aptos,Calibri,Arial,sans-serif;white-space:nowrap;">${stLbl}</span>
         </td>
       </tr>${actsRows}`;
     });
@@ -2385,10 +2385,10 @@ async function buildEmailHtml(forceLang){
         <td colspan="4" style="padding:10px 16px;background:#05233D;border-bottom:2px solid #0a3352;">
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td style="vertical-align:middle;">
-              <p style="margin:0;padding:0;font-size:12.5px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.6px;text-transform:uppercase;">${names[pid]||pid}</p>
+              <p style="margin:0;padding:0;font-size:12.5px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.6px;text-transform:uppercase;">${names[pid]||pid}</p>
             </td>
             <td align="right" style="vertical-align:middle;">
-              <span style="display:inline-block;font-size:9.5px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:600;color:#9db4c8;background:#0a3352;padding:2px 9px;border-radius:3px;white-space:nowrap;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</span>
+              <span style="display:inline-block;font-size:9.5px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:600;color:#9db4c8;background:#0a3352;padding:2px 9px;border-radius:3px;white-space:nowrap;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</span>
             </td>
           </tr></table>
         </td>
@@ -2404,7 +2404,7 @@ async function buildEmailHtml(forceLang){
     <tr><td style="padding:13px 16px;background:#f0f4f8;border-left:4px solid #1a3a56;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';color:#1e2d3d;line-height:1.6;">${_introRaw.trim().replace(/\n/g,'<br>')}</td></tr>
   </table>`:'';
   const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;border:1.5px solid #fca5a5;border-radius:8px;overflow:hidden;">
-    <tr><td colspan="4" style="padding:10px 16px;background:#dc2626;font-size:11px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.5px;border-bottom:1px solid #fca5a5;">⚠ ${TX.needsAttention}</td></tr>
+    <tr><td colspan="4" style="padding:10px 16px;background:#dc2626;font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.5px;border-bottom:1px solid #fca5a5;">⚠ ${TX.needsAttention}</td></tr>
     ${attentionRows}
   </table>`:'';
 
@@ -2612,11 +2612,11 @@ function renderEditActList(acts){
   }
   container.innerHTML=acts.map((a,i)=>`
     <div style="display:grid;grid-template-columns:110px 1fr 80px auto;gap:6px;align-items:center;background:#F7F9FB;border:1px solid var(--border);border-radius:6px;padding:6px 8px;">
-      <select onchange="updateEditAct(${i},'type',this.value)" style="font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'Inter',sans-serif;color:var(--text);">
+      <select onchange="updateEditAct(${i},'type',this.value)" style="font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'Aptos', Calibri, Arial, sans-serif;color:var(--text);">
         ${ACT_TYPES.map(tp=>`<option value="${tp}"${a.type===tp?' selected':''}>${ACT_TYPE_LABELS_FN()[tp]}</option>`).join('')}
       </select>
-      <input type="text" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="updateEditAct(${i},'text',this.value)" placeholder="${t('phActDesc')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;">
-      <input type="text" value="${a.date||''}" onchange="updateEditAct(${i},'date',this.value)" placeholder="${t('phActDate')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;text-align:center;">
+      <input type="text" value="${(a.text||'').replace(/"/g,'&quot;')}" onchange="updateEditAct(${i},'text',this.value)" placeholder="${t('phActDesc')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Aptos', Calibri, Arial, sans-serif;">
+      <input type="text" value="${a.date||''}" onchange="updateEditAct(${i},'date',this.value)" placeholder="${t('phActDate')}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:'Aptos', Calibri, Arial, sans-serif;text-align:center;">
       <button onclick="removeEditAct(${i})" style="background:none;border:none;color:#d32f2f;font-size:15px;cursor:pointer;line-height:1;padding:0 4px;">×</button>
     </div>`).join('');
 }
