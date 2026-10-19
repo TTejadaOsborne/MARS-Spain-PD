@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1655 -->
+<!-- BUILD:20261019-1712 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1655';
+const BUILD='20261019-1712';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -2338,52 +2338,57 @@ async function buildEmailHtml(forceLang){
       const topicLbl=isEN?(TOPIC_MAP_EN[iss.topic?.toLowerCase()]||iss.topic||''):(iss.topic||'');
       const issText=_tx(iss.text||'');
       const acts=iss.activities||[];
-      // Activity icons: safe Unicode chars that render consistently in Outlook
-      const ACT_ICON_CHAR={'call':'☎','email':'✉','admin':'≡','doc':'▸','internal':'○','site':'●','meeting':'□'};
+      // Activity type labels — plain text, no Unicode symbols that may break in email clients
+      const ACT_LBL_ES={'call':'Llamada','email':'Email','admin':'Gestión','doc':'Documento','internal':'Interno','site':'Visita','meeting':'Reunión'};
+      const ACT_LBL_EN={'call':'Call','email':'Email','admin':'Admin','doc':'Document','internal':'Internal','site':'Site visit','meeting':'Meeting'};
+      const ACT_LBL=isEN?ACT_LBL_EN:ACT_LBL_ES;
       const actsRows=acts.length?`<tr>
-          <td width="4" style="width:4px;padding:0;background:#1a5276;border-top:2px solid #d0dce8;"></td>
-          <td width="154" style="width:154px;padding:0;background:#eaf0f6;border-top:2px solid #d0dce8;vertical-align:top;"></td>
-          <td colspan="2" style="padding:10px 16px 12px 12px;background:#eaf0f6;border-top:2px solid #d0dce8;">
-            <p style="margin:0;padding:0 0 7px 0;font-size:9px;font-weight:700;color:#1a5276;letter-spacing:1px;text-transform:uppercase;font-family:Inter,Calibri,Arial,sans-serif;">${TX.activitiesTitle}</p>
+          <td width="4" style="width:4px;padding:0;background:#1a5276;border-top:2px solid #ccdae8;"></td>
+          <td width="154" style="width:154px;padding:0;background:#eaf0f7;border-top:2px solid #ccdae8;vertical-align:top;"></td>
+          <td colspan="2" style="padding:9px 14px 11px 14px;background:#eaf0f7;border-top:2px solid #ccdae8;">
+            <p style="margin:0 0 6px 0;padding:0;font-size:8.5px;font-weight:700;color:#1a5276;letter-spacing:1.2px;text-transform:uppercase;font-family:Inter,Calibri,Arial,sans-serif;">${TX.activitiesTitle}</p>
             ${acts.map(a=>{
-              const ico=ACT_ICON_CHAR[a.type]||'▸';
-              const dateStr=a.date?` <span style="font-size:10px;color:#05233D;font-weight:700;font-family:Inter,Calibri,Arial,sans-serif;">${a.date}</span>`:'';
-              return `<table cellpadding="0" cellspacing="0" style="margin-bottom:5px;border-collapse:collapse;"><tr>
-                <td width="18" style="width:18px;font-size:12px;color:#1a5276;vertical-align:top;padding-top:0;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;">${ico}</td>
-                <td style="font-size:12px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.5;vertical-align:top;">${_tx(a.text||'')}${dateStr}</td>
-              </tr></table>`;
+              const typeLbl=ACT_LBL[a.type]||a.type||'';
+              const dateStr=a.date?`<span style="color:#1a5276;font-weight:700;font-size:10px;font-family:Inter,Calibri,Arial,sans-serif;"> ${a.date}</span>`:'';
+              return `<div style="display:flex;align-items:baseline;margin-bottom:4px;font-family:Inter,Calibri,Arial,sans-serif;">
+                <span style="display:inline-block;font-size:9px;font-weight:700;color:#1a5276;background:#ccdae8;padding:1px 6px;border-radius:3px;white-space:nowrap;margin-right:7px;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.2px;text-transform:uppercase;">${typeLbl}</span>
+                <span style="font-size:11.5px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.5;">${_tx(a.text||'')}${dateStr}</span>
+              </div>`;
             }).join('')}
           </td>
         </tr>`:'';
       if(iss.attention){hasAttention=true;attentionRows+=`<tr>
         <td width="4" style="width:4px;padding:0;background:#ef4444;border-bottom:1px solid #fecaca;"></td>
-        <td colspan="3" style="padding:9px 16px;font-size:12px;font-family:Inter,Calibri,Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
-          <b style="color:#991b1b;">${names[pid]||pid}</b> <span style="color:#7c93ab;"> - ${topicLbl}:</span> ${issText}
+        <td colspan="3" style="padding:9px 16px;font-size:11.5px;font-family:Inter,Calibri,Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
+          <span style="font-weight:700;color:#991b1b;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">${names[pid]||pid}</span>
+          <span style="color:#9db4c8;font-weight:400;"> - ${topicLbl}: </span>
+          <span style="color:#1e2d3d;">${issText}</span>
         </td></tr>`;}
       // Issue row — border on each td (Outlook ignores border-top on tr)
-      const borderStyle=idx>0?'border-top:1px solid #e8eef0;':'';
+      const borderStyle=idx>0?'border-top:1px solid #e2eaf2;':'';
       rowsHtml+=`<tr>
         <td width="4" style="width:4px;padding:0;background:${sc.bar};${borderStyle}"></td>
-        <td width="154" style="width:154px;padding:11px 10px 11px 16px;vertical-align:top;${borderStyle}">
-          <p style="margin:0;padding:0;font-size:10px;font-weight:700;color:#05233D;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.5px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
+        <td width="148" style="width:148px;padding:10px 10px 10px 14px;vertical-align:top;background:#f8fafc;${borderStyle}">
+          <p style="margin:0;padding:0;font-size:9.5px;font-weight:700;color:#1a5276;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.6px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
         </td>
-        <td style="padding:11px 10px;vertical-align:top;${borderStyle}">
+        <td style="padding:10px 10px;vertical-align:top;${borderStyle}">
           <p style="margin:0;padding:0;font-size:12px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.55;">${issText}</p>
         </td>
-        <td width="90" style="width:90px;padding:11px 16px 11px 4px;vertical-align:top;text-align:right;white-space:nowrap;${borderStyle}">
-          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:0.2px;font-family:Inter,Calibri,Arial,sans-serif;">${stLbl}</span>
+        <td width="88" style="width:88px;padding:10px 14px 10px 4px;vertical-align:top;text-align:right;white-space:nowrap;${borderStyle}">
+          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.2px;font-family:Inter,Calibri,Arial,sans-serif;white-space:nowrap;">${stLbl}</span>
         </td>
       </tr>${actsRows}`;
     });
-    projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;border:1px solid #b8cad8;border-radius:8px;overflow:hidden;">
+    // Project title bar — same navy as app header (#05233D), white text
+    projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;border-collapse:collapse;border:1px solid #b8cad8;border-radius:8px;overflow:hidden;">
       <tr>
-        <td colspan="4" style="padding:11px 16px;background:#dde6f0;border-bottom:2px solid #b8cad8;border-radius:8px 8px 0 0;">
+        <td colspan="4" style="padding:10px 16px;background:#05233D;border-bottom:2px solid #0a3352;">
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td style="vertical-align:middle;">
-              <p style="margin:0;padding:0;font-size:13px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#05233D;letter-spacing:0.5px;text-transform:uppercase;">${names[pid]||pid}</p>
+              <p style="margin:0;padding:0;font-size:12.5px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.6px;text-transform:uppercase;">${names[pid]||pid}</p>
             </td>
             <td align="right" style="vertical-align:middle;">
-              <span style="display:inline-block;font-size:10px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:600;color:#1a5276;background:#b8d4e8;padding:3px 10px;border-radius:3px;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</span>
+              <span style="display:inline-block;font-size:9.5px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:600;color:#9db4c8;background:#0a3352;padding:2px 9px;border-radius:3px;white-space:nowrap;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</span>
             </td>
           </tr></table>
         </td>
