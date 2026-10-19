@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1248 -->
+<!-- BUILD:20261019-1251 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1248';
+const BUILD='20261019-1251';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2215,18 +2215,22 @@ async function buildEmailHtml(forceLang){
       const topicLbl=isEN?(TOPIC_MAP_EN[iss.topic?.toLowerCase()]||iss.topic||''):(iss.topic||'');
       const issText=_tx(iss.text||'');
       const acts=iss.activities||[];
-      // Icon chars that work in Outlook (no SVG)
-      const ACT_ICON={'call':'📞','email':'✉','admin':'📋','doc':'📄','internal':'💬','site':'📍'};
-      const actsRows=acts.map(a=>{
-        const ico=ACT_ICON[a.type]||'·';
-        const dateStr=a.date?` <span style="color:#b45309;font-size:10px;font-weight:600;">(${a.date})</span>`:'';
-        return `<tr>
-          <td style="width:3px;padding:0;background:#ffffff;"></td>
-          <td colspan="2" style="padding:2px 10px 2px 22px;font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#92400e;">
-            <span style="color:#d97706;">${ico}</span> ${_tx(a.text||'')}${dateStr}
+      // Activity icons: text chars that render in Outlook
+      const ACT_ICON={'call':'✆','email':'✉','admin':'⊞','doc':'⊟','internal':'◎','site':'◉','meeting':'◎'};
+      const actsRows=acts.length?`<tr>
+          <td style="width:3px;padding:0;background:#f1f5f9;border-top:1px dashed #e2e8f0;"></td>
+          <td colspan="2" style="padding:7px 10px 7px 20px;background:#f1f5f9;border-top:1px dashed #e2e8f0;">
+            <div style="font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:0.6px;text-transform:uppercase;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;margin-bottom:5px;">${TX.activitiesTitle}</div>
+            ${acts.map(a=>{
+              const ico=ACT_ICON[a.type]||'·';
+              const dateStr=a.date?` <span style="font-size:10px;color:#d97706;font-weight:600;">${a.date}</span>`:'';
+              return `<div style="display:table;width:100%;margin-bottom:3px;">
+                <span style="display:table-cell;width:18px;font-size:13px;color:#d97706;vertical-align:top;font-family:'Courier New',monospace;">${ico}</span>
+                <span style="display:table-cell;font-size:11.5px;color:#374151;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;line-height:1.4;vertical-align:top;">${_tx(a.text||'')} ${dateStr}</span>
+              </div>`;
+            }).join('')}
           </td>
-        </tr>`;
-      }).join('');
+        </tr>`:'';
       if(iss.attention){hasAttention=true;attentionRows+=`<tr><td style="padding:5px 10px 5px 12px;font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${issText}</td></tr>`;}
       // Compact row: left color bar + topic+text + status pill
       rowsHtml+=`<tr style="${idx>0?'border-top:1px solid #f1f5f9;':''}">
