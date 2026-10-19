@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1814 -->
+<!-- BUILD:20261019-1856 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1814';
+const BUILD='20261019-1856';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -2394,98 +2394,70 @@ async function buildEmailHtml(forceLang){
     ${attentionRows}
   </table>`:'';
 
-  // Render HEADER as separate image (preserves format in Outlook)
-  const EMAIL_WIDTH=720;
-  const HEADER_HTML=`<table width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" style="width:${EMAIL_WIDTH}px;background:#05233D;border-collapse:collapse;">
-    <tr>
-      <td style="padding:16px 26px;">
-        <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td width="104" style="width:104px;vertical-align:middle;padding-right:14px;">${MARS_LOGO_HTML}</td>
-            <td style="vertical-align:middle;padding:0;">
-              <p style="margin:0;padding:0;color:#9db4c8;font-size:9px;letter-spacing:0.5px;font-family:Aptos,Calibri,Arial,sans-serif;text-transform:uppercase;white-space:nowrap;line-height:1.4;">MARS Renewable Iberia</p>
-              <p style="margin:0;padding:0;color:#e8edf2;font-size:11px;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;margin-top:2px;white-space:nowrap;line-height:1.4;">${TX.subtitle}</p>
-            </td>
-            <td width="170" align="right" style="width:170px;vertical-align:middle;white-space:nowrap;padding-left:14px;">
-              <p style="margin:0;padding:0;font-size:8px;color:#9db4c8;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.4;">${TX.weekLabel}</p>
-              <p style="margin:0;padding:0;font-size:12px;color:#ffffff;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;margin-top:3px;white-space:nowrap;line-height:1.4;">${weekLbl}</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td style="background:#dce8f0;border-bottom:1px solid #c4d3de;padding:8px 26px;">
-        <p style="margin:0;padding:0;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1a3a56;font-weight:400;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} <b>${totalProjects} ${projWord}</b></p>
-      </td>
-    </tr>
-  </table>`;
-  const headerDataUrl=await _renderEmailContentAsImage(HEADER_HTML,EMAIL_WIDTH);
+  // Single EMAIL_WIDTH used for BOTH the outer table and all rendered images — no gap
+  const EMAIL_WIDTH=680;
 
-  // Render content blocks (attn + projects) as one image
-  const contentHtml=_buildContentBlocksHtml(attnBlock,projBlocks);
-  const imageDataUrl=await _renderEmailContentAsImage(contentHtml,EMAIL_WIDTH);
-
-  // Build header cell: image if render OK, else live HTML (navy table)
-  const headerRow=headerDataUrl
-    ?`<tr><td style="padding:0;line-height:0;"><img src="${headerDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="MARS Spain PD"></td></tr>`
-    :`<tr><td style="background:#05233D;padding:16px 26px;">
+  // ONE image: header + summary strip + all content blocks
+  const FULL_HTML=`<div style="width:${EMAIL_WIDTH}px;background:#ffffff;font-family:Aptos,Calibri,Arial,sans-serif;">
+    <!-- Header navy -->
+    <table width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" style="width:${EMAIL_WIDTH}px;background:#05233D;border-collapse:collapse;">
+      <tr><td style="padding:16px 24px;">
         <table width="100%" cellpadding="0" cellspacing="0"><tr>
-          <td width="104" style="width:104px;vertical-align:middle;padding-right:14px;">${MARS_LOGO_HTML}</td>
-          <td style="vertical-align:middle;"><p style="margin:0;color:#9db4c8;font-size:9px;font-family:Aptos,Calibri,Arial,sans-serif;text-transform:uppercase;">MARS Renewable Iberia</p><p style="margin:2px 0 0;color:#e8edf2;font-size:11px;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;">${TX.subtitle}</p></td>
-          <td align="right" style="vertical-align:middle;"><p style="margin:0;font-size:8px;color:#9db4c8;font-weight:700;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;">${TX.weekLabel}</p><p style="margin:3px 0 0;font-size:12px;color:#fff;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;">${weekLbl}</p></td>
+          <td width="100" style="width:100px;vertical-align:middle;padding-right:12px;">${MARS_LOGO_HTML}</td>
+          <td style="vertical-align:middle;">
+            <p style="margin:0;color:#9db4c8;font-size:9px;letter-spacing:0.5px;font-family:Aptos,Calibri,Arial,sans-serif;text-transform:uppercase;white-space:nowrap;line-height:1.4;">MARS Renewable Iberia</p>
+            <p style="margin:2px 0 0;color:#e8edf2;font-size:11px;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;white-space:nowrap;line-height:1.4;">${TX.subtitle}</p>
+          </td>
+          <td align="right" style="vertical-align:middle;white-space:nowrap;padding-left:12px;">
+            <p style="margin:0;font-size:8px;color:#9db4c8;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.4;">${TX.weekLabel}</p>
+            <p style="margin:3px 0 0;font-size:12px;color:#ffffff;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;white-space:nowrap;line-height:1.4;">${weekLbl}</p>
+          </td>
         </tr></table>
       </td></tr>
-      <tr><td style="background:#dce8f0;border-bottom:1px solid #c4d3de;padding:8px 26px;"><p style="margin:0;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1a3a56;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} <b>${totalProjects} ${projWord}</b></p></td></tr>`;
-
-  // Build body content — image if render succeeded, fallback to HTML tables
-  const bodyContent=imageDataUrl
-    ? `<img src="${imageDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="${isEN?'Project status':'Estado de proyectos'}">`
-    : `${attnBlock}${projBlocks}`;
-
-  // Render CTA footer block as image too — guarantees button renders correctly in Outlook
-  const CTA_HTML=`<table width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" style="width:${EMAIL_WIDTH}px;background:#ffffff;border-collapse:collapse;border-top:2px solid #e8eef4;">
-    <tr><td style="padding:22px 0 8px 0;text-align:center;">
-      <table cellpadding="0" cellspacing="0" style="display:inline-table;margin:0 auto;">
-        <tr><td style="background:#05233D;border-radius:8px;padding:0;">
-          <a href="${APP_URL}" style="display:block;background:#05233D;border-radius:8px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.8px;line-height:1;padding:15px 48px;text-decoration:none;white-space:nowrap;">MARS Spain PD &nbsp;↗</a>
-        </td></tr>
-      </table>
-      <p style="margin:10px 0 0 0;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
-    </td></tr>
-    <tr><td style="padding:10px 0 18px 0;text-align:center;font-size:10px;color:#b0bec8;font-family:Arial,Helvetica,sans-serif;">${TX.footer}${weekLbl}</td></tr>
-    <tr><td style="background:#05233D;padding:10px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Arial,Helvetica,sans-serif;">${TX.confidential}</td></tr>
-  </table>`;
-  const ctaDataUrl=await _renderEmailContentAsImage(CTA_HTML,EMAIL_WIDTH);
-  const ctaRow=ctaDataUrl
-    ?`<tr><td style="padding:0;line-height:0;"><img src="${ctaDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt=""></td></tr>`
-    :`<tr><td style="background:#ffffff;padding:20px 24px 0 24px;text-align:center;">
-        <a href="${APP_URL}" style="background:#05233D;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;line-height:44px;padding:0 40px;text-decoration:none;">MARS Spain PD ↗</a>
-        <p style="margin:8px 0 0;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
+      <tr><td style="background:#dce8f0;padding:8px 24px;">
+        <p style="margin:0;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1a3a56;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} <b>${totalProjects} ${projWord}</b></p>
       </td></tr>
-      <tr><td style="padding:10px 0 16px;text-align:center;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${TX.footer}${weekLbl}</td></tr>
-      <tr><td style="background:#05233D;padding:9px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Arial,Helvetica,sans-serif;">${TX.confidential}</td></tr>`;
+    </table>
+    <!-- Intro text inside image — styled simply -->
+    <div style="background:#ffffff;padding:14px 24px 10px 24px;border-bottom:1px solid #e8edf2;">
+      <p style="margin:0;font-size:12px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.7;">${introLine}</p>
+    </div>
+    <!-- Content blocks -->
+    <div style="background:#ffffff;padding:16px 24px 20px 24px;">${attnBlock}${projBlocks}</div>
+  </div>`;
 
+  const imageDataUrl=await _renderEmailContentAsImage(FULL_HTML,EMAIL_WIDTH);
+  const bodyImage=imageDataUrl
+    ?`<img src="${imageDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="${isEN?'MARS Spain PD weekly update':'Actualización semanal MARS Spain PD'}">`
+    :`<p style="padding:16px 24px;font-size:12px;color:#374151;font-family:Arial,sans-serif;">${introLine}</p>${attnBlock}${projBlocks}`;
+
+  // CTA — pure Outlook-safe HTML: table-based button, no gradients, no shadows
+  // The <a> wraps the entire TD so the whole button area is clickable
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
-<body style="margin:0;padding:32px 0 24px 0;background:#e8eef4;font-family:Aptos,Calibri,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#e8eef4;">
-<tr><td align="center" style="padding:0 16px;">
-  <table width="760" cellpadding="0" cellspacing="0" style="max-width:760px;border-radius:10px;overflow:hidden;border:1px solid #c4d3de;">
-  <!-- HEADER IMAGE -->
-  ${headerRow}
-  <!-- BODY -->
-  <tr>
-    <td style="background:#ffffff;padding:16px 24px 0 24px;">
-      <p style="margin:0;padding:0 0 14px 0;font-size:12px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.7;">${introLine}</p>
-      <div style="border-top:1px solid #e8eef4;margin-bottom:16px;"></div>
-      ${bodyContent}
-    </td>
-  </tr>
-  <!-- CTA + FOOTER IMAGE -->
-  ${ctaRow}
+<body style="margin:0;padding:40px 0 28px 0;background:#edf2f7;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#edf2f7;">
+<tr><td align="center" style="padding:0 20px;">
+  <table width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" style="max-width:${EMAIL_WIDTH}px;border-radius:10px;overflow:hidden;border:1px solid #c8d8e4;background:#ffffff;">
+  <!-- FULL CONTENT IMAGE (header + intro + projects) -->
+  <tr><td style="padding:0;line-height:0;font-size:0;">${bodyImage}</td></tr>
+  <!-- CTA — Outlook-safe table button, fully clickable -->
+  <tr><td style="background:#ffffff;padding:20px 24px 8px 24px;" align="center">
+    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+      <tr>
+        <td style="background:#05233D;border-radius:6px;mso-padding-alt:0 32px;" align="center">
+          <a href="${APP_URL}" style="display:inline-block;background:#05233D;border-radius:6px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;line-height:1;padding:14px 40px;text-decoration:none;white-space:nowrap;mso-padding-alt:14px 40px;">MARS Spain PD &nbsp;&#8599;</a>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:10px 0 0 0;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;text-align:center;">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
+  </td></tr>
+  <!-- FOOTER TEXT -->
+  <tr><td style="padding:8px 24px 14px 24px;text-align:center;font-size:10px;color:#b0bec8;font-family:Arial,Helvetica,sans-serif;">${TX.footer}${weekLbl}</td></tr>
+  <!-- FOOTER BAR -->
+  <tr><td style="background:#05233D;padding:9px 24px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Arial,Helvetica,sans-serif;">${TX.confidential}</td></tr>
   </table>
 </td></tr>
-<tr><td style="padding:16px 0;"></td></tr>
+<tr><td style="padding:20px 0;"></td></tr>
 </table>
 </body></html>`;
 }
