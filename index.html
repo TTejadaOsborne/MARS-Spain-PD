@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1726 -->
+<!-- BUILD:20261019-1732 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1726';
+const BUILD='20261019-1732';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -2382,10 +2382,13 @@ async function buildEmailHtml(forceLang){
   });
   const weekLbl=weekRange(_emailBaseWeek);
   const projWord=totalProjects===1?TX.projects:TX.projectsPlural;
-  // Auto-generated newsletter intro (no free-text textarea — full newsletter approach)
-  const _introES='Adjunto el resumen semanal del estado de los proyectos BESS de MARS Spain PD.';
-  const _introEN='Please find below the weekly BESS project status update for MARS Spain PD.';
-  const introLine=isEN?_introEN:_introES;
+  // Auto-generated newsletter intro with week dates — full newsletter approach
+  // weekRange returns e.g. "12/10/2026 al 18/10/2026"; split at sep to get start/end
+  const _wkRangeES=(()=>{ const d=new Date(_emailBaseWeek+'T12:00:00'); const mon=new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7)); const sun=new Date(mon); sun.setDate(mon.getDate()+6); const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`; return `${f(mon)} al ${f(sun)}`; })();
+  const _wkRangeEN=(()=>{ const d=new Date(_emailBaseWeek+'T12:00:00'); const mon=new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7)); const sun=new Date(mon); sun.setDate(mon.getDate()+6); const f=dt=>`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`; return `${f(mon)} to ${f(sun)}`; })();
+  const introLine=isEN
+    ?`Please find below the weekly status update for the Spain portfolio, covering the week of ${_wkRangeEN}.`
+    :`Adjunto el resumen del estado del portfolio de España, correspondiente a la semana del ${_wkRangeES}.`;
   // Intro block rendered inside the image — styled as newsletter intro line
   const introImgBlock=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;">
     <tr><td style="padding:13px 16px 11px 16px;background:#f0f4f8;border-left:4px solid #1a3a56;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1e2d3d;line-height:1.6;">${introLine}</td></tr>
@@ -2396,7 +2399,7 @@ async function buildEmailHtml(forceLang){
   </table>`:'';
 
   // Render EVERYTHING (intro + attn + projects) as one high-quality image
-  const EMAIL_WIDTH=640;
+  const EMAIL_WIDTH=720;
   const contentHtml=_buildContentBlocksHtml(introImgBlock+attnBlock,projBlocks);
   const imageDataUrl=await _renderEmailContentAsImage(contentHtml,EMAIL_WIDTH);
 
@@ -2423,22 +2426,22 @@ async function buildEmailHtml(forceLang){
   </table>`;
 
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
-<body style="margin:0;padding:24px 0;background:#d4dde8;font-family:Aptos,Calibri,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#d4dde8;">
+<body style="margin:0;padding:32px 0 24px 0;background:#e8eef4;font-family:Aptos,Calibri,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#e8eef4;">
 <tr><td align="center" style="padding:0 16px;">
-  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:auto;width:680px;" arcsize="2%" stroke="true" strokecolor="#b8cad8" fillcolor="#ffffff"><w:anchorlock/><center><![endif]-->
-  <table width="680" cellpadding="0" cellspacing="0" style="max-width:680px;border-radius:10px;overflow:hidden;border:1px solid #b8cad8;">
+  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:auto;width:760px;" arcsize="2%" stroke="true" strokecolor="#c4d3de" fillcolor="#ffffff"><w:anchorlock/><center><![endif]-->
+  <table width="760" cellpadding="0" cellspacing="0" style="max-width:760px;border-radius:10px;overflow:hidden;border:1px solid #c4d3de;">
   <!-- HEADER -->
   <tr>
-    <td style="background:#05233D;padding:14px 22px;">
+    <td style="background:#05233D;padding:16px 26px;">
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
-          <td width="104" style="width:104px;vertical-align:middle;padding-right:12px;">${MARS_LOGO_HTML}</td>
+          <td width="104" style="width:104px;vertical-align:middle;padding-right:14px;">${MARS_LOGO_HTML}</td>
           <td style="vertical-align:middle;padding:0;">
             <p style="margin:0;padding:0;color:#9db4c8;font-size:9px;letter-spacing:0.5px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';text-transform:uppercase;white-space:nowrap;line-height:1.4;">MARS Renewable Iberia</p>
             <p style="margin:0;padding:0;color:#e8edf2;font-size:11px;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';margin-top:2px;white-space:nowrap;line-height:1.4;">${TX.subtitle}</p>
           </td>
-          <td width="160" align="right" style="width:160px;vertical-align:middle;white-space:nowrap;padding-left:12px;">
+          <td width="170" align="right" style="width:170px;vertical-align:middle;white-space:nowrap;padding-left:14px;">
             <p style="margin:0;padding:0;font-size:8px;color:#9db4c8;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.4;">${TX.weekLabel}</p>
             <p style="margin:0;padding:0;font-size:12px;color:#ffffff;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';margin-top:3px;white-space:nowrap;line-height:1.4;">${weekLbl}</p>
           </td>
@@ -2448,41 +2451,36 @@ async function buildEmailHtml(forceLang){
   </tr>
   <!-- SUMMARY STRIP -->
   <tr>
-    <td style="background:#d4e4f0;border-bottom:1px solid #b8cad8;padding:8px 22px;">
+    <td style="background:#dce8f0;border-bottom:1px solid #c4d3de;padding:8px 26px;">
       <p style="margin:0;padding:0;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';color:#1a3a56;font-weight:400;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} <b>${totalProjects} ${projWord}</b></p>
     </td>
   </tr>
   <!-- BODY -->
   <tr>
-    <td style="background:#ffffff;padding:18px 20px 14px 20px;">
+    <td style="background:#ffffff;padding:20px 24px 16px 24px;">
       ${bodyContent}
       ${guideBlock}
-      <!-- CTA -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-top:2px solid #edf1f7;">
-        <tr><td style="padding-top:16px;" align="center">
-          <table cellpadding="0" cellspacing="0"><tr>
-            <td style="padding:0 6px;">
-              <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}" style="height:34px;v-text-anchor:middle;width:160px;" arcsize="18%" stroke="false" fillcolor="#05233D"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;">${TX.viewApp}</center></v:roundrect><![endif]-->
-              <!--[if !mso]><!--><a href="${APP_URL}" style="background:#05233D;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;line-height:34px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">${TX.viewApp}</a><!--<![endif]-->
-            </td>
-            <td style="padding:0 6px;">
-              <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}#guide" style="height:34px;v-text-anchor:middle;width:160px;" arcsize="18%" stroke="true" strokecolor="#05233D" fillcolor="#dce8f2"><w:anchorlock/><center style="color:#05233D;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;">${TX.guideBtn}</center></v:roundrect><![endif]-->
-              <!--[if !mso]><!--><a href="${APP_URL}#guide" style="background:#dce8f2;border-radius:6px;color:#05233D;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;line-height:34px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">${TX.guideBtn}</a><!--<![endif]-->
-            </td>
-          </tr></table>
+      <!-- CTA — prominent MARS Spain PD brand button -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;border-top:2px solid #edf1f7;">
+        <tr><td style="padding-top:20px;" align="center">
+          <!-- Main brand button -->
+          <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="12%" stroke="false" fillcolor="#05233D"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;">MARS Spain PD ↗</center></v:roundrect><![endif]-->
+          <!--[if !mso]><!--><a href="${APP_URL}" style="background:linear-gradient(135deg,#05233D 0%,#0a3a5c 100%);border-radius:8px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.8px;line-height:48px;text-align:center;text-decoration:none;width:280px;-webkit-text-size-adjust:none;box-shadow:0 2px 8px rgba(5,35,61,0.25);">MARS Spain PD &nbsp;↗</a><!--<![endif]-->
+          <br>
+          <p style="margin:8px 0 0 0;padding:0;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
         </td></tr>
-        <tr><td style="padding:10px 0 4px 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.footer}${weekLbl}</td></tr>
+        <tr><td style="padding:12px 0 4px 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.footer}${weekLbl}</td></tr>
       </table>
     </td>
   </tr>
   <!-- FOOTER BAR -->
   <tr>
-    <td style="background:#05233D;padding:9px 22px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.confidential}</td>
+    <td style="background:#05233D;padding:9px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.confidential}</td>
   </tr>
   </table>
   <!--[if mso]></center></v:roundrect><![endif]-->
 </td></tr>
-<tr><td style="padding:12px 0;"></td></tr>
+<tr><td style="padding:16px 0;"></td></tr>
 </table>
 </body></html>`;
 }
