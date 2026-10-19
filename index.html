@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1230 -->
+<!-- BUILD:20261019-1238 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1230';
+const BUILD='20261019-1238';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -1844,10 +1844,12 @@ function _prevWeekKey(weekKey){
   const keys=Object.keys(allData).filter(w=>w<weekKey&&!_weekIsEmpty(allData[w])).sort();
   return keys.length?keys[keys.length-1]:null;
 }
+function _topicKey(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim(); }
+function _topicMatch(a,b){ const ka=_topicKey(a),kb=_topicKey(b); return ka===kb||ka.startsWith(kb)||kb.startsWith(ka); }
 function _issueChanged(iss,prevIssues){
   // Returns true if this issue is new or has different text/status from all prev issues with same topic
   if(!prevIssues||!prevIssues.length) return true;
-  const match=prevIssues.find(p=>p.topic===iss.topic);
+  const match=prevIssues.find(p=>_topicMatch(p.topic,iss.topic));
   if(!match) return true; // new topic
   return match.text!==iss.text||match.status!==iss.status;
 }
@@ -1881,7 +1883,7 @@ function renderFeed(){
   document.getElementById('updatesFeed').innerHTML=items.map(({pid,iss})=>{
     const st=STATUS_MAP_GET(iss.status);
     const prevIssues=prevWd[pid]||[];
-    const match=prevKey?prevIssues.find(p=>p.topic===iss.topic):null;
+    const match=prevKey?prevIssues.find(p=>_topicMatch(p.topic,iss.topic)):null;
     const isNew=!match;
     const newBadge=isNew?`<span style="background:var(--green-s-l);color:var(--green-s);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">${t('newBadge')}</span>`:'';
     return `<div class="update-item" onclick="openProject('${pid}')">
@@ -1996,7 +1998,7 @@ function renderSemanal(){
           const LBL_STATUS_UPD=isEN?'STATUS UPDATED':'ESTADO ACTUALIZADO';
           const LBL_TEXT_UPD=isEN?'TEXT UPDATED':'TEXTO ACTUALIZADO';
           const LBL_NEW=isEN?'NEW THIS WEEK':'NUEVO ESTA SEMANA';
-          const prev=prevIssues.find(p=>p.topic===iss.topic);
+          const prev=prevIssues.find(p=>_topicMatch(p.topic,iss.topic));
           if(prev){
             const pst=STATUS_MAP_GET(prev.status);
             const sameStatus=prev.status===iss.status;
