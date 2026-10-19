@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1119 -->
+<!-- BUILD:20261019-1128 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1119';
+const BUILD='20261019-1128';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -663,7 +663,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div id="calPopupSemanal" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 8px 32px rgba(5,35,61,0.14);z-index:200;width:280px;"></div>
       </div>
       <button onclick="navWeekSemanal(1)" style="background:none;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:center;">›</button>
-      <button onclick="jumpToCurrentWeek('semanal')" style="background:none;border:1px solid var(--border);border-radius:5px;padding:0 10px;height:26px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text-2);font-family:'Inter',sans-serif;white-space:nowrap;" data-i18n="todayBtn">Hoy</button>
       <!-- Comparativa toggle -->
       <button onclick="toggleSemanalCompare()" id="semanalCompareBtn" style="display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;" title="Comparar con semana anterior">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="1" width="4.5" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -674,17 +673,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2.5" width="11" height="8" rx="1.2" stroke="white" stroke-width="1.3"/><path d="M1 4l5.5 3.5L12 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
         Email
       </button>
-      <!-- Guide -->
-      <button onclick="openGuideModal()" style="display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;" title="Quick guide">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 6v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="6.5" cy="4" r="0.7" fill="currentColor"/></svg>
-        <span id="guideBtnLbl">Guía</span>
-      </button>
     </div>
   </div>
   <div class="content">
     <div id="semanalFeed"></div>
   </div>
 </div>
+
+<!-- GUIDE FAB (floating help button, visible only on Weekly Update page) -->
+<button id="guideFab" onclick="openGuideModal()" title="Quick guide"
+  style="position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--navy);border:none;box-shadow:0 4px 14px rgba(5,35,61,0.25);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:900;transition:transform .15s,box-shadow .15s;"
+  onmouseenter="this.style.transform='scale(1.08)';this.style.boxShadow='0 6px 20px rgba(5,35,61,0.35)'"
+  onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='0 4px 14px rgba(5,35,61,0.25)'">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="white" stroke-width="1.5"/><path d="M9 8.5v4" stroke="white" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="6" r="0.9" fill="white"/></svg>
+</button>
 
 <!-- EMAIL EXPORT MODAL -->
 <div class="modal-bg" id="emailExportModal" style="align-items:center;justify-content:center;">
@@ -1674,6 +1676,9 @@ function showPage(page){
   // Hide legacy project page if it still exists
   const pp=document.getElementById('page-project'); if(pp) pp.classList.remove('on');
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  // Show guide FAB only on Weekly Update page
+  const fab=document.getElementById('guideFab');
+  if(fab) fab.style.display=page==='semanal'?'flex':'none';
   if(page==='portfolio'){ document.getElementById('nav-portfolio').classList.add('active'); renderPortfolioTimeline(); }
   if(page==='semanal'){ document.getElementById('nav-semanal').classList.add('active'); renderSemanal(); }
   if(page==='cronograma'){
@@ -1983,6 +1988,12 @@ function renderSemanal(){
         // --- Inline compare block ---
         let cmpBlock='';
         if(semanalCompareOpen){
+          const isEN=lang==='en';
+          const LBL_PREV=isEN?'Previous week':'Semana anterior';
+          const LBL_NO_CHANGE=isEN?'NO CHANGE':'SIN CAMBIO';
+          const LBL_STATUS_UPD=isEN?'STATUS UPDATED':'ESTADO ACTUALIZADO';
+          const LBL_TEXT_UPD=isEN?'TEXT UPDATED':'TEXTO ACTUALIZADO';
+          const LBL_NEW=isEN?'NEW THIS WEEK':'NUEVO ESTA SEMANA';
           const prev=prevIssues.find(p=>p.topic===iss.topic);
           if(prev){
             const pst=STATUS_MAP_GET(prev.status);
@@ -1990,15 +2001,15 @@ function renderSemanal(){
             const sameText=prev.text===iss.text;
             // Diff badge
             let diffBadge,diffBg;
-            if(sameStatus&&sameText){ diffBadge='SIN CAMBIO'; diffBg='#f3f4f6;color:#6b7280'; }
-            else if(!sameStatus){ diffBadge='ESTADO ACTUALIZADO'; diffBg='#fef9c3;color:#854d0e'; }
-            else{ diffBadge='TEXTO ACTUALIZADO'; diffBg='#dbeafe;color:#1e40af'; }
+            if(sameStatus&&sameText){ diffBadge=LBL_NO_CHANGE; diffBg='#f3f4f6;color:#6b7280'; }
+            else if(!sameStatus){ diffBadge=LBL_STATUS_UPD; diffBg='#fef9c3;color:#854d0e'; }
+            else{ diffBadge=LBL_TEXT_UPD; diffBg='#dbeafe;color:#1e40af'; }
             const pstColor=pst.sbar==='sbar-green'?'#22c55e':pst.sbar==='sbar-red'?'#ef4444':pst.sbar==='sbar-yellow'?'#eab308':'#9ca3af';
             const pstBg=pst.sbar==='sbar-green'?'#dcfce7':pst.sbar==='sbar-red'?'#fee2e2':pst.sbar==='sbar-yellow'?'#fef9c3':'#f3f4f6';
             const pstTxt=pst.sbar==='sbar-green'?'#15803d':pst.sbar==='sbar-red'?'#b91c1c':pst.sbar==='sbar-yellow'?'#854d0e':'#6b7280';
             cmpBlock=`<div style="margin:0 12px 10px 12px;border-radius:7px;background:#f8f9fc;border:1px solid #e2e8f0;overflow:hidden;">
               <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #edf0f5;">
-                <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">Semana anterior</span>
+                <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
                 <span style="font-size:9px;color:#9ca3af;">${weekRange(_prevWeekKey(currentWeek))}</span>
                 <span style="margin-left:auto;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:${diffBg};">${diffBadge}</span>
               </div>
@@ -2013,9 +2024,9 @@ function renderSemanal(){
           } else {
             // Topic didn't exist last week → NEW this week
             cmpBlock=`<div style="margin:0 12px 10px 12px;border-radius:7px;background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 10px;display:flex;align-items:center;gap:8px;">
-              <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">Semana anterior</span>
+              <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
               <span style="font-size:9px;color:#9ca3af;">${weekRange(_prevWeekKey(currentWeek))}</span>
-              <span style="margin-left:auto;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:#d1fae5;color:#065f46;">NUEVO ESTA SEMANA</span>
+              <span style="margin-left:auto;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:#d1fae5;color:#065f46;">${LBL_NEW}</span>
             </div>`;
           }
         }
@@ -2053,7 +2064,8 @@ let semanalCompareOpen=false;
 function toggleSemanalCompare(){
   semanalCompareOpen=!semanalCompareOpen;
   const btn=document.getElementById('semanalCompareLbl');
-  if(btn) btn.textContent=semanalCompareOpen?'Ocultar':'Comparar';
+  const isEN=lang==='en';
+  if(btn) btn.textContent=semanalCompareOpen?(isEN?'Hide':'Ocultar'):(isEN?'Compare':'Comparar');
   renderSemanal();
 }
 function _prevWeekKey(wk){
@@ -2150,15 +2162,8 @@ function buildEmailHtml(){
     confidential: isEN?'MARS Spain PD · Confidential internal update':'MARS Spain PD · Actualización confidencial para uso interno',
     viewApp: isEN?'View live tracker':'Ver en la app',
   };
-  // MARS logo as text — data URIs are blocked by Outlook; use styled text instead
-  const MARS_LOGO_HTML=`<table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;"><tr>
-    <td style="background:#ffffff;border-radius:4px;padding:3px 8px;vertical-align:middle;">
-      <span style="font-family:Arial,sans-serif;font-size:15px;font-weight:900;color:#e4002b;letter-spacing:1px;">MARS</span>
-    </td>
-    <td style="padding-left:10px;vertical-align:middle;">
-      <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Spain PD</span>
-    </td>
-  </tr></table>`;
+  // MARS logo — hosted on GitHub Pages so Outlook can load it (data URIs are blocked)
+  const MARS_LOGO_HTML=`<img src="https://ttejadaosborne.github.io/mars-spain-pd/mars-logo.png" alt="MARS" width="120" height="auto" style="display:block;height:32px;width:auto;border:0;" />`;
   const APP_URL='https://ttejadaosborne.github.io/mars-spain-pd/';
   let projSections='';
   let hasAttention=false;
