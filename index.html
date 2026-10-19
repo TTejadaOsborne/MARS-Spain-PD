@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1418 -->
+<!-- BUILD:20261019-1514 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1418';
+const BUILD='20261019-1514';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -207,7 +207,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .s-grey{background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);}
 .act-section{background:#F7F9FB;border-top:1px dashed var(--border);padding:9px 14px 10px 180px;}
 .act-title{font-size:9.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;}
-.act-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:4px;}.act-row .act-icon{flex-shrink:0;font-size:13px;line-height:1.2;filter:grayscale(1) sepia(1) hue-rotate(185deg) saturate(1.5) brightness(0.55);}
+.act-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:4px;}.act-row .act-icon{flex-shrink:0;font-size:13px;line-height:1.2;display:flex;align-items:center;}
 .act-date{font-size:10px;color:var(--text-3);flex-shrink:0;margin-top:2px;}
 .prev-week-hdr{padding:16px 18px 6px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;border-top:2px solid var(--border);}
 .prev-week-date{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;color:var(--text-2);}
@@ -1501,7 +1501,7 @@ const ICONS = {
 const META = {
   begues:{name:'BEGUES I & II',loc:'Olesa de Bonesvalls, Barcelona',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'100 MW (2×50)'},{l:'Tensión',v:'400 kV'},{l:'SET',v:'SET Begues'},{l:'Línea',v:'7.58 km'},{l:'Operador',v:'REE'}]},
   fregacedos:{name:'FREGACEDOS I, II & V',loc:'Humanes de Madrid, Madrid',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'15 MW (3×5)'},{l:'Tensión',v:'15 kV'},{l:'SET',v:'SET C. Fregacedos'},{l:'Operador',v:'i-DE'}]},
-  mutxamel:{name:'MUTXAMEL',loc:'Mutxamel, Alicante',statusKey:'permitting',sc:'yellow',specs:[{l:'Potencia',v:'5 MW'},{l:'Tensión',v:'20 kV'},{l:'SET',v:'SET El Cantalar'},{l:'Línea',v:'2.5 km'},{l:'Operador',v:'i-DE'}]},
+  mutxamel:{name:'MUTXAMEL',loc:'Mutxamel, Alicante',statusKey:'permitting',sc:'red',specs:[{l:'Potencia',v:'5 MW'},{l:'Tensión',v:'20 kV'},{l:'SET',v:'SET El Cantalar'},{l:'Línea',v:'2.5 km'},{l:'Operador',v:'i-DE'}]},
   entrenucleos:{name:'ENTRENÚCLEOS',loc:'Dos Hermanas, Sevilla',statusKey:'standby',sc:'grey',specs:[{l:'Potencia',v:'49 MW'},{l:'Tensión',v:'220 kV'},{l:'SET',v:'SET Entrenúcleos'},{l:'Operador',v:'REE'}]},
   custom_nuevas_oportunidades:{name:'NUEVAS OPORTUNIDADES',loc:'Pipeline · En análisis',statusKey:'analysis',sc:'blue',specs:[{l:'Herramienta',v:'Temos AI'},{l:'Fase',v:'Identificación'}]}
 };
@@ -1985,7 +1985,7 @@ function renderSemanal(){
       html+=`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
         <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;">
           <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
-          <span style="font-size:12px;font-weight:700;color:var(--navy);cursor:pointer;" onclick="openProjectPopup('${pid}')" title="${t('viewProject')}">${names[pid]||pid} <svg style="display:inline;vertical-align:middle;opacity:0.35;margin-left:2px;" width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 5.5h5M5.5 3v5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span><span onclick="openProjectPopup('${pid}')" style="margin-left:8px;font-size:10px;font-weight:500;color:var(--blue);cursor:pointer;text-decoration:none;white-space:nowrap;opacity:0.75;">ℹ Info del proyecto</span>
           <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
           ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ ${t('addBtn')}</button>`:''}
         </div>`;
@@ -2184,8 +2184,8 @@ async function exportEmailSemanal(){
     })();
     // Build off-screen wrapper: header + feed clone + footer
     const wrapper=document.createElement('div');
-    const _captureW=Math.min(feed.offsetWidth,600);
-    wrapper.style.cssText='position:fixed;left:-9999px;top:0;width:'+_captureW+'px;background:#ffffff;font-family:Inter,sans-serif;';
+    const _captureW=Math.min(feed.offsetWidth,520);
+    wrapper.style.cssText='position:fixed;left:-9999px;top:0;width:'+_captureW+'px;background:#ffffff;font-family:Inter,sans-serif;border-radius:12px;overflow:hidden;';
     // Header
     const hdr=document.createElement('div');
     hdr.style.cssText='background:#1a3a56;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;';
@@ -2210,14 +2210,13 @@ async function exportEmailSemanal(){
     const feedClone=feed.cloneNode(true);
     feedClone.style.cssText+='border-radius:0;box-shadow:none;';
     // Remove gestionar buttons, add/edit controls, view-project links
-    feedClone.querySelectorAll('[data-editor-only],[onclick*="gestionar"],[onclick*="addAct"],[onclick*="editAct"],[onclick*="removeAct"],[onclick*="goToProject"]').forEach(el=>el.remove());
+    feedClone.querySelectorAll('[data-editor-only],[onclick*="gestionar"],[onclick*="addAct"],[onclick*="editAct"],[onclick*="removeAct"],[onclick*="goToProject"],[onclick*="openEditIssue"],[onclick*="openAddUpdate"],[onclick*="confirmDraft"],[onclick*="openProjectPopup"]').forEach(el=>el.remove());
     // Also hide by class patterns used for editor controls
     feedClone.querySelectorAll('.act-add-btn,.act-edit-btn,.act-del-btn,.manage-link,.view-project-btn').forEach(el=>el.remove());
-    // Remove any element whose text content is exactly common editor labels
-    feedClone.querySelectorAll('button,a').forEach(el=>{
-      const t=(el.textContent||'').trim().toLowerCase();
-      if(['gestionar','manage','+ gestionar','ver proyecto','view project','añadir','editar','eliminar'].includes(t)) el.remove();
-    });
+    // Remove ALL buttons and links that are editor actions
+    feedClone.querySelectorAll('button').forEach(el=>el.remove());
+    // Remove draft banners
+    feedClone.querySelectorAll('.draft-banner').forEach(el=>el.remove());
     wrapper.appendChild(feedClone);
     // Footer
     const ftr=document.createElement('div');
@@ -2244,10 +2243,10 @@ async function exportEmailSemanal(){
     const w=Math.round(canvas.width/2); // logical width
     const GUIDE_URL='https://ttejadaosborne.github.io/mars-spain-pd/#guide';
     const emailHtml=`<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f1f5f9;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:20px 0;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#e8edf2;padding:24px 0;">
 <tr><td align="center" style="padding:0 0 8px 0;">
 <a href="${APP_URL_EMAIL}" target="_blank" style="display:inline-block;border:0;text-decoration:none;">
-<img src="${dataUrl}" width="${w}" style="display:block;max-width:100%;width:${w}px;border:0;border-radius:4px;" alt="Actualización Semanal MARS" />
+<img src="${dataUrl}" width="${w}" style="display:block;max-width:100%;width:${w}px;border:0;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10);" alt="Actualización Semanal MARS" />
 </a>
 </td></tr>
 <tr><td align="center" style="padding:8px 0 4px 0;">
