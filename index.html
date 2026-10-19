@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1251 -->
+<!-- BUILD:20261019-1258 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1251';
+const BUILD='20261019-1258';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -700,8 +700,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
     <div style="flex:1;overflow-y:auto;padding:20px 24px;">
       <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button onclick="copyEmailHtml()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar al portapapeles</button>
-        <button onclick="selectEmailContent()" style="background:#fff;border:1px solid var(--border);color:var(--navy);border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">Seleccionar todo</button>
+        <button onclick="copyEmailHtml()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar imagen</button>
+        <button onclick="selectEmailContent()" style="background:#fff;border:1px solid var(--border);color:var(--navy);border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:none;">Seleccionar todo</button>
       </div>
       <div id="emailPreviewWrap" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#f8f9fa;"></div>
     </div>
@@ -2128,22 +2128,78 @@ function openGuideModal(){
   document.getElementById('guideModal').classList.add('on');
 }
 
-// ── EXPORT EMAIL ────────────────────────────────────────────────────────────
+// ── EXPORT EMAIL (screenshot-based) ──────────────────────────────────────────
+function _loadHtml2Canvas(){
+  return new Promise((resolve,reject)=>{
+    if(window.html2canvas){resolve(window.html2canvas);return;}
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=()=>resolve(window.html2canvas);
+    s.onerror=reject;
+    document.head.appendChild(s);
+  });
+}
+
 async function exportEmailSemanal(){
   const modal=document.getElementById('emailExportModal');
   if(!modal) return;
   const isEN=lang==='en';
   const title=document.getElementById('emailModalTitle');
   const sub=document.getElementById('emailModalSubtitle');
-  if(title) title.textContent=isEN?'📧 Executive email — ready to copy':'📧 Email ejecutivo — listo para copiar';
-  if(sub) sub.textContent=isEN?'Translating content…':'Generando email…';
   const wrap=document.getElementById('emailPreviewWrap');
-  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Translating…':'Generando…'}</div>`;
+  if(title) title.textContent=isEN?'📧 Executive email — screenshot':'📧 Email ejecutivo — captura visual';
+  if(sub) sub.textContent=isEN?'Capturing weekly view…':'Capturando vista semanal…';
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Generating screenshot…':'Generando captura…'}</div>`;
   modal.classList.add('on');
-  const html=await buildEmailHtml(lang);
-  if(sub) sub.textContent=isEN?'Select the full content in the box below and paste it into your email client':'Selecciona todo el contenido del recuadro y pégalo directamente en tu cliente de email';
-  if(wrap) wrap.innerHTML=`<iframe srcdoc="${html.replace(/"/g,'&quot;')}" style="width:100%;height:520px;border:none;border-radius:10px;" sandbox="allow-same-origin"></iframe>`;
-  modal._emailHtml=html;
+
+  try{
+    const h2c=await _loadHtml2Canvas();
+    const feed=document.getElementById('semanalFeed');
+    if(!feed){
+      if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#e11d48;font-size:13px;">No hay datos de semana seleccionada</div>`;
+      return;
+    }
+    // Capture the feed at 2x resolution for crispness
+    const canvas=await h2c(feed,{
+      scale:2,
+      useCORS:true,
+      backgroundColor:'#ffffff',
+      logging:false,
+      allowTaint:true
+    });
+    const dataUrl=canvas.toDataURL('image/png');
+    // Build minimal email HTML: just the image — renders identically everywhere
+    const w=Math.round(canvas.width/2); // logical width
+    const emailHtml=`<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f1f5f9;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:20px 0;">
+<tr><td align="center">
+<img src="${dataUrl}" width="${w}" style="display:block;max-width:100%;width:${w}px;border:0;" alt="Actualización Semanal MARS" />
+</td></tr>
+</table>
+</body></html>`;
+    modal._emailHtml=emailHtml;
+    modal._emailPng=dataUrl;
+    modal._emailPngW=w;
+    // Show preview
+    if(sub) sub.textContent=isEN?'Copy image to clipboard and paste into Outlook / email':'Copia la imagen al portapapeles y pégala en Outlook / email';
+    if(wrap){
+      wrap.innerHTML='';
+      const img=document.createElement('img');
+      img.src=dataUrl;
+      img.style.cssText=`display:block;max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);`;
+      wrap.style.padding='16px';
+      wrap.style.background='#f1f5f9';
+      wrap.appendChild(img);
+    }
+    // Update button labels
+    const copyBtn=document.querySelector('#emailExportModal button[onclick="copyEmailHtml()"]');
+    if(copyBtn) copyBtn.textContent=isEN?'📋 Copy image':'📋 Copiar imagen';
+    const selBtn=document.querySelector('#emailExportModal button[onclick="selectEmailContent()"]');
+    if(selBtn) selBtn.style.display='none'; // not needed for image mode
+  } catch(err){
+    console.error('html2canvas error',err);
+    if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#e11d48;font-size:13px;">Error al capturar: ${err.message}</div>`;
+  }
 }
 async function buildEmailHtml(forceLang){
   // Accept explicit lang parameter to avoid closure-capture issues when called from setLang()
@@ -2316,21 +2372,37 @@ async function buildEmailHtml(forceLang){
 </table>
 </body></html>`;
 }
-function copyEmailHtml(){
+async function copyEmailHtml(){
   const modal=document.getElementById('emailExportModal');
-  const html=modal?modal._emailHtml:'';
-  if(!html) return;
-  // Copy as rich-text (text/html) so Outlook pastes the rendered email, not raw HTML code
+  if(!modal) return;
+  // Prefer PNG image copy (works perfectly in Outlook)
+  if(modal._emailPng){
+    try{
+      // Convert data URL to blob
+      const res=await fetch(modal._emailPng);
+      const blob=await res.blob();
+      const item=new ClipboardItem({'image/png':blob});
+      await navigator.clipboard.write([item]);
+      toast('✓ '+(lang==='en'?'Image copied — paste into Outlook':'Imagen copiada — pega en Outlook'));
+      return;
+    } catch(e){
+      // Fall back to HTML copy
+      console.warn('PNG clipboard failed, trying HTML',e);
+    }
+  }
+  // Fallback: HTML copy
+  const html=modal._emailHtml||'';
+  if(!html){toast(lang==='en'?'Generate the email first':'Genera primero el email');return;}
   try{
     const blob=new Blob([html],{type:'text/html'});
     const item=new ClipboardItem({'text/html':blob});
-    navigator.clipboard.write([item])
-      .then(()=>toast('✓ '+(lang==='en'?'Email copied — paste directly into Outlook':'Email copiado — pega directamente en Outlook')))
-      .catch(()=>_fallbackCopyEmail(html));
-  } catch(e){ _fallbackCopyEmail(html); }
+    await navigator.clipboard.write([item]);
+    toast('✓ '+(lang==='en'?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
+  } catch(e){
+    _fallbackCopyEmail(html);
+  }
 }
 function _fallbackCopyEmail(html){
-  // Fallback: render in a hidden div and select/copy
   const tmp=document.createElement('div');
   tmp.innerHTML=html;
   tmp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none;';
@@ -2344,7 +2416,7 @@ function _fallbackCopyEmail(html){
     document.execCommand('copy');
     toast('✓ '+(lang==='en'?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
   } catch(e2){
-    toast(lang==='en'?'Select all in the box and press Ctrl+C':'Selecciona todo en el recuadro y pulsa Ctrl+C');
+    toast(lang==='en'?'Right-click the preview image and copy it':'Haz clic derecho en la imagen y cópiala');
   }
   sel.removeAllRanges();
   document.body.removeChild(tmp);
