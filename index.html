@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1046 -->
+<!-- BUILD:20261019-1119 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1046';
+const BUILD='20261019-1119';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2150,7 +2150,15 @@ function buildEmailHtml(){
     confidential: isEN?'MARS Spain PD · Confidential internal update':'MARS Spain PD · Actualización confidencial para uso interno',
     viewApp: isEN?'View live tracker':'Ver en la app',
   };
-  const MARS_LOGO='data:image/png;base64,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';
+  // MARS logo as text — data URIs are blocked by Outlook; use styled text instead
+  const MARS_LOGO_HTML=`<table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;"><tr>
+    <td style="background:#ffffff;border-radius:4px;padding:3px 8px;vertical-align:middle;">
+      <span style="font-family:Arial,sans-serif;font-size:15px;font-weight:900;color:#e4002b;letter-spacing:1px;">MARS</span>
+    </td>
+    <td style="padding-left:10px;vertical-align:middle;">
+      <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Spain PD</span>
+    </td>
+  </tr></table>`;
   const APP_URL='https://ttejadaosborne.github.io/mars-spain-pd/';
   let projSections='';
   let hasAttention=false;
@@ -2169,13 +2177,13 @@ function buildEmailHtml(){
       const sc=stColor(st);
       const acts=iss.activities||[];
       const topicLbl=isEN?(TOPIC_MAP_EN[iss.topic?.toLowerCase()]||iss.topic||''):(iss.topic||'');
-      if(iss.attention){ hasAttention=true; attentionItems+=`<tr><td style="padding:6px 10px;font-size:12px;color:#374151;border-bottom:1px solid #fee2e2;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${iss.text||''}</td></tr>`; }
+      if(iss.attention){ hasAttention=true; attentionItems+=`<tr><td style="padding:6px 10px;font-size:13px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fee2e2;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${iss.text||''}</td></tr>`; }
       issueRows+=`<tr>
         <td style="padding:0;width:4px;"><div style="width:4px;background:${sc.bar};height:100%;min-height:50px;"></div></td>
         <td style="padding:10px 14px;vertical-align:top;">
-          <div style="font-size:12px;font-weight:700;color:#1e293b;margin-bottom:3px;">${topicLbl}</div>
-          <div style="font-size:12px;color:#475569;line-height:1.5;">${iss.text||''}</div>
-          ${acts.length?`<div style="margin-top:8px;">${acts.map(a=>`<div style="font-size:11px;color:#6b7280;padding:2px 0;">${ICONS[a.type]||'•'} ${a.text||''} <span style="color:#9ca3af;">${a.date||''}</span></div>`).join('')}</div>`:''}
+          <div style="font-size:13px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-weight:700;color:#1e293b;margin-bottom:3px;">${topicLbl}</div>
+          <div style="font-size:13px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#475569;line-height:1.5;">${iss.text||''}</div>
+          ${acts.length?`<div style="margin-top:8px;">${acts.map(a=>`<div style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#6b7280;padding:2px 0;">${ICONS[a.type]||'•'} ${a.text||''} <span style="color:#9ca3af;">${a.date||''}</span></div>`).join('')}</div>`:''}
         </td>
         <td style="padding:10px 14px;text-align:right;vertical-align:top;white-space:nowrap;">
           <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${st.lbl}</span>
@@ -2218,7 +2226,7 @@ function buildEmailHtml(){
     </td></tr>`:''
   ;
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MARS Spain PD — ${TX.subtitle}</title></head>
-<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Helvetica Neue',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-size:13px;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 0;">
 <tr><td align="center">
 <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
@@ -2227,8 +2235,8 @@ function buildEmailHtml(){
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td style="vertical-align:middle;">
-          <img src="${MARS_LOGO}" alt="MARS" style="height:28px;display:block;margin-bottom:6px;">
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;">${TX.subtitle}</div>
+          ${MARS_LOGO_HTML}
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;margin-top:6px;">${TX.subtitle}</div>
         </td>
         <td align="right" style="vertical-align:middle;">
           <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:8px 14px;text-align:center;">
@@ -2242,8 +2250,8 @@ function buildEmailHtml(){
   <!-- SUMMARY BAR -->
   <tr><td style="background:#e8f1f7;padding:10px 28px;border-left:1px solid #d1dce8;border-right:1px solid #d1dce8;">
     <table width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-size:11px;color:#2d4a6b;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${isEN?'in':'en'} ${totalProjects} ${projWord}</td>
-      <td align="right" style="font-size:11px;color:#6b7280;">${today}</td>
+      <td style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#2d4a6b;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${isEN?'in':'en'} ${totalProjects} ${projWord}</td>
+      <td align="right" style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#6b7280;">${today}</td>
     </tr></table>
   </td></tr>
   <!-- BODY -->
@@ -2274,7 +2282,34 @@ function copyEmailHtml(){
   const modal=document.getElementById('emailExportModal');
   const html=modal?modal._emailHtml:'';
   if(!html) return;
-  navigator.clipboard.writeText(html).then(()=>toast('✓ HTML copiado al portapapeles')).catch(()=>{selectEmailContent();toast('Seleccionado — usa Ctrl+C para copiar');});
+  // Copy as rich-text (text/html) so Outlook pastes the rendered email, not raw HTML code
+  try{
+    const blob=new Blob([html],{type:'text/html'});
+    const item=new ClipboardItem({'text/html':blob});
+    navigator.clipboard.write([item])
+      .then(()=>toast('✓ '+(lang==='en'?'Email copied — paste directly into Outlook':'Email copiado — pega directamente en Outlook')))
+      .catch(()=>_fallbackCopyEmail(html));
+  } catch(e){ _fallbackCopyEmail(html); }
+}
+function _fallbackCopyEmail(html){
+  // Fallback: render in a hidden div and select/copy
+  const tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  tmp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(tmp);
+  const range=document.createRange();
+  range.selectNodeContents(tmp);
+  const sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  try{
+    document.execCommand('copy');
+    toast('✓ '+(lang==='en'?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
+  } catch(e2){
+    toast(lang==='en'?'Select all in the box and press Ctrl+C':'Selecciona todo en el recuadro y pulsa Ctrl+C');
+  }
+  sel.removeAllRanges();
+  document.body.removeChild(tmp);
 }
 function selectEmailContent(){
   const iframe=document.querySelector('#emailPreviewWrap iframe');
