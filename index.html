@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1218 -->
+<!-- BUILD:20261019-1230 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1218';
+const BUILD='20261019-1230';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2127,21 +2127,23 @@ function openGuideModal(){
 }
 
 // ── EXPORT EMAIL ────────────────────────────────────────────────────────────
-function exportEmailSemanal(){
+async function exportEmailSemanal(){
   const modal=document.getElementById('emailExportModal');
   if(!modal) return;
   const isEN=lang==='en';
   const title=document.getElementById('emailModalTitle');
   const sub=document.getElementById('emailModalSubtitle');
   if(title) title.textContent=isEN?'📧 Executive email — ready to copy':'📧 Email ejecutivo — listo para copiar';
-  if(sub) sub.textContent=isEN?'Select the full content in the box below and paste it into your email client':'Selecciona todo el contenido del recuadro y pégalo directamente en tu cliente de email';
-  const html=buildEmailHtml(lang);
+  if(sub) sub.textContent=isEN?'Translating content…':'Generando email…';
   const wrap=document.getElementById('emailPreviewWrap');
-  if(wrap) wrap.innerHTML=`<iframe srcdoc="${html.replace(/"/g,'&quot;')}" style="width:100%;height:520px;border:none;border-radius:10px;" sandbox="allow-same-origin"></iframe>`;
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Translating…':'Generando…'}</div>`;
   modal.classList.add('on');
+  const html=await buildEmailHtml(lang);
+  if(sub) sub.textContent=isEN?'Select the full content in the box below and paste it into your email client':'Selecciona todo el contenido del recuadro y pégalo directamente en tu cliente de email';
+  if(wrap) wrap.innerHTML=`<iframe srcdoc="${html.replace(/"/g,'&quot;')}" style="width:100%;height:520px;border:none;border-radius:10px;" sandbox="allow-same-origin"></iframe>`;
   modal._emailHtml=html;
 }
-function buildEmailHtml(forceLang){
+async function buildEmailHtml(forceLang){
   // Accept explicit lang parameter to avoid closure-capture issues when called from setLang()
   const isEN=(forceLang||lang)==='en';
   const locale=isEN?'en-GB':'es-ES';
@@ -2180,6 +2182,22 @@ function buildEmailHtml(forceLang){
   const APP_URL='https://ttejadaosborne.github.io/mars-spain-pd/';
   // Collect data
   let projBlocks='';
+  // Pre-translate all free text when in EN mode (uses MyMemory API + localStorage cache)
+  const _txMap=new Map();
+  if(isEN){
+    const allTexts=[];
+    activeOrder.forEach(pid=>{
+      (wd[pid]||[]).filter(i=>!i.draft).forEach(iss=>{
+        if(iss.text) allTexts.push(iss.text);
+        (iss.activities||[]).forEach(a=>{ if(a.text) allTexts.push(a.text); });
+      });
+    });
+    const unique=[...new Set(allTexts)];
+    const translated=await Promise.all(unique.map(t=>_translateOne(t)));
+    unique.forEach((orig,i)=>_txMap.set(orig,translated[i]||orig));
+  }
+  const _tx=t=>isEN?(_txMap.get(t)||t):t;
+
   let hasAttention=false;
   let attentionRows='';
   let totalIssues=0;
@@ -2193,14 +2211,15 @@ function buildEmailHtml(forceLang){
     issues.forEach((iss,idx)=>{
       const {lbl:stLbl,sc}=stData(iss.status);
       const topicLbl=isEN?(TOPIC_MAP_EN[iss.topic?.toLowerCase()]||iss.topic||''):(iss.topic||'');
+      const issText=_tx(iss.text||'');
       const acts=iss.activities||[];
-      const actsHtml=acts.map(a=>`<span style="font-size:11px;color:#64748b;">${ICONS[a.type]||'·'} ${a.text||''}${a.date?` <span style="color:#94a3b8;">(${a.date})</span>`:''}</span>`).join('<br>');
-      if(iss.attention){hasAttention=true;attentionRows+=`<tr><td style="padding:5px 10px 5px 12px;font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${iss.text||''}</td></tr>`;}
+      const actsHtml=acts.map(a=>`<span style="font-size:11px;color:#64748b;">${ICONS[a.type]||'·'} ${_tx(a.text||'')}${a.date?` <span style="color:#94a3b8;">(${a.date})</span>`:''}</span>`).join('<br>');
+      if(iss.attention){hasAttention=true;attentionRows+=`<tr><td style="padding:5px 10px 5px 12px;font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${issText}</td></tr>`;}
       // Compact row: left color bar + topic+text + status pill
       rowsHtml+=`<tr style="${idx>0?'border-top:1px solid #f1f5f9;':''}">
         <td style="width:3px;padding:0;background:${sc.bar};"></td>
         <td style="padding:7px 10px;vertical-align:top;">
-          <div style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;"><b style="color:#0f172a;">${topicLbl}</b> <span style="color:#475569;">${iss.text||''}</span></div>
+          <div style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;"><b style="color:#0f172a;">${topicLbl}</b> <span style="color:#475569;">${issText}</span></div>
           ${actsHtml?`<div style="margin-top:3px;">${actsHtml}</div>`:''}
         </td>
         <td style="padding:7px 10px;vertical-align:top;text-align:right;white-space:nowrap;">
