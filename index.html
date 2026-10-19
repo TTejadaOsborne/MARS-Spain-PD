@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1351 -->
+<!-- BUILD:20261019-1418 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1351';
+const BUILD='20261019-1418';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -207,7 +207,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .s-grey{background:var(--grey-l);color:var(--grey);border:1px solid var(--grey-b);}
 .act-section{background:#F7F9FB;border-top:1px dashed var(--border);padding:9px 14px 10px 180px;}
 .act-title{font-size:9.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;}
-.act-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.act-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:4px;}.act-row .act-icon{flex-shrink:0;font-size:13px;line-height:1.2;filter:grayscale(1) sepia(1) hue-rotate(185deg) saturate(1.5) brightness(0.55);}
 .act-date{font-size:10px;color:var(--text-3);flex-shrink:0;margin-top:2px;}
 .prev-week-hdr{padding:16px 18px 6px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;border-top:2px solid var(--border);}
 .prev-week-date{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;color:var(--text-2);}
@@ -649,7 +649,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <button id="semanalAddBtn" onclick="openAddUpdateSemanal()" style="display:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;" data-i18n="addUpdate">+ Nueva novedad</button>
       <!-- Project filter -->
       <div style="position:relative;">
-        <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
+        <button onclick="toggleSemanalProjFilter()" id="semanalProjFilterBtn" style="display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           <span id="semanalProjFilterLbl" data-i18n="allProjects">Todos los proyectos</span>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1565,6 +1565,13 @@ function init(){
         if(latest) currentWeek=latest;
       }
       if(nav.semFilt) semanalFilterPid=nav.semFilt;
+    // Restore sidebar collapsed state
+    try{
+      const _sbc=nav.sidebarCollapsed!==undefined?nav.sidebarCollapsed:(localStorage.getItem('mars_sidebar_collapsed')==='true');
+      if(_sbc){const _sb=document.querySelector('.sidebar');if(_sb){_sb.classList.add('collapsed');const _icon=document.getElementById('sb-toggle-icon');if(_icon){_icon.innerHTML='<svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M7 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';}}}
+    }catch(e){}
+    // Restore scroll position after render
+    if(nav.scrollY){setTimeout(()=>{try{window.scrollTo({top:nav.scrollY,behavior:'instant'});}catch(e){}},150);}
       if(nav.page==='semanal'){
         showPage('semanal');
       } else if((nav.page==='cronograma'||nav.page==='project') && nav.pid){
@@ -1600,6 +1607,7 @@ function toggleSidebar(){
   const icon=document.getElementById('sb-toggle-icon');
   sb.classList.toggle('collapsed');
   const collapsed=sb.classList.contains('collapsed');
+  try{localStorage.setItem('mars_sidebar_collapsed',collapsed);}catch(e){}
   if(icon){
     // collapsed → show expand icon (panel with right arrow); expanded → show collapse icon (panel with left arrow)
     icon.innerHTML=collapsed
@@ -1613,7 +1621,7 @@ function buildProjSwitcher(section){
   const idMap={crono:'projSwitcherCrono',docs:'projSwitcherDocs'};
   const el=document.getElementById(idMap[section]);
   if(!el) return;
-  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
+  const smap={yellow:'background:var(--blue-l);color:var(--navy);',red:'background:#fee2e2;color:#C00000;',grey:'background:var(--blue-l);color:var(--navy);',blue:'background:var(--blue-l);color:var(--navy);'};
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
   el.innerHTML=pids.map(pid=>{
     const m=META[pid]||{};
@@ -1666,7 +1674,7 @@ function saveNav(){
     const docsOn=document.getElementById('page-documentacion')&&document.getElementById('page-documentacion').style.display!=='none';
     const semOn=['','flex'].includes(document.getElementById('page-semanal').style.display);
     const page=semOn?'semanal':cronOn?'cronograma':docsOn?'documentacion':'portfolio';
-    localStorage.setItem(NAV_KEY,JSON.stringify({page,pid:currentProjId,week:currentWeek,semFilt:semanalFilterPid}));
+    localStorage.setItem(NAV_KEY,JSON.stringify({page,pid:currentProjId,week:currentWeek,semFilt:semanalFilterPid,sidebarCollapsed:document.querySelector('.sidebar')?.classList.contains('collapsed')||false,scrollY:window.scrollY}));
   }catch(e){}
 }
 function showPage(page){
@@ -1903,7 +1911,7 @@ function renderFeed(){
 // ── SEMANAL PAGE ──────────────────────────────────────────────────────────
 let semanalFilterPid=null; // null = todos los proyectos
 function buildSemanalProjFilter(){
-  const smap={yellow:'background:var(--yellow-l);color:var(--yellow);',red:'background:var(--red-l);color:var(--red);',grey:'background:var(--grey-l);color:var(--grey);',blue:'background:var(--blue-l);color:var(--blue);'};
+  const smap={yellow:'background:var(--blue-l);color:var(--navy);',red:'background:#fee2e2;color:#C00000;',grey:'background:var(--blue-l);color:var(--navy);',blue:'background:var(--blue-l);color:var(--navy);'};
   const drop=document.getElementById('semanalProjFilterDrop');
   if(!drop) return;
   const pids=['begues','fregacedos','mutxamel','entrenucleos'];
@@ -1977,10 +1985,9 @@ function renderSemanal(){
       html+=`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
         <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;">
           <div style="width:9px;height:9px;border-radius:50%;background:${dotColor[pid]||'var(--grey)'};flex-shrink:0;"></div>
-          <span style="font-size:12px;font-weight:700;color:var(--navy);">${names[pid]||pid}</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy);cursor:pointer;" onclick="openProjectPopup('${pid}')" title="${t('viewProject')}">${names[pid]||pid} <svg style="display:inline;vertical-align:middle;opacity:0.35;margin-left:2px;" width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 5.5h5M5.5 3v5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></span>
           <span style="margin-left:auto;background:rgba(5,35,61,0.08);color:var(--text-2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">${issues.length} ${issues.length>1?t('updates2'):t('update')}</span>
           ${isEditor?`<button onclick="openAddUpdate('${pid}')" style="background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">+ ${t('addBtn')}</button>`:''}
-          <span style="font-size:10px;color:var(--blue);cursor:pointer;" onclick="openProject('${pid}')">${t('viewProject')}</span>
         </div>`;
       // Use the week with data as base for comparison (currentWeek may be empty)
       const _semanalBaseWeek=(()=>{const wd2=allData[currentWeek]||{};const hasCurrent=Object.values(wd2).some(arr=>arr&&arr.length);return hasCurrent?currentWeek:(_latestDataWeek()||currentWeek);})();
@@ -2010,19 +2017,20 @@ function renderSemanal(){
             if(sameStatus&&sameText){ diffBadge=LBL_NO_CHANGE; diffBg='#f3f4f6;color:#6b7280'; }
             else if(!sameStatus){ diffBadge=LBL_STATUS_UPD; diffBg='#fef9c3;color:#854d0e'; }
             else{ diffBadge=LBL_TEXT_UPD; diffBg='#dbeafe;color:#1e40af'; }
-            const pstColor=pst.sbar==='sbar-green'?'#22c55e':pst.sbar==='sbar-red'?'#ef4444':pst.sbar==='sbar-yellow'?'#eab308':'#9ca3af';
-            const pstBg=pst.sbar==='sbar-green'?'#dcfce7':pst.sbar==='sbar-red'?'#fee2e2':pst.sbar==='sbar-yellow'?'#fef9c3':'#f3f4f6';
-            const pstTxt=pst.sbar==='sbar-green'?'#15803d':pst.sbar==='sbar-red'?'#b91c1c':pst.sbar==='sbar-yellow'?'#854d0e':'#6b7280';
-            cmpBlock=`<div style="margin:0 12px 10px 12px;border-radius:7px;background:#f8f9fc;border:1px solid #e2e8f0;overflow:hidden;">
+            // Previous week status — always muted grey
+            const pstColor='#c4cad3';
+            const pstBg='#f1f3f6';
+            const pstTxt='#9ca3af';
+            cmpBlock=`<div style="margin:0 12px 10px 12px;border-radius:7px;background:#f9fafb;border:1px solid #eaecef;overflow:hidden;">
               <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #edf0f5;">
-                <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
-                <span style="font-size:9px;color:#9ca3af;">${weekRange(_prevWeekKey(currentWeek))}</span>
-                <span style="margin-left:auto;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:${diffBg};">${diffBadge}</span>
+                <span style="font-size:9px;font-weight:500;color:#b8c0cc;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
+                <span style="font-size:9px;color:#c4cad3;">${weekRange(_prevWeekKey(currentWeek))}</span>
+                <span style="margin-left:6px;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:${diffBg};">${diffBadge}</span>
               </div>
               <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;">
                 <div style="width:3px;align-self:stretch;border-radius:2px;background:${pstColor};flex-shrink:0;min-height:16px;"></div>
                 <div style="flex:1;min-width:0;">
-                  <span class="cmp-prev-text" style="font-size:11px;color:#4b5563;line-height:1.4;">${prev.text||'—'}</span>
+                  <span class="cmp-prev-text" style="font-size:11px;color:#a0a8b4;line-height:1.4;">${prev.text||'—'}</span>
                 </div>
                 <span style="flex-shrink:0;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:${pstBg};color:${pstTxt};">${pst.lbl}</span>
               </div>
@@ -2030,9 +2038,9 @@ function renderSemanal(){
           } else {
             // Topic didn't exist last week → NEW this week
             cmpBlock=`<div style="margin:0 12px 10px 12px;border-radius:7px;background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 10px;display:flex;align-items:center;gap:8px;">
-              <span style="font-size:9px;font-weight:800;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
-              <span style="font-size:9px;color:#9ca3af;">${weekRange(_prevWeekKey(currentWeek))}</span>
-              <span style="margin-left:auto;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:#d1fae5;color:#065f46;">${LBL_NEW}</span>
+              <span style="font-size:9px;font-weight:500;color:#b8c0cc;letter-spacing:0.5px;text-transform:uppercase;">${LBL_PREV}</span>
+              <span style="font-size:9px;color:#c4cad3;">${weekRange(_prevWeekKey(currentWeek))}</span>
+              <span style="margin-left:6px;font-size:9px;font-weight:700;padding:1px 7px;border-radius:3px;background:#d1fae5;color:#065f46;">${LBL_NEW}</span>
             </div>`;
           }
         }
@@ -2054,7 +2062,7 @@ function renderSemanal(){
           ${acts.length||isEditor?`<div class="act-section">
             <div class="act-title">${t('activities')}${isEditor?` <button onclick="openEditIssue('${pid}',${issIdx})" style="background:none;border:none;color:var(--blue);font-size:9.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0 0 0 6px;">+ ${t('manageBtn')}</button>`:''}
             </div>
-            <div>${acts.map(a=>`<div class="act-row">${ICONS[a.type]||''}<span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div>
+            <div>${acts.map(a=>`<div class="act-row"><span class="act-icon">${ICONS[a.type]||'·'}</span><span>${a.text||''}</span><span class="act-date">${a.date||''}</span></div>`).join('')}</div>
           </div>`:''}
         </div>`;
       });
