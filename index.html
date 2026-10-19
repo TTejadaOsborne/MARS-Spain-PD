@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1514 -->
+<!-- BUILD:20261019-1518 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1514';
+const BUILD='20261019-1518';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -690,20 +690,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
 <!-- EMAIL EXPORT MODAL -->
 <div class="modal-bg" id="emailExportModal" style="align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(5,35,61,0.22);width:min(760px,96vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;">
+  <div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(5,35,61,0.22);width:min(780px,96vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <div>
-        <div style="font-size:14px;font-weight:800;color:var(--navy);" id="emailModalTitle">📧 Email ejecutivo — listo para copiar</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:2px;" id="emailModalSubtitle">Selecciona todo el contenido del recuadro y pégalo directamente en tu cliente de email</div>
+        <div style="font-size:14px;font-weight:800;color:var(--navy);" id="emailModalTitle">📧 Email ejecutivo — actualización semanal</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;" id="emailModalSubtitle">Personaliza el texto introductorio y copia el email completo</div>
       </div>
       <button onclick="closeModal('emailExportModal')" style="background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;padding:0 4px;">×</button>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:20px 24px;">
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button onclick="copyEmailHtml()" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar imagen</button>
-        <button onclick="selectEmailContent()" style="background:#fff;border:1px solid var(--border);color:var(--navy);border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:none;">Seleccionar todo</button>
+    <div style="flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px;">
+      <!-- Intro text editor -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:0.3px;">TEXTO INTRODUCTORIO <span style="font-weight:400;color:var(--text-3);">(aparecerá al inicio del email)</span></div>
+        <textarea id="emailIntroText" rows="4" placeholder="Ej: Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo." style="width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--text);resize:vertical;outline:none;background:var(--bg-2,#f8fafc);line-height:1.5;"></textarea>
       </div>
-      <div id="emailPreviewWrap" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#f8f9fa;"></div>
+      <!-- Action buttons -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button onclick="copyEmailHtml()" id="emailCopyBtn" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📋 Copiar email</button>
+        <button onclick="regenerateEmailHtml()" style="background:#fff;border:1.5px solid var(--border);color:var(--navy);border-radius:7px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">🔄 Actualizar preview</button>
+        <span id="emailCopyStatus" style="font-size:11px;color:#16a34a;font-weight:600;display:none;">✓ ¡Copiado!</span>
+      </div>
+      <!-- Preview -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:0.3px;">PREVIEW</div>
+        <div id="emailPreviewWrap" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#e8edf2;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -2159,132 +2170,57 @@ async function exportEmailSemanal(){
   const title=document.getElementById('emailModalTitle');
   const sub=document.getElementById('emailModalSubtitle');
   const wrap=document.getElementById('emailPreviewWrap');
-  if(title) title.textContent=isEN?'📧 Executive email — screenshot':'📧 Email ejecutivo — captura visual';
-  if(sub) sub.textContent=isEN?'Capturing weekly view…':'Capturando vista semanal…';
-  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Generating screenshot…':'Generando captura…'}</div>`;
+  if(title) title.textContent=isEN?'📧 Executive email — weekly update':'📧 Email ejecutivo — actualización semanal';
+  if(sub) sub.textContent=isEN?'Customise the intro and copy the full email':'Personaliza el texto introductorio y copia el email completo';
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">${isEN?'Building email…':'Generando email…'}</div>`;
   modal.classList.add('on');
-
-  try{
-    const h2c=await _loadHtml2Canvas();
-    const feed=document.getElementById('semanalFeed');
-    if(!feed){
-      if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#e11d48;font-size:13px;">No hay datos de semana seleccionada</div>`;
-      return;
-    }
-    const APP_URL_EMAIL='https://ttejadaosborne.github.io/mars-spain-pd/';
-    // Format week label
-    const weekLabel=(()=>{
-      if(!currentWeek) return '';
-      try{
-        const d=new Date(currentWeek+'T00:00:00');
-        const end=new Date(d); end.setDate(d.getDate()+6);
-        const fmt=dt=>dt.toLocaleDateString(isEN?'en-GB':'es-ES',{day:'2-digit',month:'short'});
-        return fmt(d)+' – '+fmt(end);
-      }catch(e){return currentWeek;}
-    })();
-    // Build off-screen wrapper: header + feed clone + footer
-    const wrapper=document.createElement('div');
-    const _captureW=Math.min(feed.offsetWidth,520);
-    wrapper.style.cssText='position:fixed;left:-9999px;top:0;width:'+_captureW+'px;background:#ffffff;font-family:Inter,sans-serif;border-radius:12px;overflow:hidden;';
-    // Header
-    const hdr=document.createElement('div');
-    hdr.style.cssText='background:#1a3a56;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;';
-    // Try to get LOGO_B64 from buildEmailHtml scope — look for it at module level or inline a small text fallback
-    const logoB64=(typeof LOGO_B64!=='undefined'&&LOGO_B64)?LOGO_B64:'';
-    const logoHtml=logoB64
-      ? `<span style="display:inline-block;background:#fff;border-radius:3px;padding:3px 8px;line-height:0;"><img src="data:image/png;base64,${logoB64}" alt="MARS" style="display:block;height:24px;width:auto;border:0;" /></span>`
-      : `<span style="display:inline-block;background:#fff;border-radius:3px;padding:4px 8px;color:#1a3a56;font-weight:800;font-size:14px;letter-spacing:2px;">MARS</span>`;
-    hdr.innerHTML=`
-      <div style="display:flex;align-items:center;gap:12px;">
-        ${logoHtml}
-        <div>
-          <div style="color:#fff;font-size:13px;font-weight:700;line-height:1.2;">${isEN?'Weekly Update':'Actualización Semanal'}</div>
-          <div style="color:#93c5fd;font-size:11px;font-weight:400;margin-top:2px;">Spain PD Portfolio</div>
-        </div>
-      </div>
-      <div style="color:#cbd5e1;font-size:11px;font-weight:500;text-align:right;">
-        ${weekLabel}
-      </div>`;
-    wrapper.appendChild(hdr);
-    // Feed clone — strip editor-only UI elements before capture
-    const feedClone=feed.cloneNode(true);
-    feedClone.style.cssText+='border-radius:0;box-shadow:none;';
-    // Remove gestionar buttons, add/edit controls, view-project links
-    feedClone.querySelectorAll('[data-editor-only],[onclick*="gestionar"],[onclick*="addAct"],[onclick*="editAct"],[onclick*="removeAct"],[onclick*="goToProject"],[onclick*="openEditIssue"],[onclick*="openAddUpdate"],[onclick*="confirmDraft"],[onclick*="openProjectPopup"]').forEach(el=>el.remove());
-    // Also hide by class patterns used for editor controls
-    feedClone.querySelectorAll('.act-add-btn,.act-edit-btn,.act-del-btn,.manage-link,.view-project-btn').forEach(el=>el.remove());
-    // Remove ALL buttons and links that are editor actions
-    feedClone.querySelectorAll('button').forEach(el=>el.remove());
-    // Remove draft banners
-    feedClone.querySelectorAll('.draft-banner').forEach(el=>el.remove());
-    wrapper.appendChild(feedClone);
-    // Footer
-    const ftr=document.createElement('div');
-    ftr.style.cssText='background:#f8fafc;border-top:1px solid #e2e8f0;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;';
-    ftr.innerHTML=`
-      <span style="color:#94a3b8;font-size:10px;">${isEN?'Auto-generated · MARS Spain PD':'Generado automáticamente · MARS Spain PD'}</span>
-      <span style="color:#1a3a56;font-size:10px;font-weight:600;">${isEN?'Weekly Update':'Actualización Semanal'}</span>`;
-    wrapper.appendChild(ftr);
-    document.body.appendChild(wrapper);
-    let canvas;
-    try{
-      canvas=await h2c(wrapper,{
-        scale:2,
-        useCORS:true,
-        backgroundColor:'#ffffff',
-        logging:false,
-        allowTaint:true
-      });
-    }finally{
-      document.body.removeChild(wrapper);
-    }
-    const dataUrl=canvas.toDataURL('image/png');
-    // Build email HTML: image wrapped in clickable link to app
-    const w=Math.round(canvas.width/2); // logical width
-    const GUIDE_URL='https://ttejadaosborne.github.io/mars-spain-pd/#guide';
-    const emailHtml=`<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f1f5f9;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#e8edf2;padding:24px 0;">
-<tr><td align="center" style="padding:0 0 8px 0;">
-<a href="${APP_URL_EMAIL}" target="_blank" style="display:inline-block;border:0;text-decoration:none;">
-<img src="${dataUrl}" width="${w}" style="display:block;max-width:100%;width:${w}px;border:0;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10);" alt="Actualización Semanal MARS" />
-</a>
-</td></tr>
-<tr><td align="center" style="padding:8px 0 4px 0;">
-<table cellpadding="0" cellspacing="0"><tr>
-<td style="padding:0 8px;">
-<a href="${APP_URL_EMAIL}" target="_blank" style="display:inline-block;background:#1a3a56;color:#fff;font-size:12px;font-weight:700;padding:7px 18px;border-radius:5px;text-decoration:none;font-family:Arial,sans-serif;">MARS Spain PD →</a>
-</td>
-<td style="padding:0 8px;">
-<a href="${GUIDE_URL}" target="_blank" style="display:inline-block;background:#e2e8f0;color:#1a3a56;font-size:12px;font-weight:600;padding:7px 18px;border-radius:5px;text-decoration:none;font-family:Arial,sans-serif;">${isEN?'📖 User guide':'📖 Guía de uso'}</a>
-</td>
-</tr></table>
-</td></tr>
-<tr><td align="center" style="padding:6px 0 12px 0;font-family:Arial,sans-serif;font-size:10px;color:#94a3b8;">${isEN?'Auto-generated · MARS Spain PD':'Generado automáticamente · MARS Spain PD'}</td></tr>
-</table>
-</body></html>`;
-    modal._emailHtml=emailHtml;
-    modal._emailPng=dataUrl;
-    modal._emailPngW=w;
-    // Show preview
-    if(sub) sub.textContent=isEN?'Copy image to clipboard and paste into Outlook / email':'Copia la imagen al portapapeles y pégala en Outlook / email';
-    if(wrap){
-      wrap.innerHTML='';
-      const img=document.createElement('img');
-      img.src=dataUrl;
-      img.style.cssText=`display:block;max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);`;
-      wrap.style.padding='16px';
-      wrap.style.background='#f1f5f9';
-      wrap.appendChild(img);
-    }
-    // Update button labels
-    const copyBtn=document.querySelector('#emailExportModal button[onclick="copyEmailHtml()"]');
-    if(copyBtn) copyBtn.textContent=isEN?'📋 Copy image':'📋 Copiar imagen';
-    const selBtn=document.querySelector('#emailExportModal button[onclick="selectEmailContent()"]');
-    if(selBtn) selBtn.style.display='none'; // not needed for image mode
-  } catch(err){
-    console.error('html2canvas error',err);
-    if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#e11d48;font-size:13px;">Error al capturar: ${err.message}</div>`;
+  // Reset copy status
+  const st=document.getElementById('emailCopyStatus');
+  if(st) st.style.display='none';
+  // Set default intro text if empty
+  const introEl=document.getElementById('emailIntroText');
+  if(introEl&&!introEl.value.trim()){
+    introEl.value=isEN
+      ?'Please find below the weekly project status update for the MARS Spain PD portfolio. For further detail, you can access the tracking tool via the link at the bottom of this email.'
+      :'Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo.';
   }
+  await _refreshEmailPreview();
+}
+async function _refreshEmailPreview(){
+  const modal=document.getElementById('emailExportModal');
+  const wrap=document.getElementById('emailPreviewWrap');
+  if(!modal||!wrap) return;
+  const isEN=lang==='en';
+  try{
+    const emailHtml=await buildEmailHtml();
+    modal._emailHtml=emailHtml;
+    // Render preview in iframe so styles are isolated
+    wrap.innerHTML='';
+    const iframe=document.createElement('iframe');
+    iframe.style.cssText='width:100%;border:none;border-radius:10px;display:block;';
+    iframe.setAttribute('scrolling','no');
+    wrap.appendChild(iframe);
+    const doc=iframe.contentDocument||iframe.contentWindow.document;
+    doc.open();doc.write(emailHtml);doc.close();
+    // Auto-height
+    const resize=()=>{
+      try{
+        iframe.style.height=(iframe.contentDocument.body.scrollHeight+8)+'px';
+      }catch(e){}
+    };
+    iframe.onload=resize;
+    setTimeout(resize,300);
+  }catch(err){
+    console.error('buildEmailHtml error',err);
+    if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#e11d48;font-size:13px;">Error: ${err.message}</div>`;
+  }
+}
+async function regenerateEmailHtml(){
+  const wrap=document.getElementById('emailPreviewWrap');
+  if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Inter,sans-serif;font-size:13px;">Actualizando…</div>`;
+  const st=document.getElementById('emailCopyStatus');
+  if(st) st.style.display='none';
+  await _refreshEmailPreview();
 }
 async function buildEmailHtml(forceLang){
   // Accept explicit lang parameter to avoid closure-capture issues when called from setLang()
@@ -2391,6 +2327,11 @@ async function buildEmailHtml(forceLang){
   });
   const weekLbl=weekRange(_emailBaseWeek);
   const projWord=totalProjects===1?TX.projects:TX.projectsPlural;
+  // Intro text from modal textarea (if present)
+  const _introRaw=(document.getElementById('emailIntroText')||{}).value||'';
+  const introBlock=_introRaw.trim()?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;border-collapse:collapse;">
+    <tr><td style="padding:12px 14px;background:#f0f4f8;border-left:3px solid #1a3a56;border-radius:4px;font-size:12.5px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#1e2d3d;line-height:1.6;">${_introRaw.trim().replace(/\n/g,'<br>')}</td></tr>
+  </table>`:'';
   const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border-collapse:collapse;border:1.5px solid #fecaca;border-radius:6px;overflow:hidden;">
     <tr style="background:#fff1f2;"><td style="padding:6px 10px;font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-weight:800;color:#991b1b;letter-spacing:0.4px;border-bottom:1px solid #fecaca;">${TX.needsAttention}</td></tr>
     ${attentionRows}
@@ -2431,13 +2372,17 @@ async function buildEmailHtml(forceLang){
   <!-- BODY -->
   <tr>
     <td colspan="2" style="background:#ffffff;padding:14px 20px;">
+      ${introBlock}
       ${attnBlock}
       ${projBlocks}
       <!-- CTA -->
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;border-top:1px solid #f1f5f9;">
         <tr>
           <td style="padding:8px 0 0 0;" align="center">
-            <a href="${APP_URL}" style="display:inline-block;background:#1a3a56;color:#fff;font-size:11px;font-weight:700;padding:6px 14px;border-radius:5px;text-decoration:none;letter-spacing:0.3px;">${TX.viewApp} →</a>
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="padding:0 5px;"><a href="${APP_URL}" style="display:inline-block;background:#1a3a56;color:#fff;font-size:11px;font-weight:700;padding:6px 14px;border-radius:5px;text-decoration:none;letter-spacing:0.3px;">${TX.viewApp} →</a></td>
+              <td style="padding:0 5px;"><a href="${APP_URL}#guide" style="display:inline-block;background:#e8f1f8;color:#1a3a56;font-size:11px;font-weight:600;padding:6px 14px;border-radius:5px;text-decoration:none;letter-spacing:0.3px;">${isEN?'📖 User guide':'📖 Guía de uso'}</a></td>
+            </tr></table>
           </td>
         </tr>
         <tr>
@@ -2458,31 +2403,20 @@ async function buildEmailHtml(forceLang){
 async function copyEmailHtml(){
   const modal=document.getElementById('emailExportModal');
   if(!modal) return;
-  // Prefer PNG image copy (works perfectly in Outlook)
-  if(modal._emailPng){
-    try{
-      // Convert data URL to blob
-      const res=await fetch(modal._emailPng);
-      const blob=await res.blob();
-      const item=new ClipboardItem({'image/png':blob});
-      await navigator.clipboard.write([item]);
-      toast('✓ '+(lang==='en'?'Image copied — paste into Outlook':'Imagen copiada — pega en Outlook'));
-      return;
-    } catch(e){
-      // Fall back to HTML copy
-      console.warn('PNG clipboard failed, trying HTML',e);
-    }
-  }
-  // Fallback: HTML copy
-  const html=modal._emailHtml||'';
-  if(!html){toast(lang==='en'?'Generate the email first':'Genera primero el email');return;}
+  const isEN=lang==='en';
+  const st=document.getElementById('emailCopyStatus');
+  // Always regenerate with current intro text before copying
+  const emailHtml=await buildEmailHtml();
+  modal._emailHtml=emailHtml;
+  if(!emailHtml){toast(isEN?'Generate the email first':'Genera primero el email');return;}
   try{
-    const blob=new Blob([html],{type:'text/html'});
+    const blob=new Blob([emailHtml],{type:'text/html'});
     const item=new ClipboardItem({'text/html':blob});
     await navigator.clipboard.write([item]);
-    toast('✓ '+(lang==='en'?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
+    if(st){st.textContent=isEN?'✓ Copied!':'✓ ¡Copiado!';st.style.display='inline';}
+    toast('✓ '+(isEN?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
   } catch(e){
-    _fallbackCopyEmail(html);
+    _fallbackCopyEmail(emailHtml);
   }
 }
 function _fallbackCopyEmail(html){
