@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1022 -->
+<!-- BUILD:20261019-1028 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1022';
+const BUILD='20261019-1028';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -638,7 +638,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 </div>
 
 <!-- ACTUALIZACIÓN SEMANAL PAGE -->
-<div id="page-semanal" style="display:none;">
+<div id="page-semanal" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;">
   <div class="page-hdr">
     <div class="page-hdr-left">
       <h2 data-i18n="navSemanal">Actualización semanal</h2>
@@ -913,7 +913,7 @@ const DB = {
         "status": "yellow",
         "attention": false,
         "text": "Paquete de documentación completo presentado durante agosto. Pendiente subir documentación técnica de Fregacedos I por limitaciones de tamaño de archivo.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "mutxamel": [
@@ -934,7 +934,7 @@ const DB = {
         "status": "red",
         "attention": true,
         "text": "Univergy alega que los costes asociados a la actualización de la documentación quedan fuera del alcance del DSA. Pendiente decisión interna sobre si proceder con el pago.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ]
   },
@@ -985,7 +985,7 @@ const DB = {
         "impact": "schedule",
         "status": "yellow",
         "text": "La documentación de Fregacedos I fue recibida correctamente el 14/09 y trasladada al expediente. Próximos pasos: seguimiento del análisis ambiental.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "mutxamel": [
@@ -1001,7 +1001,7 @@ const DB = {
         "impact": "legal",
         "status": "red",
         "text": "Hemos rechazado la cotización de Univergy por modificación de trazado. Univergy contraargumenta que los trabajos fueron ejecutados correctamente. Hemos solicitado reunión para negociar una solución técnica y contractual.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ]
   },
@@ -1037,7 +1037,7 @@ const DB = {
         "impact": "none",
         "status": "yellow",
         "text": "Se ha avanzado en la definición del layout con EFENER. Reunión con ALTANO para valorar alternativas al trazado. Aceptado presupuesto CIVILE para informe de inundabilidad. ICU favorable del Ayuntamiento de Olesa de Bonesvalls obtenido el 23/09.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "custom_nuevas_oportunidades": [
@@ -1065,7 +1065,7 @@ const DB = {
         "impact": "schedule",
         "status": "yellow",
         "text": "No hay novedades.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "mutxamel": [
@@ -1086,7 +1086,7 @@ const DB = {
         "impact": "legal",
         "status": "red",
         "text": "No hay novedades.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ]
   },
@@ -1122,7 +1122,7 @@ const DB = {
         "impact": "schedule",
         "status": "yellow",
         "text": "Se ha recibido cotización por parte de SOCOTEC (empresa recomendada por ECAFIR) para la realización del informe hidrológico completo, por un importe de 5.450,00€ + IVA, a repartir 50/50 entre FFV y MARS. // Se ha definido el layout de la planta, y se ha confirmado la alternativa de trazado de la LSMT junto con EFENER/ECAFIR. Pendiente de enviar a ALTANO para su VºBº.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "fregacedos": [
@@ -1140,7 +1140,7 @@ const DB = {
         "impact": "schedule",
         "status": "yellow",
         "text": "No hay novedades.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "mutxamel": [
@@ -1150,7 +1150,7 @@ const DB = {
         "impact": "legal",
         "status": "red",
         "text": "Reunión con Univergy el 30/09 para proponer la disolución de los contratos y salida limpia del SPA y DSA. Univergy aceptó el planteamiento. Se solicita a Univergy que presente la propuesta inicial para comenzar las negociaciones formales.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ]
   },
@@ -1181,7 +1181,7 @@ const DB = {
         "impact": "none",
         "status": "yellow",
         "text": "Tras recibir el informe previo de inundabilidad de CIVILE, no hay conclusión clara sobre la posible afección de la Riera de Begues. Se requiere estudio hidrológico completo. Layout acordado con EFENER en zonas alejadas de la Riera, pendiente revisión final.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "custom_nuevas_oportunidades": [
@@ -1215,7 +1215,7 @@ const DB = {
         "impact": "schedule",
         "status": "yellow",
         "text": "No hay novedades.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ],
     "mutxamel": [
@@ -1241,7 +1241,7 @@ const DB = {
         "impact": "legal",
         "status": "red",
         "text": "Reunión con Univergy el 30/09 para proponer la disolución de los contratos y salida limpia del SPA y DSA. Univergy aceptó el planteamiento. Se solicita a Univergy que presente la propuesta inicial para comenzar las negociaciones formales.",
-        "topic": "Diseño técnico"
+        "topic": "Diseño"
       }
     ]
   }
@@ -1351,13 +1351,16 @@ let calMonth = 9;
 // ── TOPIC TRANSLATION ──────────────────────────────────────────────────────
 const TOPIC_MAP_EN={
   'estado permitting':'Permitting status',
-  'diseño técnico':'Technical design',
-  'diseño tecnico':'Technical design',
+  'diseño':'Design',
+  'diseño técnico':'Design',
+  'diseño tecnico':'Design',
   'análisis':'Analysis',
   'analisis':'Analysis',
   'análisis técnico':'Technical analysis',
-  'grid connection':'Grid connection',
+  'terrenos':'Land',
+  'conexión a red':'Grid connection',
   'conexión red':'Grid connection',
+  'grid connection':'Grid connection',
   'medioambiente':'Environment',
   'medio ambiente':'Environment',
   'legal':'Legal',
@@ -1367,6 +1370,10 @@ const TOPIC_MAP_EN={
   'construccion':'Construction',
   'operación':'Operations',
   'operacion':'Operations',
+  'permisos':'Permits',
+  'ingeniería':'Engineering',
+  'ingenieria':'Engineering',
+  'licencias':'Licenses',
 };
 function translateTopic(topic){
   if(!topic||lang==='es') return topic;
@@ -1627,7 +1634,7 @@ function saveNav(){
   try{
     const cronOn=document.getElementById('page-cronograma')&&document.getElementById('page-cronograma').style.display!=='none';
     const docsOn=document.getElementById('page-documentacion')&&document.getElementById('page-documentacion').style.display!=='none';
-    const semOn=document.getElementById('page-semanal').style.display!=='none';
+    const semOn=['','flex'].includes(document.getElementById('page-semanal').style.display);
     const page=semOn?'semanal':cronOn?'cronograma':docsOn?'documentacion':'portfolio';
     localStorage.setItem(NAV_KEY,JSON.stringify({page,pid:currentProjId,week:currentWeek,semFilt:semanalFilterPid}));
   }catch(e){}
@@ -1635,7 +1642,7 @@ function saveNav(){
 function showPage(page){
   const pages=['portfolio','semanal','cronograma','documentacion'];
   document.getElementById('page-portfolio').style.display = page==='portfolio' ? '' : 'none';
-  document.getElementById('page-semanal').style.display = page==='semanal' ? '' : 'none';
+  document.getElementById('page-semanal').style.display = page==='semanal' ? 'flex' : 'none';
   document.getElementById('page-cronograma').style.display = page==='cronograma' ? 'flex' : 'none';
   document.getElementById('page-documentacion').style.display = page==='documentacion' ? 'flex' : 'none';
   // Hide legacy project page if it still exists
@@ -3063,7 +3070,7 @@ function checkPwdPop(){
     toast('✏️ '+t('editorOn'));
     renderPtlEditBtns();
     const semPage=document.getElementById('page-semanal');
-    if(semPage&&semPage.style.display!=='none') renderSemanal();
+    if(semPage&&semPage.style.display==='flex') renderSemanal();
   } else {
     const err=document.getElementById('pwdErrPop');
     err.style.display='block';
@@ -3079,7 +3086,7 @@ function exitEditor(){
   renderPtlEditBtns();
   // Refresh semanal to hide add buttons
   const semPage=document.getElementById('page-semanal');
-  if(semPage&&semPage.style.display!=='none') renderSemanal();
+  if(semPage&&semPage.style.display==='flex') renderSemanal();
 }
 
 // ── ADD UPDATE ──────────────────────────────────────────────────────────────
@@ -3394,7 +3401,7 @@ function applyLang(){
     el.placeholder=t(k);
   });
   // Re-render semanal to pick up language changes
-  if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none') renderSemanal();
+  if(document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display==='flex') renderSemanal();
   // Re-render feed (portfolio) to pick up language changes
   if(document.getElementById('updatesFeed')) renderFeed();
   // Re-render portfolio timeline
@@ -3414,7 +3421,7 @@ function setLang(l){
   if(badge) badge.style.display='';
   applyLang();
   // Re-render current visible page content
-  const semVisible=document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display!=='none';
+  const semVisible=document.getElementById('page-semanal')&&document.getElementById('page-semanal').style.display==='flex';
   if(semVisible) renderSemanal();
   if(currentProjId){
     const cronVisible=document.getElementById('page-cronograma')&&document.getElementById('page-cronograma').style.display!=='none';
