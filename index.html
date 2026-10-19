@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1242 -->
+<!-- BUILD:20261019-1248 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1242';
+const BUILD='20261019-1248';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2215,19 +2215,29 @@ async function buildEmailHtml(forceLang){
       const topicLbl=isEN?(TOPIC_MAP_EN[iss.topic?.toLowerCase()]||iss.topic||''):(iss.topic||'');
       const issText=_tx(iss.text||'');
       const acts=iss.activities||[];
-      const actsHtml=acts.map(a=>{const ico=ICONS[a.type]?`<span style="display:inline-block;vertical-align:middle;margin-right:4px;filter:sepia(1) saturate(4) hue-rotate(5deg);">${ICONS[a.type]}</span>`:'·';return `<span style="font-size:11px;color:#b45309;">${ico}<span style="vertical-align:middle;">${_tx(a.text||'')}${a.date?` <span style="color:#d97706;font-size:10px;">(${a.date})</span>`:''}</span></span>`;}).join('<br>');
+      // Icon chars that work in Outlook (no SVG)
+      const ACT_ICON={'call':'📞','email':'✉','admin':'📋','doc':'📄','internal':'💬','site':'📍'};
+      const actsRows=acts.map(a=>{
+        const ico=ACT_ICON[a.type]||'·';
+        const dateStr=a.date?` <span style="color:#b45309;font-size:10px;font-weight:600;">(${a.date})</span>`:'';
+        return `<tr>
+          <td style="width:3px;padding:0;background:#ffffff;"></td>
+          <td colspan="2" style="padding:2px 10px 2px 22px;font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#92400e;">
+            <span style="color:#d97706;">${ico}</span> ${_tx(a.text||'')}${dateStr}
+          </td>
+        </tr>`;
+      }).join('');
       if(iss.attention){hasAttention=true;attentionRows+=`<tr><td style="padding:5px 10px 5px 12px;font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${issText}</td></tr>`;}
       // Compact row: left color bar + topic+text + status pill
       rowsHtml+=`<tr style="${idx>0?'border-top:1px solid #f1f5f9;':''}">
         <td style="width:3px;padding:0;background:${sc.bar};"></td>
         <td style="padding:7px 10px;vertical-align:top;">
           <div style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;"><b style="color:#0f172a;">${topicLbl}</b> <span style="color:#475569;">${issText}</span></div>
-          ${actsHtml?`<div style="margin-top:3px;">${actsHtml}</div>`:''}
         </td>
         <td style="padding:7px 10px;vertical-align:top;text-align:right;white-space:nowrap;">
           <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:0.3px;">${stLbl}</span>
         </td>
-      </tr>`;
+      </tr>${actsRows}`;
     });
     projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
       <tr style="background:#f8fafc;">
