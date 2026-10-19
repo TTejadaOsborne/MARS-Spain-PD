@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1644 -->
+<!-- BUILD:20261019-1655 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,8 +13,9 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1644';
+const BUILD='20261019-1655';
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
 (function(){
@@ -2226,6 +2227,48 @@ async function regenerateEmailHtml(){
   if(st) st.style.display='none';
   await _refreshEmailPreview();
 }
+// Render HTML content to a PNG data URL using html2canvas
+// Returns a data:image/png;base64,... string or null on failure
+async function _renderEmailContentAsImage(htmlContent, widthPx){
+  return new Promise((resolve)=>{
+    try{
+      if(typeof html2canvas==='undefined'){resolve(null);return;}
+      const wrapper=document.createElement('div');
+      wrapper.style.cssText=`position:fixed;left:-9999px;top:0;width:${widthPx}px;background:#ffffff;font-family:Inter,Calibri,Arial,sans-serif;font-size:12px;line-height:1.5;color:#1e2d3d;`;
+      wrapper.innerHTML=htmlContent;
+      document.body.appendChild(wrapper);
+      // Give browser a tick to lay out
+      requestAnimationFrame(()=>{
+        html2canvas(wrapper,{
+          scale:2,
+          useCORS:true,
+          allowTaint:true,
+          backgroundColor:'#ffffff',
+          logging:false,
+          width:widthPx,
+        }).then(canvas=>{
+          document.body.removeChild(wrapper);
+          resolve(canvas.toDataURL('image/png'));
+        }).catch(err=>{
+          try{document.body.removeChild(wrapper);}catch(e){}
+          console.error('html2canvas error',err);
+          resolve(null);
+        });
+      });
+    }catch(e){
+      console.error('_renderEmailContentAsImage error',e);
+      resolve(null);
+    }
+  });
+}
+
+// Build the visual content blocks (attn + projects) as web-styled HTML for image rendering
+// Returns plain HTML string (NOT email table HTML)
+function _buildContentBlocksHtml(attnBlock, projBlocks){
+  // attnBlock and projBlocks are already email table HTML — they render fine in browser too
+  return `<div style="padding:0;background:#ffffff;">${attnBlock}${projBlocks}</div>`;
+}
+
 async function buildEmailHtml(forceLang){
   // Accept explicit lang parameter to avoid closure-capture issues when called from setLang()
   const isEN=(forceLang||lang)==='en';
@@ -2257,6 +2300,7 @@ async function buildEmailHtml(forceLang){
     footer:isEN?'Auto-generated · MARS Spain PD · ':'Generado automáticamente · MARS Spain PD · ',
     confidential:isEN?'Confidential internal update':'Actualización confidencial — uso interno',
     viewApp:isEN?'Open tracker':'Abrir tracker',
+    guideBtn:isEN?'User guide':'Guía de uso',
     inWord:isEN?'across':'en',
   };
   const MARS_LOGO_HTML=`<table cellpadding="0" cellspacing="0" width="100" style="width:100px;"><tr><td width="100" height="36" style="width:100px;height:36px;background:#ffffff;padding:0;vertical-align:middle;text-align:center;"><img src="data:image/png;base64,${LOGO_B64}" alt="MARS" width="96" height="27" style="display:block;height:27px;width:96px;max-width:96px;border:0;margin:4px 2px;" /></td></tr></table>`;
@@ -2300,20 +2344,20 @@ async function buildEmailHtml(forceLang){
           <td width="4" style="width:4px;padding:0;background:#1a5276;border-top:2px solid #d0dce8;"></td>
           <td width="154" style="width:154px;padding:0;background:#eaf0f6;border-top:2px solid #d0dce8;vertical-align:top;"></td>
           <td colspan="2" style="padding:10px 16px 12px 12px;background:#eaf0f6;border-top:2px solid #d0dce8;">
-            <p style="margin:0;padding:0 0 7px 0;font-size:9px;font-weight:700;color:#1a5276;letter-spacing:1px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.activitiesTitle}</p>
+            <p style="margin:0;padding:0 0 7px 0;font-size:9px;font-weight:700;color:#1a5276;letter-spacing:1px;text-transform:uppercase;font-family:Inter,Calibri,Arial,sans-serif;">${TX.activitiesTitle}</p>
             ${acts.map(a=>{
               const ico=ACT_ICON_CHAR[a.type]||'▸';
-              const dateStr=a.date?` <span style="font-size:10px;color:#05233D;font-weight:700;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${a.date}</span>`:'';
+              const dateStr=a.date?` <span style="font-size:10px;color:#05233D;font-weight:700;font-family:Inter,Calibri,Arial,sans-serif;">${a.date}</span>`:'';
               return `<table cellpadding="0" cellspacing="0" style="margin-bottom:5px;border-collapse:collapse;"><tr>
-                <td width="18" style="width:18px;font-size:12px;color:#1a5276;vertical-align:top;padding-top:0;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;mso-font-alt:'Arial';">${ico}</td>
-                <td style="font-size:12px;color:#1e2d3d;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.5;vertical-align:top;">${_tx(a.text||'')}${dateStr}</td>
+                <td width="18" style="width:18px;font-size:12px;color:#1a5276;vertical-align:top;padding-top:0;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;">${ico}</td>
+                <td style="font-size:12px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.5;vertical-align:top;">${_tx(a.text||'')}${dateStr}</td>
               </tr></table>`;
             }).join('')}
           </td>
         </tr>`:'';
       if(iss.attention){hasAttention=true;attentionRows+=`<tr>
         <td width="4" style="width:4px;padding:0;background:#ef4444;border-bottom:1px solid #fecaca;"></td>
-        <td colspan="3" style="padding:9px 16px;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
+        <td colspan="3" style="padding:9px 16px;font-size:12px;font-family:Inter,Calibri,Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;line-height:1.5;">
           <b style="color:#991b1b;">${names[pid]||pid}</b> <span style="color:#7c93ab;"> - ${topicLbl}:</span> ${issText}
         </td></tr>`;}
       // Issue row — border on each td (Outlook ignores border-top on tr)
@@ -2321,26 +2365,25 @@ async function buildEmailHtml(forceLang){
       rowsHtml+=`<tr>
         <td width="4" style="width:4px;padding:0;background:${sc.bar};${borderStyle}"></td>
         <td width="154" style="width:154px;padding:11px 10px 11px 16px;vertical-align:top;${borderStyle}">
-          <p style="margin:0;padding:0;font-size:10px;font-weight:700;color:#05233D;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';letter-spacing:0.5px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
+          <p style="margin:0;padding:0;font-size:10px;font-weight:700;color:#05233D;font-family:Inter,Calibri,Arial,sans-serif;letter-spacing:0.5px;text-transform:uppercase;line-height:1.4;">${topicLbl}</p>
         </td>
         <td style="padding:11px 10px;vertical-align:top;${borderStyle}">
-          <p style="margin:0;padding:0;font-size:12px;color:#1e2d3d;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.55;">${issText}</p>
+          <p style="margin:0;padding:0;font-size:12px;color:#1e2d3d;font-family:Inter,Calibri,Arial,sans-serif;line-height:1.55;">${issText}</p>
         </td>
         <td width="90" style="width:90px;padding:11px 16px 11px 4px;vertical-align:top;text-align:right;white-space:nowrap;${borderStyle}">
-          <p style="margin:0;padding:0;display:inline;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:0.2px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${stLbl}</p>
+          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:0.2px;font-family:Inter,Calibri,Arial,sans-serif;">${stLbl}</span>
         </td>
       </tr>${actsRows}`;
     });
-    const _dotC={begues:'#22c55e',fregacedos:'#22c55e',mutxamel:'#ef4444',entrenucleos:'#94a3b8',custom_nuevas_oportunidades:'#3b82f6'};
     projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;border:1px solid #b8cad8;border-radius:8px;overflow:hidden;">
       <tr>
-        <td colspan="4" style="padding:11px 16px;background:#dde6f0;border-bottom:2px solid #b8cad8;">
+        <td colspan="4" style="padding:11px 16px;background:#dde6f0;border-bottom:2px solid #b8cad8;border-radius:8px 8px 0 0;">
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td style="vertical-align:middle;">
-              <p style="margin:0;padding:0;font-size:13px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';font-weight:700;color:#05233D;letter-spacing:0.5px;text-transform:uppercase;">${names[pid]||pid}</p>
+              <p style="margin:0;padding:0;font-size:13px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#05233D;letter-spacing:0.5px;text-transform:uppercase;">${names[pid]||pid}</p>
             </td>
             <td align="right" style="vertical-align:middle;">
-              <p style="margin:0;padding:0;font-size:10px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';font-weight:600;color:#1a5276;background:#b8d4e8;padding:3px 10px;border-radius:3px;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</p>
+              <span style="display:inline-block;font-size:10px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:600;color:#1a5276;background:#b8d4e8;padding:3px 10px;border-radius:3px;">${issues.length} ${issues.length===1?TX.updates:TX.updatesPlural}</span>
             </td>
           </tr></table>
         </td>
@@ -2356,9 +2399,20 @@ async function buildEmailHtml(forceLang){
     <tr><td style="padding:13px 16px;background:#f0f4f8;border-left:4px solid #1a3a56;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';color:#1e2d3d;line-height:1.6;">${_introRaw.trim().replace(/\n/g,'<br>')}</td></tr>
   </table>`:'';
   const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;border:1.5px solid #fca5a5;border-radius:8px;overflow:hidden;">
-    <tr><td colspan="4" style="padding:10px 16px;background:#dc2626;font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';font-weight:700;color:#ffffff;letter-spacing:0.5px;border-bottom:1px solid #fca5a5;">⚠ ${TX.needsAttention}</td></tr>
+    <tr><td colspan="4" style="padding:10px 16px;background:#dc2626;font-size:11px;font-family:Inter,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.5px;border-bottom:1px solid #fca5a5;">⚠ ${TX.needsAttention}</td></tr>
     ${attentionRows}
   </table>`:'';
+
+  // Render the project data tables as an image to guarantee pixel-perfect format in Outlook
+  const EMAIL_WIDTH=640;
+  const contentHtml=_buildContentBlocksHtml(attnBlock,projBlocks);
+  const imageDataUrl=await _renderEmailContentAsImage(contentHtml,EMAIL_WIDTH);
+
+  // Build the body content — image if render succeeded, fallback to HTML tables
+  const bodyContent=imageDataUrl
+    ? `<img src="${imageDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="${isEN?'Project status':'Estado de proyectos'}">`
+    : `${attnBlock}${projBlocks}`;
+
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
 <body style="margin:0;padding:24px 0;background:#d4dde8;font-family:Aptos,Calibri,Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#d4dde8;">
@@ -2391,25 +2445,24 @@ async function buildEmailHtml(forceLang){
   </tr>
   <!-- BODY -->
   <tr>
-    <td style="background:#ffffff;padding:18px 20px;">
+    <td style="background:#ffffff;padding:18px 20px 14px 20px;">
       ${introBlock}
-      ${attnBlock}
-      ${projBlocks}
+      ${bodyContent}
       <!-- CTA -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;border-top:2px solid #edf1f7;padding-top:16px;">
-        <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-top:2px solid #edf1f7;">
+        <tr><td style="padding-top:16px;" align="center">
           <table cellpadding="0" cellspacing="0"><tr>
             <td style="padding:0 6px;">
               <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}" style="height:34px;v-text-anchor:middle;width:160px;" arcsize="18%" stroke="false" fillcolor="#05233D"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;">${TX.viewApp}</center></v:roundrect><![endif]-->
               <!--[if !mso]><!--><a href="${APP_URL}" style="background:#05233D;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;line-height:34px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">${TX.viewApp}</a><!--<![endif]-->
             </td>
             <td style="padding:0 6px;">
-              <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}#guide" style="height:34px;v-text-anchor:middle;width:160px;" arcsize="18%" stroke="true" strokecolor="#05233D" fillcolor="#dce8f2"><w:anchorlock/><center style="color:#05233D;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;">${isEN?'User guide':'Guia de uso'}</center></v:roundrect><![endif]-->
-              <!--[if !mso]><!--><a href="${APP_URL}#guide" style="background:#dce8f2;border-radius:6px;color:#05233D;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;line-height:34px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">${isEN?'User guide':'Guia de uso'}</a><!--<![endif]-->
+              <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}#guide" style="height:34px;v-text-anchor:middle;width:160px;" arcsize="18%" stroke="true" strokecolor="#05233D" fillcolor="#dce8f2"><w:anchorlock/><center style="color:#05233D;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;">${TX.guideBtn}</center></v:roundrect><![endif]-->
+              <!--[if !mso]><!--><a href="${APP_URL}#guide" style="background:#dce8f2;border-radius:6px;color:#05233D;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;line-height:34px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">${TX.guideBtn}</a><!--<![endif]-->
             </td>
           </tr></table>
         </td></tr>
-        <tr><td style="padding:10px 0 0 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.footer}${weekLbl}</td></tr>
+        <tr><td style="padding:10px 0 4px 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.footer}${weekLbl}</td></tr>
       </table>
     </td>
   </tr>
