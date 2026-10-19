@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1746 -->
+<!-- BUILD:20261019-1814 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1746';
+const BUILD='20261019-1814';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -2443,39 +2443,47 @@ async function buildEmailHtml(forceLang){
     ? `<img src="${imageDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="${isEN?'Project status':'Estado de proyectos'}">`
     : `${attnBlock}${projBlocks}`;
 
+  // Render CTA footer block as image too — guarantees button renders correctly in Outlook
+  const CTA_HTML=`<table width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" style="width:${EMAIL_WIDTH}px;background:#ffffff;border-collapse:collapse;border-top:2px solid #e8eef4;">
+    <tr><td style="padding:22px 0 8px 0;text-align:center;">
+      <table cellpadding="0" cellspacing="0" style="display:inline-table;margin:0 auto;">
+        <tr><td style="background:#05233D;border-radius:8px;padding:0;">
+          <a href="${APP_URL}" style="display:block;background:#05233D;border-radius:8px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.8px;line-height:1;padding:15px 48px;text-decoration:none;white-space:nowrap;">MARS Spain PD &nbsp;↗</a>
+        </td></tr>
+      </table>
+      <p style="margin:10px 0 0 0;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
+    </td></tr>
+    <tr><td style="padding:10px 0 18px 0;text-align:center;font-size:10px;color:#b0bec8;font-family:Arial,Helvetica,sans-serif;">${TX.footer}${weekLbl}</td></tr>
+    <tr><td style="background:#05233D;padding:10px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Arial,Helvetica,sans-serif;">${TX.confidential}</td></tr>
+  </table>`;
+  const ctaDataUrl=await _renderEmailContentAsImage(CTA_HTML,EMAIL_WIDTH);
+  const ctaRow=ctaDataUrl
+    ?`<tr><td style="padding:0;line-height:0;"><img src="${ctaDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt=""></td></tr>`
+    :`<tr><td style="background:#ffffff;padding:20px 24px 0 24px;text-align:center;">
+        <a href="${APP_URL}" style="background:#05233D;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;line-height:44px;padding:0 40px;text-decoration:none;">MARS Spain PD ↗</a>
+        <p style="margin:8px 0 0;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
+      </td></tr>
+      <tr><td style="padding:10px 0 16px;text-align:center;font-size:10px;color:#94a3b8;font-family:Arial,Helvetica,sans-serif;">${TX.footer}${weekLbl}</td></tr>
+      <tr><td style="background:#05233D;padding:9px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Arial,Helvetica,sans-serif;">${TX.confidential}</td></tr>`;
+
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
 <body style="margin:0;padding:32px 0 24px 0;background:#e8eef4;font-family:Aptos,Calibri,Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#e8eef4;">
 <tr><td align="center" style="padding:0 16px;">
-  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:auto;width:760px;" arcsize="2%" stroke="true" strokecolor="#c4d3de" fillcolor="#ffffff"><w:anchorlock/><center><![endif]-->
   <table width="760" cellpadding="0" cellspacing="0" style="max-width:760px;border-radius:10px;overflow:hidden;border:1px solid #c4d3de;">
-  <!-- HEADER IMAGE ROW -->
+  <!-- HEADER IMAGE -->
   ${headerRow}
   <!-- BODY -->
   <tr>
-    <td style="background:#ffffff;padding:0 24px 0 24px;">
-      <!-- Intro text — plain, outside image, left-aligned -->
-      <p style="margin:0;padding:18px 0 14px 0;font-size:12px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.7;text-align:left;">${introLine}</p>
+    <td style="background:#ffffff;padding:16px 24px 0 24px;">
+      <p style="margin:0;padding:0 0 14px 0;font-size:12px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';line-height:1.7;">${introLine}</p>
       <div style="border-top:1px solid #e8eef4;margin-bottom:16px;"></div>
       ${bodyContent}
-      <!-- CTA — prominent MARS Spain PD brand button -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;border-top:2px solid #edf1f7;">
-        <tr><td style="padding-top:20px;" align="center">
-          <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${APP_URL}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="12%" stroke="false" fillcolor="#05233D"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;">MARS Spain PD ↗</center></v:roundrect><![endif]-->
-          <!--[if !mso]><!--><a href="${APP_URL}" style="background:linear-gradient(135deg,#05233D 0%,#0a3a5c 100%);border-radius:8px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.8px;line-height:48px;text-align:center;text-decoration:none;width:280px;-webkit-text-size-adjust:none;box-shadow:0 2px 8px rgba(5,35,61,0.25);">MARS Spain PD &nbsp;↗</a><!--<![endif]-->
-          <br>
-          <p style="margin:8px 0 0 0;padding:0;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${isEN?'Access the full tracking tool online':'Accede a la herramienta de seguimiento online'}</p>
-        </td></tr>
-        <tr><td style="padding:12px 0 16px 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.footer}${weekLbl}</td></tr>
-      </table>
     </td>
   </tr>
-  <!-- FOOTER BAR -->
-  <tr>
-    <td style="background:#05233D;padding:9px 26px;text-align:center;font-size:10px;color:#7a9ab8;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';">${TX.confidential}</td>
-  </tr>
+  <!-- CTA + FOOTER IMAGE -->
+  ${ctaRow}
   </table>
-  <!--[if mso]></center></v:roundrect><![endif]-->
 </td></tr>
 <tr><td style="padding:16px 0;"></td></tr>
 </table>
