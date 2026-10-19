@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1128 -->
+<!-- BUILD:20261019-1142 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1128';
+const BUILD='20261019-1142';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2068,11 +2068,6 @@ function toggleSemanalCompare(){
   if(btn) btn.textContent=semanalCompareOpen?(isEN?'Hide':'Ocultar'):(isEN?'Compare':'Comparar');
   renderSemanal();
 }
-function _prevWeekKey(wk){
-  const d=new Date(wk);
-  d.setDate(d.getDate()-7);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 // renderSemanalCompare is now inline inside renderSemanal — no separate panel needed
 
 // ── USER GUIDE MODAL ────────────────────────────────────────────────────────
@@ -2162,8 +2157,9 @@ function buildEmailHtml(){
     confidential: isEN?'MARS Spain PD · Confidential internal update':'MARS Spain PD · Actualización confidencial para uso interno',
     viewApp: isEN?'View live tracker':'Ver en la app',
   };
-  // MARS logo — hosted on GitHub Pages so Outlook can load it (data URIs are blocked)
-  const MARS_LOGO_HTML=`<img src="https://ttejadaosborne.github.io/mars-spain-pd/mars-logo.png" alt="MARS" width="120" height="auto" style="display:block;height:32px;width:auto;border:0;" />`;
+  // MARS logo — embedded as base64 so it renders in Outlook when pasted as rich text (no external request needed)
+  const MARS_LOGO_B64='iVBORw0KGgoAAAANSUhEUgAABz8AAAIiCAYAAABWswUwAAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nOzdT28c1703+Ins1SSPF9QsntWDAbWoxQMMBuSzG/SiyGC2A5AXzwsgte6FaGD2ol6BKAy4VusVhNrNLmTjojbBhcXk4j4J0JhIzsUFEtgXoh0b1+1JPDjykSPJlMQ/XdWnTn0+ABEkjtld5zS7+9T3/H7nJ999990BAAAAAAAA0Hc/NYMAAAAAAABADoSfAAAAAAAAQBaEnwAAAAAAAEAWhJ8AAAAAAABAFoSfAAAAAAAAQBaEnwAAAAAAAEAWhJ8AAAAAAABAFoSfAAAAAAAAQBaEnwAAAAAAAEAWhJ8AAAAAAABAFoSfAAAAAAAAQBaEnwAAAAAAAEAWhJ8AAAAAAABAFoSfAAAAAAAAQBaEnwAAAAAAAEAWhJ8AAAAAAABAFoSfAAAAAAAAQBaEnwAAAAAAAEAWPjSNAAAAAAAMTVnV60VR3IyXHf5z3YsAoFNP57PpZNEPuJDws6zqzaIofrWI30VSHs9n021TArxLXCh8YpCydW8+m+4PfRBeVVb1ywXxy0Xy5iv/eGP5zxBgKU5eedDjoiieF0XxJPzMZ9PnpuR7/3nz//i//tP/9pP/M4XnwvB8+7R4+tn/mD819XBtT+Ln3Avz2fTYkKYvruM24zouCODeAA==';
+  const MARS_LOGO_HTML=`<img src="https://ttejadaosborne.github.io/mars-spain-pd/mars-logo.png" alt="MARS" width="200" style="display:block;height:auto;max-height:48px;width:auto;border:0;" />`;
   const APP_URL='https://ttejadaosborne.github.io/mars-spain-pd/';
   let projSections='';
   let hasAttention=false;
@@ -2232,11 +2228,11 @@ function buildEmailHtml(){
   ;
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MARS Spain PD — ${TX.subtitle}</title></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-size:13px;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 0;">
-<tr><td align="center">
-<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">
+<tr><td style="padding:0;">
+<table width="100%" cellpadding="0" cellspacing="0" style="width:100%;">
   <!-- HEADER -->
-  <tr><td style="background:#1a3a56;border-radius:12px 12px 0 0;padding:22px 28px;">
+  <tr><td style="background:#1a3a56;padding:22px 32px;">
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td style="vertical-align:middle;">
@@ -2253,14 +2249,14 @@ function buildEmailHtml(){
     </table>
   </td></tr>
   <!-- SUMMARY BAR -->
-  <tr><td style="background:#e8f1f7;padding:10px 28px;border-left:1px solid #d1dce8;border-right:1px solid #d1dce8;">
+  <tr><td style="background:#e8f1f7;padding:10px 32px;border-bottom:1px solid #d1dce8;">
     <table width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#2d4a6b;"><b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${isEN?'in':'en'} ${totalProjects} ${projWord}</td>
       <td align="right" style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#6b7280;">${today}</td>
     </tr></table>
   </td></tr>
   <!-- BODY -->
-  <tr><td style="background:#ffffff;padding:22px 28px;border:1px solid #e2e8f0;border-top:none;">
+  <tr><td style="background:#ffffff;padding:22px 32px;">
     <table width="100%" cellpadding="0" cellspacing="0">
       ${attnBlock}
       ${projSections}
@@ -2275,7 +2271,7 @@ function buildEmailHtml(){
       </td></tr>
     </table>
   </td></tr>
-  <tr><td style="background:#1a3a56;border-radius:0 0 12px 12px;padding:12px 28px;text-align:center;">
+  <tr><td style="background:#1a3a56;padding:14px 32px;text-align:center;">
     <div style="font-size:10px;color:rgba(255,255,255,0.5);">${TX.confidential}</div>
   </td></tr>
 </table>
@@ -3534,6 +3530,9 @@ function setLang(l){
     if(cronVisible) renderGantt();
   }
   setTimeout(()=>{ if(badge) badge.style.display='none'; },600);
+  // If email modal is open, regenerate it in the new language
+  const emailModal=document.getElementById('emailExportModal');
+  if(emailModal&&emailModal.classList.contains('on')) exportEmailSemanal();
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
 function closeModal(id){document.getElementById(id).classList.remove('on');}
