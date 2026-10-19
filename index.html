@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1714 -->
+<!-- BUILD:20261019-1726 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1714';
+const BUILD='20261019-1726';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -695,16 +695,11 @@ body{font-family:'Aptos', Calibri, Arial, sans-serif;background:var(--bg);color:
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <div>
         <div style="font-size:14px;font-weight:800;color:var(--navy);" id="emailModalTitle">📧 Email ejecutivo — actualización semanal</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:2px;" id="emailModalSubtitle">Personaliza el texto introductorio y copia el email completo</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;" id="emailModalSubtitle">Copia el email y pégalo en Outlook — formato garantizado</div>
       </div>
       <button onclick="closeModal('emailExportModal')" style="background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;padding:0 4px;">×</button>
     </div>
     <div style="flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px;">
-      <!-- Intro text editor -->
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:0.3px;">TEXTO INTRODUCTORIO <span style="font-weight:400;color:var(--text-3);">(aparecerá al inicio del email)</span></div>
-        <textarea id="emailIntroText" rows="4" placeholder="Ej: Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo." style="width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12.5px;font-family:'Aptos', Calibri, Arial, sans-serif;color:var(--text);resize:vertical;outline:none;background:var(--bg-2,#f8fafc);line-height:1.5;"></textarea>
-      </div>
       <!-- Action buttons -->
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button onclick="copyEmailHtml()" id="emailCopyBtn" style="background:var(--navy);color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Aptos', Calibri, Arial, sans-serif;">📋 Copiar email</button>
@@ -2172,23 +2167,12 @@ async function exportEmailSemanal(){
   const sub=document.getElementById('emailModalSubtitle');
   const wrap=document.getElementById('emailPreviewWrap');
   if(title) title.textContent=isEN?'📧 Executive email — weekly update':'📧 Email ejecutivo — actualización semanal';
-  if(sub) sub.textContent=isEN?'Customise the intro and copy the full email':'Personaliza el texto introductorio y copia el email completo';
+  if(sub) sub.textContent=isEN?'Copy the email and paste it into Outlook — format guaranteed':'Copia el email y pégalo en Outlook — formato garantizado';
   if(wrap) wrap.innerHTML=`<div style="padding:40px;text-align:center;color:#94a3b8;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13px;">${isEN?'Building email…':'Generando email…'}</div>`;
   modal.classList.add('on');
   // Reset copy status
   const st=document.getElementById('emailCopyStatus');
   if(st) st.style.display='none';
-  // Set / update default intro text (overwrite if it matches either default)
-  const introEl=document.getElementById('emailIntroText');
-  const _defES='Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo.';
-  const _defEN='Please find below the weekly project status update for the MARS Spain PD portfolio. For further detail, you can access the tracking tool via the link at the bottom of this email.';
-  if(introEl){
-    const cur=introEl.value.trim();
-    // Auto-fill if empty or still showing the other language's default
-    if(!cur||cur===_defES||cur===_defEN){
-      introEl.value=isEN?_defEN:_defES;
-    }
-  }
   await _refreshEmailPreview();
 }
 async function _refreshEmailPreview(){
@@ -2240,7 +2224,7 @@ async function _renderEmailContentAsImage(htmlContent, widthPx){
       // Give browser a tick to lay out
       requestAnimationFrame(()=>{
         html2canvas(wrapper,{
-          scale:2,
+          scale:3,
           useCORS:true,
           allowTaint:true,
           backgroundColor:'#ffffff',
@@ -2351,7 +2335,7 @@ async function buildEmailHtml(forceLang){
               const typeLbl=ACT_LBL[a.type]||a.type||'';
               const dateStr=a.date?`<span style="color:#1a5276;font-weight:700;font-size:10px;font-family:Aptos,Calibri,Arial,sans-serif;"> ${a.date}</span>`:'';
               return `<div style="display:flex;align-items:baseline;margin-bottom:4px;font-family:Aptos,Calibri,Arial,sans-serif;">
-                <span style="display:inline-block;font-size:9px;font-weight:700;color:#1a5276;background:#ccdae8;padding:1px 6px;border-radius:3px;white-space:nowrap;margin-right:7px;font-family:Aptos,Calibri,Arial,sans-serif;letter-spacing:0.2px;text-transform:uppercase;">${typeLbl}</span>
+                <span style="display:inline-block;width:72px;min-width:72px;text-align:center;font-size:9px;font-weight:700;color:#1a5276;background:#ccdae8;padding:1px 4px;border-radius:3px;white-space:nowrap;margin-right:8px;flex-shrink:0;font-family:Aptos,Calibri,Arial,sans-serif;letter-spacing:0.2px;text-transform:uppercase;">${typeLbl}</span>
                 <span style="font-size:11.5px;color:#1e2d3d;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.5;">${_tx(a.text||'')}${dateStr}</span>
               </div>`;
             }).join('')}
@@ -2398,25 +2382,45 @@ async function buildEmailHtml(forceLang){
   });
   const weekLbl=weekRange(_emailBaseWeek);
   const projWord=totalProjects===1?TX.projects:TX.projectsPlural;
-  // Intro text from modal textarea (if present)
-  const _introRaw=(document.getElementById('emailIntroText')||{}).value||'';
-  const introBlock=_introRaw.trim()?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;">
-    <tr><td style="padding:13px 16px;background:#f0f4f8;border-left:4px solid #1a3a56;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;mso-font-alt:'Arial';color:#1e2d3d;line-height:1.6;">${_introRaw.trim().replace(/\n/g,'<br>')}</td></tr>
-  </table>`:'';
+  // Auto-generated newsletter intro (no free-text textarea — full newsletter approach)
+  const _introES='Adjunto el resumen semanal del estado de los proyectos BESS de MARS Spain PD.';
+  const _introEN='Please find below the weekly BESS project status update for MARS Spain PD.';
+  const introLine=isEN?_introEN:_introES;
+  // Intro block rendered inside the image — styled as newsletter intro line
+  const introImgBlock=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;">
+    <tr><td style="padding:13px 16px 11px 16px;background:#f0f4f8;border-left:4px solid #1a3a56;font-size:12px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1e2d3d;line-height:1.6;">${introLine}</td></tr>
+  </table>`;
   const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border-collapse:collapse;border:1.5px solid #fca5a5;border-radius:8px;overflow:hidden;">
     <tr><td colspan="4" style="padding:10px 16px;background:#dc2626;font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.5px;border-bottom:1px solid #fca5a5;">⚠ ${TX.needsAttention}</td></tr>
     ${attentionRows}
   </table>`:'';
 
-  // Render the project data tables as an image to guarantee pixel-perfect format in Outlook
+  // Render EVERYTHING (intro + attn + projects) as one high-quality image
   const EMAIL_WIDTH=640;
-  const contentHtml=_buildContentBlocksHtml(attnBlock,projBlocks);
+  const contentHtml=_buildContentBlocksHtml(introImgBlock+attnBlock,projBlocks);
   const imageDataUrl=await _renderEmailContentAsImage(contentHtml,EMAIL_WIDTH);
 
   // Build the body content — image if render succeeded, fallback to HTML tables
   const bodyContent=imageDataUrl
     ? `<img src="${imageDataUrl}" width="${EMAIL_WIDTH}" style="display:block;width:${EMAIL_WIDTH}px;max-width:100%;border:0;" alt="${isEN?'Project status':'Estado de proyectos'}">`
-    : `${attnBlock}${projBlocks}`;
+    : `${introImgBlock}${attnBlock}${projBlocks}`;
+
+  // User guide section — HTML with working hyperlink (outside image so link is clickable)
+  const GUIDE_URL='https://ttejadaosborne.github.io/MARS-Spain-PD/';
+  const guideBlock=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-collapse:collapse;border:1px solid #b8cad8;border-radius:8px;overflow:hidden;">
+    <tr>
+      <td style="padding:12px 16px 10px 16px;background:#f0f4f8;border-bottom:1px solid #b8cad8;">
+        <p style="margin:0;padding:0;font-size:10.5px;font-weight:700;color:#1a3a56;letter-spacing:0.8px;text-transform:uppercase;font-family:Aptos,Calibri,Arial,sans-serif;">${isEN?'📘 USER GUIDE':'📘 GUÍA DE USO'}</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:12px 16px 14px 16px;background:#ffffff;">
+        <p style="margin:0 0 8px 0;padding:0;font-size:11.5px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.6;">${isEN?'The MARS Spain PD tracking tool is available online — no installation required. It allows you to view the current project status, historical updates, and activity log for all BESS projects.':'La herramienta de seguimiento MARS Spain PD está disponible online, sin necesidad de instalación. Permite consultar el estado actual, historial de novedades y registro de actividades de todos los proyectos BESS.'}</p>
+        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${GUIDE_URL}" style="height:30px;v-text-anchor:middle;width:140px;" arcsize="18%" stroke="true" strokecolor="#1a3a56" fillcolor="#dce8f2"><w:anchorlock/><center style="color:#1a3a56;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;">${isEN?'Open guide':'Abrir guía'}</center></v:roundrect><![endif]-->
+        <!--[if !mso]><!--><a href="${GUIDE_URL}" style="display:inline-block;background:#dce8f2;border:1px solid #1a3a56;border-radius:5px;color:#1a3a56;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;line-height:30px;padding:0 16px;text-decoration:none;-webkit-text-size-adjust:none;">${isEN?'Open guide ↗':'Abrir guía ↗'}</a><!--<![endif]-->
+      </td>
+    </tr>
+  </table>`;
 
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
 <body style="margin:0;padding:24px 0;background:#d4dde8;font-family:Aptos,Calibri,Arial,sans-serif;">
@@ -2451,8 +2455,8 @@ async function buildEmailHtml(forceLang){
   <!-- BODY -->
   <tr>
     <td style="background:#ffffff;padding:18px 20px 14px 20px;">
-      ${introBlock}
       ${bodyContent}
+      ${guideBlock}
       <!-- CTA -->
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-top:2px solid #edf1f7;">
         <tr><td style="padding-top:16px;" align="center">
