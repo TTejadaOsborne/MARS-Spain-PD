@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261019-1518 -->
+<!-- BUILD:20261019-1524 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261019-1518';
+const BUILD='20261019-1524';
 </script>
 <script>
 // Auto-update: poll GitHub Pages cada 60s, recarga si hay versión nueva
@@ -2177,12 +2177,16 @@ async function exportEmailSemanal(){
   // Reset copy status
   const st=document.getElementById('emailCopyStatus');
   if(st) st.style.display='none';
-  // Set default intro text if empty
+  // Set / update default intro text (overwrite if it matches either default)
   const introEl=document.getElementById('emailIntroText');
-  if(introEl&&!introEl.value.trim()){
-    introEl.value=isEN
-      ?'Please find below the weekly project status update for the MARS Spain PD portfolio. For further detail, you can access the tracking tool via the link at the bottom of this email.'
-      :'Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo.';
+  const _defES='Adjunto el resumen semanal de estado de proyectos de MARS Spain PD. Para más detalle, podéis acceder a la herramienta de seguimiento en el enlace al pie del correo.';
+  const _defEN='Please find below the weekly project status update for the MARS Spain PD portfolio. For further detail, you can access the tracking tool via the link at the bottom of this email.';
+  if(introEl){
+    const cur=introEl.value.trim();
+    // Auto-fill if empty or still showing the other language's default
+    if(!cur||cur===_defES||cur===_defEN){
+      introEl.value=isEN?_defEN:_defES;
+    }
   }
   await _refreshEmailPreview();
 }
@@ -2291,36 +2295,44 @@ async function buildEmailHtml(forceLang){
       const issText=_tx(iss.text||'');
       const acts=iss.activities||[];
       // Activity icons: text chars that render in Outlook
-      const ACT_ICON={'call':'✆','email':'✉','admin':'⊞','doc':'⊟','internal':'◎','site':'◉','meeting':'◎'};
+      const ACT_ICON={'call':'📞','email':'✉','admin':'📋','doc':'📄','internal':'💬','site':'📍','meeting':'👥'};
       const actsRows=acts.length?`<tr>
-          <td style="width:3px;padding:0;background:#f1f5f9;border-top:1px dashed #e2e8f0;"></td>
-          <td colspan="2" style="padding:7px 10px 7px 20px;background:#f1f5f9;border-top:1px dashed #e2e8f0;">
-            <div style="font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:0.6px;text-transform:uppercase;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;margin-bottom:5px;">${TX.activitiesTitle}</div>
+          <td style="width:4px;padding:0;background:#e8f1f8;border-top:1px solid #edf2f7;"></td>
+          <td colspan="2" style="padding:8px 12px 8px 16px;background:#f8fafc;border-top:1px solid #edf2f7;">
+            <div style="font-size:9.5px;font-weight:700;color:#64748b;letter-spacing:0.7px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:6px;">${TX.activitiesTitle}</div>
             ${acts.map(a=>{
               const ico=ACT_ICON[a.type]||'·';
-              const dateStr=a.date?` <span style="font-size:10px;color:#d97706;font-weight:600;">${a.date}</span>`:'';
-              return `<div style="display:table;width:100%;margin-bottom:3px;">
-                <span style="display:table-cell;width:18px;font-size:13px;color:#d97706;vertical-align:top;font-family:'Courier New',monospace;">${ico}</span>
-                <span style="display:table-cell;font-size:11.5px;color:#374151;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;line-height:1.4;vertical-align:top;">${_tx(a.text||'')} ${dateStr}</span>
-              </div>`;
+              const dateStr=a.date?` <span style="font-size:10px;color:#05233D;font-weight:700;background:#e8f1f8;padding:1px 5px;border-radius:3px;">${a.date}</span>`:'';
+              return `<table cellpadding="0" cellspacing="0" style="margin-bottom:4px;width:100%"><tr>
+                <td style="width:20px;font-size:13px;vertical-align:top;padding-top:1px;">${ico}</td>
+                <td style="font-size:11.5px;color:#374151;font-family:Arial,sans-serif;line-height:1.45;vertical-align:top;">${_tx(a.text||'')} ${dateStr}</td>
+              </tr></table>`;
             }).join('')}
           </td>
         </tr>`:'';
       if(iss.attention){hasAttention=true;attentionRows+=`<tr><td style="padding:5px 10px 5px 12px;font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#374151;border-bottom:1px solid #fecaca;"><b>${names[pid]||pid}</b> — ${topicLbl}: ${issText}</td></tr>`;}
-      // Compact row: left color bar + topic+text + status pill
-      rowsHtml+=`<tr style="${idx>0?'border-top:1px solid #f1f5f9;':''}">
-        <td style="width:3px;padding:0;background:${sc.bar};"></td>
-        <td style="padding:7px 10px;vertical-align:top;">
-          <div style="font-size:12px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;"><b style="color:#0f172a;">${topicLbl}</b> <span style="color:#475569;">${issText}</span></div>
+      // Issue row — matches app layout: 4px bar + topic bold + text + status pill right
+      rowsHtml+=`<tr style="${idx>0?'border-top:1px solid #f0f4f8;':''}">
+        <td style="width:4px;padding:0;background:${sc.bar};"></td>
+        <td style="padding:9px 12px;vertical-align:top;line-height:1.4;">
+          <span style="font-size:12px;font-weight:700;color:#05233D;font-family:Arial,sans-serif;">${topicLbl}</span>
+          <span style="font-size:12px;color:#374151;font-family:Arial,sans-serif;"> ${issText}</span>
         </td>
-        <td style="padding:7px 10px;vertical-align:top;text-align:right;white-space:nowrap;">
-          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:0.3px;">${stLbl}</span>
+        <td style="padding:9px 12px;vertical-align:top;text-align:right;white-space:nowrap;">
+          <span style="display:inline-block;background:${sc.bg};color:${sc.txt};font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.2px;font-family:Arial,sans-serif;">${stLbl}</span>
         </td>
       </tr>${actsRows}`;
     });
-    projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
-      <tr style="background:#f8fafc;">
-        <td colspan="3" style="padding:6px 10px;font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-weight:800;color:#1a3a56;letter-spacing:0.4px;border-bottom:1px solid #e2e8f0;">${names[pid]||pid} <span style="font-weight:400;color:#94a3b8;">(${issues.length})</span></td>
+    const _dotC={begues:'#22c55e',fregacedos:'#22c55e',mutxamel:'#ef4444',entrenucleos:'#94a3b8',custom_nuevas_oportunidades:'#3b82f6'};
+    projBlocks+=`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;border-collapse:collapse;border:1px solid #dde4ed;border-radius:8px;overflow:hidden;">
+      <tr style="background:#f4f7fb;">
+        <td colspan="3" style="padding:8px 12px;border-bottom:1px solid #dde4ed;">
+          <table cellpadding="0" cellspacing="0"><tr>
+            <td style="width:9px;height:9px;background:${_dotC[pid]||'#94a3b8'};border-radius:50%;padding:0;vertical-align:middle;"></td>
+            <td style="padding-left:8px;font-size:11.5px;font-family:Arial,sans-serif;font-weight:800;color:#05233D;letter-spacing:0.3px;vertical-align:middle;">${names[pid]||pid}</td>
+            <td style="padding-left:6px;font-size:10.5px;font-family:Arial,sans-serif;font-weight:400;color:#94a3b8;vertical-align:middle;">(${issues.length})</td>
+          </tr></table>
+        </td>
       </tr>
       ${rowsHtml}
     </table>`;
@@ -2332,68 +2344,66 @@ async function buildEmailHtml(forceLang){
   const introBlock=_introRaw.trim()?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;border-collapse:collapse;">
     <tr><td style="padding:12px 14px;background:#f0f4f8;border-left:3px solid #1a3a56;border-radius:4px;font-size:12.5px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#1e2d3d;line-height:1.6;">${_introRaw.trim().replace(/\n/g,'<br>')}</td></tr>
   </table>`:'';
-  const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border-collapse:collapse;border:1.5px solid #fecaca;border-radius:6px;overflow:hidden;">
-    <tr style="background:#fff1f2;"><td style="padding:6px 10px;font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;font-weight:800;color:#991b1b;letter-spacing:0.4px;border-bottom:1px solid #fecaca;">${TX.needsAttention}</td></tr>
+  const attnBlock=hasAttention?`<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;border-collapse:collapse;border:1.5px solid #fca5a5;border-radius:8px;overflow:hidden;">
+    <tr style="background:#fff1f2;"><td style="padding:8px 12px;font-size:11px;font-family:Arial,sans-serif;font-weight:800;color:#991b1b;letter-spacing:0.3px;border-bottom:1px solid #fecaca;">${TX.needsAttention}</td></tr>
     ${attentionRows}
   </table>`:'';
   return `<!DOCTYPE html><html lang="${isEN?'en':'es'}"><head><meta charset="utf-8"><title>MARS Spain PD</title></head>
-<body style="margin:0;padding:16px 0;background:#f1f5f9;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">
-<tr><td align="center" style="padding:0;">
-  <table width="660" cellpadding="0" cellspacing="0" style="max-width:660px;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+<body style="margin:0;padding:20px 0;background:#edf1f7;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#edf1f7;">
+<tr><td align="center" style="padding:0 12px;">
+  <table width="640" cellpadding="0" cellspacing="0" style="max-width:640px;border-radius:10px;overflow:hidden;border:1px solid #d1d9e6;">
   <!-- HEADER -->
   <tr>
-    <td colspan="2" style="background:#1a3a56;padding:9px 18px;">
-      <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="vertical-align:middle;">
-            <table cellpadding="0" cellspacing="0"><tr>
-              <td style="vertical-align:middle;padding-right:10px;">${MARS_LOGO_HTML}</td>
-              <td style="vertical-align:middle;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.4px;">${TX.subtitle}</td>
-            </tr></table>
-          </td>
-          <td align="right" style="vertical-align:middle;white-space:nowrap;">
-            <span style="display:inline-block;background:rgba(255,255,255,0.12);border-radius:4px;padding:4px 10px;">
-              <span style="font-size:8px;color:rgba(255,255,255,0.5);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;">${TX.weekLabel}:&nbsp;</span><span style="font-size:11px;color:#fff;font-weight:800;">${weekLbl}</span>
-            </span>
-          </td>
-        </tr>
-      </table>
+    <td style="background:#05233D;padding:12px 20px;">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:middle;">
+          <table cellpadding="0" cellspacing="0"><tr>
+            <td style="vertical-align:middle;padding-right:12px;">${MARS_LOGO_HTML}</td>
+            <td style="vertical-align:middle;">
+              <div style="color:rgba(255,255,255,0.5);font-size:9px;letter-spacing:0.5px;font-family:Arial,sans-serif;">MARS RENEWABLE IBERIA</div>
+              <div style="color:rgba(255,255,255,0.85);font-size:10.5px;font-weight:600;font-family:Arial,sans-serif;margin-top:1px;">${TX.subtitle}</div>
+            </td>
+          </tr></table>
+        </td>
+        <td align="right" style="vertical-align:middle;white-space:nowrap;">
+          <div style="background:rgba(255,255,255,0.10);border-radius:5px;padding:5px 12px;display:inline-block;">
+            <div style="font-size:8px;color:rgba(255,255,255,0.45);font-weight:700;letter-spacing:0.6px;text-transform:uppercase;font-family:Arial,sans-serif;">${TX.weekLabel}</div>
+            <div style="font-size:12px;color:#fff;font-weight:800;font-family:Arial,sans-serif;margin-top:1px;">${weekLbl}</div>
+          </div>
+        </td>
+      </tr></table>
     </td>
   </tr>
   <!-- SUMMARY STRIP -->
   <tr>
-    <td colspan="2" style="background:#e8f1f8;border-bottom:1px solid #d1dce8;padding:6px 20px;">
-      <span style="font-size:11px;font-family:Aptos,'Helvetica Neue',Arial,sans-serif;color:#2d4a6b;">
-        <b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} ${totalProjects} ${projWord}
+    <td style="background:#dce8f2;border-bottom:1px solid #c5d6e8;padding:7px 20px;">
+      <span style="font-size:11.5px;font-family:Arial,sans-serif;color:#1a3a56;font-weight:400;">
+        <b>${totalIssues} ${totalIssues===1?TX.updates:TX.updatesPlural}</b> ${TX.inWord} <b>${totalProjects} ${projWord}</b>
       </span>
     </td>
   </tr>
   <!-- BODY -->
   <tr>
-    <td colspan="2" style="background:#ffffff;padding:14px 20px;">
+    <td style="background:#ffffff;padding:16px 18px;">
       ${introBlock}
       ${attnBlock}
       ${projBlocks}
       <!-- CTA -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;border-top:1px solid #f1f5f9;">
-        <tr>
-          <td style="padding:8px 0 0 0;" align="center">
-            <table cellpadding="0" cellspacing="0"><tr>
-              <td style="padding:0 5px;"><a href="${APP_URL}" style="display:inline-block;background:#1a3a56;color:#fff;font-size:11px;font-weight:700;padding:6px 14px;border-radius:5px;text-decoration:none;letter-spacing:0.3px;">${TX.viewApp} →</a></td>
-              <td style="padding:0 5px;"><a href="${APP_URL}#guide" style="display:inline-block;background:#e8f1f8;color:#1a3a56;font-size:11px;font-weight:600;padding:6px 14px;border-radius:5px;text-decoration:none;letter-spacing:0.3px;">${isEN?'📖 User guide':'📖 Guía de uso'}</a></td>
-            </tr></table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:6px 0 0 0;text-align:center;font-size:10px;color:#94a3b8;">${TX.footer}${weekLbl}</td>
-        </tr>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-top:2px solid #edf1f7;padding-top:14px;">
+        <tr><td align="center">
+          <table cellpadding="0" cellspacing="0"><tr>
+            <td style="padding:0 6px;"><a href="${APP_URL}" style="display:inline-block;background:#05233D;color:#fff;font-size:11.5px;font-weight:700;padding:8px 18px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;">${TX.viewApp} →</a></td>
+            <td style="padding:0 6px;"><a href="${APP_URL}#guide" style="display:inline-block;background:#dce8f2;color:#05233D;font-size:11.5px;font-weight:600;padding:8px 18px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;">${isEN?'📖 User guide':'📖 Guía de uso'}</a></td>
+          </tr></table>
+        </td></tr>
+        <tr><td style="padding:8px 0 0 0;text-align:center;font-size:10px;color:#94a3b8;font-family:Arial,sans-serif;">${TX.footer}${weekLbl}</td></tr>
       </table>
     </td>
   </tr>
   <!-- FOOTER BAR -->
   <tr>
-    <td colspan="2" style="background:#1a3a56;padding:8px 20px;text-align:center;font-size:10px;color:rgba(255,255,255,0.4);">${TX.confidential}</td>
+    <td style="background:#05233D;padding:9px 20px;text-align:center;font-size:10px;color:rgba(255,255,255,0.35);font-family:Arial,sans-serif;">${TX.confidential}</td>
   </tr>
   </table>
 </td></tr>
@@ -2405,18 +2415,36 @@ async function copyEmailHtml(){
   if(!modal) return;
   const isEN=lang==='en';
   const st=document.getElementById('emailCopyStatus');
-  // Always regenerate with current intro text before copying
   const emailHtml=await buildEmailHtml();
   modal._emailHtml=emailHtml;
   if(!emailHtml){toast(isEN?'Generate the email first':'Genera primero el email');return;}
-  try{
-    const blob=new Blob([emailHtml],{type:'text/html'});
-    const item=new ClipboardItem({'text/html':blob});
-    await navigator.clipboard.write([item]);
+  // Use execCommand approach — most compatible with Outlook paste
+  const tmp=document.createElement('div');
+  tmp.innerHTML=emailHtml;
+  tmp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0.01;pointer-events:none;width:700px;';
+  document.body.appendChild(tmp);
+  const range=document.createRange();
+  range.selectNodeContents(tmp);
+  const sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  let ok=false;
+  try{ok=document.execCommand('copy');}catch(e){}
+  sel.removeAllRanges();
+  document.body.removeChild(tmp);
+  if(ok){
     if(st){st.textContent=isEN?'✓ Copied!':'✓ ¡Copiado!';st.style.display='inline';}
     toast('✓ '+(isEN?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
-  } catch(e){
-    _fallbackCopyEmail(emailHtml);
+  } else {
+    // Modern API fallback
+    try{
+      const blob=new Blob([emailHtml],{type:'text/html'});
+      await navigator.clipboard.write([new ClipboardItem({'text/html':blob})]);
+      if(st){st.textContent=isEN?'✓ Copied!':'✓ ¡Copiado!';st.style.display='inline';}
+      toast('✓ '+(isEN?'Email copied — paste into Outlook':'Email copiado — pega en Outlook'));
+    }catch(e2){
+      toast(isEN?'Copy failed — try Ctrl+A + Ctrl+C in the preview':'Error — selecciona el contenido del preview y copia');
+    }
   }
 }
 function _fallbackCopyEmail(html){
