@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261020-0845 -->
+<!-- BUILD:20261021-1258 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261020-0845';
+const BUILD='20261021-1258';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -1467,7 +1467,7 @@ async function translateSemanalFreeText(){
   const feed=document.getElementById('semanalFeed');
   if(!feed) return;
   const textEls=[...feed.querySelectorAll('.i-text')];
-  const actEls=[...feed.querySelectorAll('.act-row span:first-of-type')];
+  const actEls=[...feed.querySelectorAll('.act-row span:nth-of-type(2)')];
   // Also translate topics that weren't in the static TOPIC_MAP
   const topicEls=[...feed.querySelectorAll('.i-topic')];
   // Also translate compare-prev text blocks
