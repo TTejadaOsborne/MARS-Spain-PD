@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD:20261021-1258 -->
+<!-- BUILD:20261020-0845 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <title>MARS Spain PD</title>
 <script>
 // Build stamp — global so updateLastReportingBadge() can read it
-const BUILD='20261021-1258';
+const BUILD='20261020-0845';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -678,6 +678,16 @@ body{font-family:'Aptos', Calibri, Arial, sans-serif;background:var(--bg);color:
   </div>
   <div class="content">
     <div id="semanalFeed"></div>
+    <!-- GRID CAPACITY PANEL (visible only to editors, rendered by renderGcPanel()) -->
+    <div id="gcPanel" style="display:none;padding:0 20px 28px 20px;"></div>
+  </div>
+</div>
+
+<!-- GRID CAPACITY NODE MODAL -->
+<div class="modal-bg" id="gcNodeModal">
+  <div class="modal" style="max-width:640px;width:96vw;">
+    <div class="modal-hdr"><h2 id="gcNodeModalTitle">+ Nudo Grid Capacity</h2><button class="modal-close" onclick="closeModal('gcNodeModal')">×</button></div>
+    <div class="modal-body" id="gcNodeModalBody" style="padding:16px 20px 20px;"></div>
   </div>
 </div>
 
@@ -1284,6 +1294,8 @@ const STORAGE_KEY='mars_pd_data_v3';
 const PTL_STORAGE_KEY='mars_pd_ptl_v1';
 const NAV_KEY='mars_pd_nav_v1';
 const LAST_CHANGE_KEY='mars_pd_last_change';
+const GC_DATA_KEY='mars_pd_gc_data_v1';
+const GC_SETTINGS_KEY='mars_pd_gc_settings_v1';
 function _nowTS(){
   const n=new Date();
   const date=String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear();
@@ -1367,6 +1379,26 @@ function loadData(){
     }
   }catch(e){}
   return dbNorm;
+}
+
+// ── GRID CAPACITY DATA STORE ──────────────────────────────────────────────
+// gcSettings: thresholds (MW) and toggle
+let gcSettings = {thresholdDSO:5, thresholdREE:10, includeInEmail:true, dataMes:''};
+// gridCapacityData: { dso: [{...}, ...], ree: [{...}, ...] }
+let gridCapacityData = {dso:[], ree:[]};
+function saveGcData(){
+  try{
+    localStorage.setItem(GC_DATA_KEY,JSON.stringify(gridCapacityData));
+    localStorage.setItem(GC_SETTINGS_KEY,JSON.stringify(gcSettings));
+  }catch(e){}
+}
+function loadGcData(){
+  try{
+    const rawD=localStorage.getItem(GC_DATA_KEY);
+    const rawS=localStorage.getItem(GC_SETTINGS_KEY);
+    if(rawD){ const p=JSON.parse(rawD); if(p&&(p.dso||p.ree)){gridCapacityData=p;} }
+    if(rawS){ const p=JSON.parse(rawS); if(p){gcSettings=Object.assign(gcSettings,p);} }
+  }catch(e){}
 }
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -1558,6 +1590,7 @@ function _latestDataWeek(){
 }
 function init(){
   loadPtlData();
+  loadGcData();
   updateLastReportingBadge();
   // Restore navigation state
   try{
@@ -2079,6 +2112,7 @@ function renderSemanal(){
   document.getElementById('semanalFeed').innerHTML=html;
   saveNav();
   translateSemanalFreeText();
+  renderGcPanel();
 }
 // ── COMPARATIVA SEMANA ANTERIOR ────────────────────────────────────────────
 let semanalCompareOpen=false;
@@ -2253,6 +2287,371 @@ function _buildContentBlocksHtml(attnBlock, projBlocks){
   return `<div style="padding:0;background:#ffffff;">${attnBlock}${projBlocks}</div>`;
 }
 
+// ── GRID CAPACITY — EMAIL BLOCK ────────────────────────────────────────────
+function _buildGcEmailBlock(isEN){
+  if(!gcSettings.includeInEmail) return '';
+  const dsoAll=gridCapacityData.dso||[];
+  const reeAll=gridCapacityData.ree||[];
+  if(!dsoAll.length && !reeAll.length) return '';
+
+  const thr=gcSettings.thresholdDSO||0;
+  const thrRee=gcSettings.thresholdREE||0;
+  const dataMes=gcSettings.dataMes||'';
+  const mesLbl=dataMes?(isEN?` — Data as of: ${dataMes}`:` — Datos a: ${dataMes}`):'';
+  const title=isEN?`GRID CAPACITY${mesLbl}`:`CAPACIDAD DE RED${mesLbl}`;
+
+  // Filter nodes by threshold: gen+dem > threshold
+  const dsoSinAcept=dsoAll.filter(n=>!n.aceptREE && ((n.genActual||0)+(n.demActual||0))>thr);
+  const dsoConAcept=dsoAll.filter(n=>n.aceptREE>0 && ((n.genActual||0)+(n.demActual||0))>thr);
+  const reeNodes=reeAll.filter(n=>((n.genActual||0)+(n.demActual||0))>thrRee);
+
+  if(!dsoSinAcept.length && !dsoConAcept.length && !reeNodes.length) return '';
+
+  // Header styles
+  const HDR_BG='#0a3352'; const HDR_TXT='#9db4c8';
+  const TH='font-size:9px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:'+HDR_TXT+';text-transform:uppercase;letter-spacing:0.5px;padding:5px 7px;background:'+HDR_BG+';white-space:nowrap;';
+  const TD='font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1e2d3d;padding:5px 7px;vertical-align:top;border-bottom:1px solid #e2eaf2;';
+  const TDR='font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1e2d3d;padding:5px 7px;vertical-align:top;text-align:right;border-bottom:1px solid #e2eaf2;';
+  const TDBOLD='font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;color:#1e2d3d;font-weight:600;padding:5px 7px;vertical-align:top;border-bottom:1px solid #e2eaf2;';
+  const GN='color:#166534;font-weight:700;'; // green number
+  const RN='color:#991b1b;font-weight:700;'; // red number
+
+  function fmt(v){ return (v===null||v===undefined||v==='')?'—':Number(v).toLocaleString('es-ES',{maximumFractionDigits:1}); }
+  function delta(curr,prev){
+    if(curr===null||curr===undefined||curr===''||prev===null||prev===undefined||prev==='') return {txt:'—',col:''};
+    const d=Number(curr)-Number(prev);
+    if(Math.abs(d)<0.05) return {txt:'0',col:''};
+    return d>0?{txt:'+'+d.toFixed(1),col:GN}:{txt:d.toFixed(1),col:RN};
+  }
+  function yesNo(v){ return v?'S':'N'; }
+
+  // ── DSO table helper
+  function dsoTableHtml(nodes, withAcept, subLabel){
+    if(!nodes.length) return '';
+    const thrLbl=isEN?`>${thr} MW`:`>${thr} MW`;
+    const lbl=subLabel+(isEN?` (${thrLbl})`:` (${thrLbl})`);
+    let cols=isEN
+      ?['Substation','Province','Municipality','kV','Gen (MW)','Dem (MW)','Gen Prev.','Dem Prev.','ΔGen','ΔDem','Afloram.']
+      :['Subestación','Provincia','Municipio','kV','Gen (MW)','Dem (MW)','Gen Ant.','Dem Ant.','ΔGen','ΔDem','Afloram.'];
+    if(withAcept) cols.push(isEN?'Acept. REE (MW)':'Acept. REE (MW)');
+    const thRow=cols.map(c=>`<th style="${TH}">${c}</th>`).join('');
+    const rows=nodes.map(n=>{
+      const dg=delta(n.genActual,n.genPrev);
+      const dd=delta(n.demActual,n.demPrev);
+      let cells=`<td style="${TDBOLD}">${n.nombre||'—'}</td>
+        <td style="${TD}">${n.provincia||'—'}</td>
+        <td style="${TD}">${n.municipio||'—'}</td>
+        <td style="${TDR}">${fmt(n.tension)}</td>
+        <td style="${TDR}">${fmt(n.genActual)}</td>
+        <td style="${TDR}">${fmt(n.demActual)}</td>
+        <td style="${TDR}">${fmt(n.genPrev)}</td>
+        <td style="${TDR}">${fmt(n.demPrev)}</td>
+        <td style="font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;padding:5px 7px;vertical-align:top;text-align:right;border-bottom:1px solid #e2eaf2;${dg.col}">${dg.txt}</td>
+        <td style="font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;padding:5px 7px;vertical-align:top;text-align:right;border-bottom:1px solid #e2eaf2;${dd.col}">${dd.txt}</td>
+        <td style="${TDR}">${yesNo(n.afloramiento)}</td>`;
+      if(withAcept) cells+=`<td style="${TDR};font-weight:600;color:#166534;">${fmt(n.aceptREE)}</td>`;
+      let tr=`<tr>${cells}</tr>`;
+      if(n.comentarios) tr+=`<tr><td colspan="${cols.length}" style="font-size:10.5px;font-family:Aptos,Calibri,Arial,sans-serif;color:#4a6278;padding:3px 7px 6px 7px;border-bottom:1px solid #e2eaf2;font-style:italic;">${isEN?'Comment':'Comentario'}: ${n.comentarios}</td></tr>`;
+      return tr;
+    }).join('');
+    return `<div style="margin-bottom:10px;">
+      <p style="margin:0 0 4px 0;font-size:10px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#4a6278;text-transform:uppercase;letter-spacing:0.5px;">${lbl}</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #b8cad8;border-radius:6px;overflow:hidden;font-size:11px;">
+        <tr>${thRow}</tr>${rows}
+      </table></div>`;
+  }
+
+  // ── REE table helper
+  function reeTableHtml(nodes){
+    if(!nodes.length) return '';
+    const thrLbl=isEN?`>${thrRee} MW`:`>${thrRee} MW`;
+    const lbl=(isEN?`REE NODES (${thrLbl})`:`NUDOS REE (${thrLbl})`);
+    const cols=isEN
+      ?['Node','CC.AA.','kV','Gen (MW)','Dem (MW)','Gen Prev.','Dem Prev.','ΔGen','ΔDem','Afloram.']
+      :['Nudo','CC.AA.','kV','Gen (MW)','Dem (MW)','Gen Ant.','Dem Ant.','ΔGen','ΔDem','Afloram.'];
+    const thRow=cols.map(c=>`<th style="${TH}">${c}</th>`).join('');
+    const rows=nodes.map(n=>{
+      const dg=delta(n.genActual,n.genPrev);
+      const dd=delta(n.demActual,n.demPrev);
+      let tr=`<tr>
+        <td style="${TDBOLD}">${n.nombre||'—'}</td>
+        <td style="${TD}">${n.ccaa||'—'}</td>
+        <td style="${TDR}">${fmt(n.tension)}</td>
+        <td style="${TDR}">${fmt(n.genActual)}</td>
+        <td style="${TDR}">${fmt(n.demActual)}</td>
+        <td style="${TDR}">${fmt(n.genPrev)}</td>
+        <td style="${TDR}">${fmt(n.demPrev)}</td>
+        <td style="font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;padding:5px 7px;vertical-align:top;text-align:right;border-bottom:1px solid #e2eaf2;${dg.col}">${dg.txt}</td>
+        <td style="font-size:11px;font-family:Aptos,Calibri,Arial,sans-serif;padding:5px 7px;vertical-align:top;text-align:right;border-bottom:1px solid #e2eaf2;${dd.col}">${dd.txt}</td>
+        <td style="${TDR}">${yesNo(n.afloramiento)}</td>
+      </tr>`;
+      if(n.comentarios) tr+=`<tr><td colspan="${cols.length}" style="font-size:10.5px;font-family:Aptos,Calibri,Arial,sans-serif;color:#4a6278;padding:3px 7px 6px 7px;border-bottom:1px solid #e2eaf2;font-style:italic;">${isEN?'Comment':'Comentario'}: ${n.comentarios}</td></tr>`;
+      return tr;
+    }).join('');
+    return `<div style="margin-bottom:10px;">
+      <p style="margin:0 0 4px 0;font-size:10px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#4a6278;text-transform:uppercase;letter-spacing:0.5px;">${lbl}</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #b8cad8;border-radius:6px;overflow:hidden;font-size:11px;">
+        <tr>${thRow}</tr>${rows}
+      </table></div>`;
+  }
+
+  const dsoSinHtml=dsoTableHtml(dsoSinAcept,false,isEN?'DSO NODES — WITHOUT REE ACCEPTABILITY':'NUDOS DSO — SIN ACEPTABILIDAD NETA REE');
+  const dsoConHtml=dsoTableHtml(dsoConAcept,true,isEN?'DSO NODES — WITH REE ACCEPTABILITY > 0':'NUDOS DSO — CON ACEPTABILIDAD NETA REE > 0');
+  const reeHtml=reeTableHtml(reeNodes);
+
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-collapse:collapse;border:1px solid #b8cad8;border-radius:8px;overflow:hidden;">
+    <tr><td colspan="2" style="padding:10px 16px;background:#05233D;border-bottom:2px solid #0a3352;">
+      <p style="margin:0;padding:0;font-size:12.5px;font-family:Aptos,Calibri,Arial,sans-serif;font-weight:700;color:#ffffff;letter-spacing:0.6px;text-transform:uppercase;">${title}</p>
+    </td></tr>
+    <tr><td colspan="2" style="padding:12px 16px 14px 16px;background:#ffffff;">
+      ${dsoSinHtml}${dsoConHtml}${reeHtml}
+    </td></tr>
+  </table>`;
+}
+
+// ── GRID CAPACITY — UI PANEL ───────────────────────────────────────────────
+function renderGcPanel(){
+  const panel=document.getElementById('gcPanel');
+  if(!panel) return;
+  if(!isEditor){ panel.style.display='none'; return; }
+  panel.style.display='block';
+  const dso=gridCapacityData.dso||[];
+  const ree=gridCapacityData.ree||[];
+  const thr=gcSettings.thresholdDSO;
+  const thrR=gcSettings.thresholdREE;
+  const incl=gcSettings.includeInEmail;
+  const mes=gcSettings.dataMes||'';
+
+  // Count nodes above threshold
+  const dsoSin=dso.filter(n=>!n.aceptREE&&((n.genActual||0)+(n.demActual||0))>thr).length;
+  const dsoCon=dso.filter(n=>n.aceptREE>0&&((n.genActual||0)+(n.demActual||0))>thr).length;
+  const rN=ree.filter(n=>((n.genActual||0)+(n.demActual||0))>thrR).length;
+
+  panel.innerHTML=`
+  <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;margin-top:4px;">
+    <!-- Panel header -->
+    <div style="background:#05233D;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="8" width="4" height="7" rx="1" fill="#9db4c8"/><rect x="6" y="4" width="4" height="11" rx="1" fill="#9db4c8"/><rect x="11" y="1" width="4" height="14" rx="1" fill="#9db4c8"/></svg>
+        <span style="font-size:13px;font-weight:700;color:#fff;letter-spacing:0.5px;text-transform:uppercase;">Grid Capacity</span>
+        <span style="font-size:10px;color:#9db4c8;font-weight:500;">— ${lang==='en'?'Monthly Node Tracking':'Seguimiento mensual de nudos'}</span>
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;">
+        <span style="font-size:10.5px;color:#9db4c8;">${lang==='en'?'Include in email':'Incluir en email'}</span>
+        <span style="position:relative;display:inline-block;width:36px;height:20px;">
+          <input type="checkbox" id="gcInclChk" ${incl?'checked':''} onchange="gcSettings.includeInEmail=this.checked;saveGcData();" style="opacity:0;width:0;height:0;position:absolute;">
+          <span onclick="document.getElementById('gcInclChk').click();" style="position:absolute;inset:0;border-radius:10px;background:${incl?'#22c55e':'#4a6278'};transition:background .2s;cursor:pointer;">
+            <span style="position:absolute;top:3px;left:${incl?'19px':'3px'};width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;"></span>
+          </span>
+        </span>
+      </label>
+    </div>
+    <!-- Settings strip -->
+    <div style="background:#f0f4f8;padding:10px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:7px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);">${lang==='en'?'Data month:':'Mes de datos:'}</label>
+        <input type="month" value="${mes}" onchange="gcSettings.dataMes=this.value;saveGcData();renderGcPanel();" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-family:'Aptos',Calibri,Arial,sans-serif;color:var(--navy);">
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);">${lang==='en'?'DSO threshold (MW):':'Umbral DSO (MW):'}</label>
+        <input type="number" value="${thr}" min="0" step="0.5" onchange="gcSettings.thresholdDSO=parseFloat(this.value)||0;saveGcData();renderGcPanel();" style="font-size:11px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;width:70px;font-family:'Aptos',Calibri,Arial,sans-serif;color:var(--navy);">
+        <span style="font-size:10.5px;color:var(--text-3);">gen+dem ></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-2);">${lang==='en'?'REE threshold (MW):':'Umbral REE (MW):'}</label>
+        <input type="number" value="${thrR}" min="0" step="0.5" onchange="gcSettings.thresholdREE=parseFloat(this.value)||0;saveGcData();renderGcPanel();" style="font-size:11px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;width:70px;font-family:'Aptos',Calibri,Arial,sans-serif;color:var(--navy);">
+        <span style="font-size:10.5px;color:var(--text-3);">gen+dem ></span>
+      </div>
+    </div>
+    <!-- Summary strip -->
+    <div style="padding:10px 18px;background:#f8fafc;display:flex;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--border);">
+      <span style="font-size:11px;color:var(--text-2);"><b style="color:var(--navy);">${dso.length}</b> ${lang==='en'?'DSO nodes':'nudos DSO'} · <b style="color:var(--navy);">${dsoSin}</b> ${lang==='en'?'w/o acceptability':'sin aceptabilidad'} &gt;${thr}MW · <b style="color:var(--navy);">${dsoCon}</b> ${lang==='en'?'with acceptability':'con aceptabilidad'} &gt;${thr}MW</span>
+      <span style="font-size:11px;color:var(--text-2);"><b style="color:var(--navy);">${ree.length}</b> ${lang==='en'?'REE nodes':'nudos REE'} · <b style="color:var(--navy);">${rN}</b> &gt;${thrR}MW</span>
+    </div>
+    <!-- DSO section -->
+    <div style="padding:14px 18px 4px 18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">${lang==='en'?'DSO Nodes':'Nudos DSO'} (${dso.length})</span>
+        <button onclick="openGcNodeModal('dso',null)" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Aptos',Calibri,Arial,sans-serif;">+ ${lang==='en'?'Add DSO node':'Añadir nudo DSO'}</button>
+      </div>
+      ${_gcDsoTableHtml(dso)}
+    </div>
+    <!-- REE section -->
+    <div style="padding:14px 18px 18px 18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">${lang==='en'?'REE Nodes':'Nudos REE'} (${ree.length})</span>
+        <button onclick="openGcNodeModal('ree',null)" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Aptos',Calibri,Arial,sans-serif;">+ ${lang==='en'?'Add REE node':'Añadir nudo REE'}</button>
+      </div>
+      ${_gcReeTableHtml(ree)}
+    </div>
+  </div>`;
+}
+
+function _gcDsoTableHtml(nodes){
+  if(!nodes.length) return `<p style="font-size:11.5px;color:var(--text-3);padding:8px 0;">${lang==='en'?'No DSO nodes added yet.':'No hay nudos DSO añadidos.'}</p>`;
+  const rows=nodes.map((n,i)=>`<tr style="border-bottom:1px solid var(--border);">
+    <td style="padding:5px 8px;font-size:11.5px;font-weight:600;color:var(--navy);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.nombre||'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;color:var(--text-2);">${n.provincia||'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;color:var(--text-2);">${n.municipio||'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:var(--navy);">${n.tension||'—'} kV</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:#166534;font-weight:600;">${_gcFmt(n.genActual)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:#1a3a56;font-weight:600;">${_gcFmt(n.demActual)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:${n.aceptREE>0?'#166534':'var(--text-3)'};">${n.aceptREE>0?_gcFmt(n.aceptREE):'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:center;color:${n.afloramiento?'#166534':'var(--text-3)'};">${n.afloramiento?'S':'N'}</td>
+    <td style="padding:5px 4px;white-space:nowrap;">
+      <button onclick="openGcNodeModal('dso',${i})" style="background:var(--blue-l);color:var(--navy);border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;margin-right:4px;">✎</button>
+      <button onclick="deleteGcNode('dso',${i})" style="background:var(--red-l);color:var(--red);border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;">✕</button>
+    </td>
+  </tr>`).join('');
+  return `<div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;font-family:'Aptos',Calibri,Arial,sans-serif;min-width:600px;">
+    <thead><tr style="background:#f0f4f8;">
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:left;">${lang==='en'?'Substation':'Subestación'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:left;">${lang==='en'?'Province':'Provincia'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:left;">${lang==='en'?'Municipality':'Municipio'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">kV</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">Gen (MW)</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">Dem (MW)</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">Acept. REE</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:center;">Afloram.</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;"></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function _gcReeTableHtml(nodes){
+  if(!nodes.length) return `<p style="font-size:11.5px;color:var(--text-3);padding:8px 0;">${lang==='en'?'No REE nodes added yet.':'No hay nudos REE añadidos.'}</p>`;
+  const rows=nodes.map((n,i)=>`<tr style="border-bottom:1px solid var(--border);">
+    <td style="padding:5px 8px;font-size:11.5px;font-weight:600;color:var(--navy);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.nombre||'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;color:var(--text-2);">${n.ccaa||'—'}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:var(--navy);">${n.tension||'—'} kV</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:#166534;font-weight:600;">${_gcFmt(n.genActual)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:#1a3a56;font-weight:600;">${_gcFmt(n.demActual)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:var(--text-3);">${_gcFmt(n.genPrev)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:right;color:var(--text-3);">${_gcFmt(n.demPrev)}</td>
+    <td style="padding:5px 8px;font-size:11px;text-align:center;color:${n.afloramiento?'#166534':'var(--text-3)'};">${n.afloramiento?'S':'N'}</td>
+    <td style="padding:5px 4px;white-space:nowrap;">
+      <button onclick="openGcNodeModal('ree',${i})" style="background:var(--blue-l);color:var(--navy);border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;margin-right:4px;">✎</button>
+      <button onclick="deleteGcNode('ree',${i})" style="background:var(--red-l);color:var(--red);border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;">✕</button>
+    </td>
+  </tr>`).join('');
+  return `<div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;font-family:'Aptos',Calibri,Arial,sans-serif;min-width:580px;">
+    <thead><tr style="background:#f0f4f8;">
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:left;">${lang==='en'?'Node':'Nudo'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:left;">CC.AA.</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">kV</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">Gen (MW)</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">Dem (MW)</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">${lang==='en'?'Gen Prev.':'Gen Ant.'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:right;">${lang==='en'?'Dem Prev.':'Dem Ant.'}</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;text-align:center;">Afloram.</th>
+      <th style="padding:5px 8px;font-size:9.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.4px;"></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function _gcFmt(v){ return (v===null||v===undefined||v==='')?'—':Number(v).toLocaleString('es-ES',{maximumFractionDigits:1})+' MW'; }
+
+function deleteGcNode(type,idx){
+  if(!confirm(lang==='en'?'Delete this node?':'¿Eliminar este nudo?')) return;
+  if(type==='dso') gridCapacityData.dso.splice(idx,1);
+  else gridCapacityData.ree.splice(idx,1);
+  saveGcData();
+  renderGcPanel();
+}
+
+function openGcNodeModal(type,idx){
+  const isEdit=idx!==null&&idx!==undefined;
+  const node=isEdit?(type==='dso'?gridCapacityData.dso[idx]:gridCapacityData.ree[idx]):null;
+  document.getElementById('gcNodeModalTitle').textContent=(isEdit?(lang==='en'?'Edit node':'Editar nudo'):(lang==='en'?'+ Add node':'+ Añadir nudo'))+' — '+(type==='dso'?'DSO':'REE');
+  const body=document.getElementById('gcNodeModalBody');
+  if(type==='dso'){
+    body.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;">
+        <div class="form-row" style="grid-column:1/-1;"><label class="form-label">${lang==='en'?'Substation name':'Nombre subestación'}*</label><input class="form-input" id="gcf_nombre" value="${node?.nombre||''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Province':'Provincia'}</label><input class="form-input" id="gcf_provincia" value="${node?.provincia||''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Municipality':'Municipio'}</label><input class="form-input" id="gcf_municipio" value="${node?.municipio||''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Voltage (kV)':'Tensión (kV)'}</label><input class="form-input" type="number" id="gcf_tension" value="${node?.tension??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'REE Net Acceptability (MW)':'Acept. Neta REE (MW)'}</label><input class="form-input" type="number" step="0.1" id="gcf_aceptREE" value="${node?.aceptREE??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Gen capacity — current (MW)':'Cap. Gen actual (MW)'}*</label><input class="form-input" type="number" step="0.1" id="gcf_genActual" value="${node?.genActual??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Dem capacity — current (MW)':'Cap. Dem actual (MW)'}*</label><input class="form-input" type="number" step="0.1" id="gcf_demActual" value="${node?.demActual??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Gen capacity — previous (MW)':'Cap. Gen anterior (MW)'}</label><input class="form-input" type="number" step="0.1" id="gcf_genPrev" value="${node?.genPrev??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Dem capacity — previous (MW)':'Cap. Dem anterior (MW)'}</label><input class="form-input" type="number" step="0.1" id="gcf_demPrev" value="${node?.demPrev??''}"></div>
+        <div class="form-row" style="display:flex;align-items:center;gap:10px;"><label class="form-label" style="margin:0;">${lang==='en'?'Afloramiento':'Afloramiento'}</label><input type="checkbox" id="gcf_afloramiento" ${node?.afloramiento?'checked':''}></div>
+        <div class="form-row" style="grid-column:1/-1;"><label class="form-label">${lang==='en'?'Comments (DSO)':'Comentarios DSO'}</label><textarea class="form-input" id="gcf_comentarios" rows="2" style="resize:vertical;">${node?.comentarios||''}</textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn btn-primary" onclick="saveGcNodeModal('dso',${isEdit?idx:'null'})">${isEdit?(lang==='en'?'Save':'Guardar'):(lang==='en'?'Add':'Añadir')}</button>
+        <button class="btn btn-sec" onclick="closeModal('gcNodeModal')">${lang==='en'?'Cancel':'Cancelar'}</button>
+      </div>`;
+  } else {
+    body.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;">
+        <div class="form-row" style="grid-column:1/-1;"><label class="form-label">${lang==='en'?'Node name':'Nombre nudo'}*</label><input class="form-input" id="gcf_nombre" value="${node?.nombre||''}"></div>
+        <div class="form-row"><label class="form-label">CC.AA.</label><input class="form-input" id="gcf_ccaa" value="${node?.ccaa||''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Voltage (kV)':'Tensión (kV)'}</label><input class="form-input" type="number" id="gcf_tension" value="${node?.tension??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Gen capacity — current (MW)':'Cap. Gen actual (MW)'}*</label><input class="form-input" type="number" step="0.1" id="gcf_genActual" value="${node?.genActual??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Dem capacity — current (MW)':'Cap. Dem actual (MW)'}*</label><input class="form-input" type="number" step="0.1" id="gcf_demActual" value="${node?.demActual??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Gen capacity — previous (MW)':'Cap. Gen anterior (MW)'}</label><input class="form-input" type="number" step="0.1" id="gcf_genPrev" value="${node?.genPrev??''}"></div>
+        <div class="form-row"><label class="form-label">${lang==='en'?'Dem capacity — previous (MW)':'Cap. Dem anterior (MW)'}</label><input class="form-input" type="number" step="0.1" id="gcf_demPrev" value="${node?.demPrev??''}"></div>
+        <div class="form-row" style="display:flex;align-items:center;gap:10px;"><label class="form-label" style="margin:0;">${lang==='en'?'Afloramiento':'Afloramiento'}</label><input type="checkbox" id="gcf_afloramiento" ${node?.afloramiento?'checked':''}></div>
+        <div class="form-row" style="grid-column:1/-1;"><label class="form-label">${lang==='en'?'Comments (REE)':'Comentarios REE'}</label><textarea class="form-input" id="gcf_comentarios" rows="2" style="resize:vertical;">${node?.comentarios||''}</textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn btn-primary" onclick="saveGcNodeModal('ree',${isEdit?idx:'null'})">${isEdit?(lang==='en'?'Save':'Guardar'):(lang==='en'?'Add':'Añadir')}</button>
+        <button class="btn btn-sec" onclick="closeModal('gcNodeModal')">${lang==='en'?'Cancel':'Cancelar'}</button>
+      </div>`;
+  }
+  document.getElementById('gcNodeModal').style.display='flex';
+}
+
+function saveGcNodeModal(type,idx){
+  const isEdit=idx!==null&&idx!==undefined;
+  const nombre=document.getElementById('gcf_nombre')?.value?.trim();
+  if(!nombre){ alert(lang==='en'?'Name is required.':'El nombre es obligatorio.'); return; }
+  const genA=parseFloat(document.getElementById('gcf_genActual')?.value);
+  const demA=parseFloat(document.getElementById('gcf_demActual')?.value);
+  if(isNaN(genA)||isNaN(demA)){ alert(lang==='en'?'Current capacities are required.':'Las capacidades actuales son obligatorias.'); return; }
+
+  if(type==='dso'){
+    const node={
+      nombre,
+      provincia:document.getElementById('gcf_provincia')?.value?.trim()||'',
+      municipio:document.getElementById('gcf_municipio')?.value?.trim()||'',
+      tension:parseFloat(document.getElementById('gcf_tension')?.value)||null,
+      aceptREE:parseFloat(document.getElementById('gcf_aceptREE')?.value)||0,
+      genActual:genA,
+      demActual:demA,
+      genPrev:parseFloat(document.getElementById('gcf_genPrev')?.value)||null,
+      demPrev:parseFloat(document.getElementById('gcf_demPrev')?.value)||null,
+      afloramiento:document.getElementById('gcf_afloramiento')?.checked||false,
+      comentarios:document.getElementById('gcf_comentarios')?.value?.trim()||''
+    };
+    if(isEdit) gridCapacityData.dso[idx]=node;
+    else gridCapacityData.dso.push(node);
+  } else {
+    const node={
+      nombre,
+      ccaa:document.getElementById('gcf_ccaa')?.value?.trim()||'',
+      tension:parseFloat(document.getElementById('gcf_tension')?.value)||null,
+      genActual:genA,
+      demActual:demA,
+      genPrev:parseFloat(document.getElementById('gcf_genPrev')?.value)||null,
+      demPrev:parseFloat(document.getElementById('gcf_demPrev')?.value)||null,
+      afloramiento:document.getElementById('gcf_afloramiento')?.checked||false,
+      comentarios:document.getElementById('gcf_comentarios')?.value?.trim()||''
+    };
+    if(isEdit) gridCapacityData.ree[idx]=node;
+    else gridCapacityData.ree.push(node);
+  }
+  saveGcData();
+  closeModal('gcNodeModal');
+  renderGcPanel();
+}
+
 async function buildEmailHtml(forceLang){
   // Accept explicit lang parameter to avoid closure-capture issues when called from setLang()
   const isEN=(forceLang||lang)==='en';
@@ -2423,7 +2822,7 @@ async function buildEmailHtml(forceLang){
       <p style="margin:0;font-size:12px;color:#374151;font-family:Aptos,Calibri,Arial,sans-serif;line-height:1.7;">${introLine}</p>
     </div>
     <!-- Content blocks -->
-    <div style="background:#ffffff;padding:16px 24px 20px 24px;">${attnBlock}${projBlocks}</div>
+    <div style="background:#ffffff;padding:16px 24px 20px 24px;">${attnBlock}${projBlocks}${_buildGcEmailBlock(isEN)}</div>
   </div>`;
 
   const imageDataUrl=await _renderEmailContentAsImage(FULL_HTML,EMAIL_WIDTH);
